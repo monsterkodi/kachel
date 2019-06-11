@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+cd `dirname $0`/..
+
+if rm -rf kachel-darwin-x64; then
+
+    if ./node_modules/.bin/konrad; then
+    
+        IGNORE="/(.*\.dmg$|Icon$|watch$|icons$|.*md$|pug$|styl$|.*\.lock$|img/banner\.png)"
+        
+        node_modules/electron-packager/cli.js . --overwrite --icon=img/app.icns --ignore=$IGNORE
+    fi
+fi

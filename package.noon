@@ -1,0 +1,26 @@
+name            kachel
+productName     kachel
+version         0.1.0
+description     experiment
+main            js/main.js
+repository
+                type  git
+                url   https://github.com/monsterkodi/kachel.git
+scripts
+                mac   bash ./bin/buildmac.sh
+                win   bash ./bin/buildwin.sh
+keywords
+                electron
+author          monsterkodi
+license         Unlicense
+bugs
+                url  https://github.com/monsterkodi/kachel/issues
+dependencies
+                kxk  ^0.312.0
+devDependencies
+                appdmg          ^0.6.0
+                electron        ^5.0.3
+                electron-packager  ^13.1.1
+                electron-rebuild  ^1.8.5
+                konrad          ^0.131.0
+                sds             ^3.1.1

@@ -1,0 +1,93 @@
+* {
+  outline-width: 0;
+}
+body {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+  margin: 0;
+  font-family: "Meslo LG S", "Liberation Mono", "Menlo", "Cousine", "Andale Mono", monospace;
+  font-size: 15px;
+  overflow: hidden;
+  -webkit-user-select: none;
+}
+#main {
+  -webkit-app-region: drag;
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 6px;
+  bottom: 6px;
+  scroll: none;
+  overflow: hidden;
+  pointer-events: auto;
+}
+.menuItem {
+  -webkit-app-region: no-drag;
+}
+.menu {
+  height: titlebarHeight;
+  pointer-events: auto;
+  -webkit-app-region: drag;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: row;
+}
+.menuItem {
+  -webkit-app-region: no-drag;
+  cursor: pointer;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 7px;
+  display: inline-block;
+  height: titlebarHeight;
+  overflow: visible;
+}
+.popup {
+  z-index: 9999;
+  position: absolute;
+  border-radius: 3px;
+  font-size: titlebarFontSize;
+  font-family: Bahnschrift Light, Ebrima, Varela Round, Arial Rounded MT Bold, Helvetica, Arial;
+}
+.popup.titlemenu {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.popupItem {
+  padding: 2px;
+  padding-left: 12px;
+  padding-right: 82px;
+  cursor: pointer;
+}
+.popupItem.separator {
+  padding: 0;
+  cursor: default;
+  border: 0;
+  height: 0;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+.popupItem:last-child {
+  padding-bottom: 6px;
+}
+.popupItem:first-child {
+  padding-top: 6px;
+}
+.popupCombo {
+  pointer-events: none;
+  position: absolute;
+  right: 12px;
+}
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar {
+  height: 6px;
+  background-color: transparent;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
