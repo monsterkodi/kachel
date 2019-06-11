@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, app } = require 'kxk'
+{ post, prefs, app } = require 'kxk'
 
 electron = require 'electron'
 
@@ -25,10 +25,12 @@ new app
     icon:           '../img/app.ico'
     tray:           '../img/menu.png'
     about:          '../img/about.png'
-    minWidth:       kachelSize
-    minHeight:      kachelSize
-    width:          kachelSize
-    height:         kachelSize
+    minWidth:       50
+    minHeight:      50
+    maxWidth:       50
+    maxHeight:      50
+    width:          50
+    height:         50
     resizable:      true
     maximizable:    false
     onWinReady:     winEvents
@@ -63,7 +65,7 @@ onNewKachel = ->
         webPreferences:
             nodeIntegration: true
 
-    win.loadURL "file://#{__dirname}/../js/index.html"
+    win.loadURL "file://#{__dirname}/../js/kachel.html"
     win.on 'ready-to-show', -> win.show()
     winEvents win
     win
@@ -71,6 +73,6 @@ onNewKachel = ->
 post.on 'newKachel', onNewKachel
     
 kachelClosed = (event) -> # log 'kachelClosed'
-saveBounds   = (event) -> # log 'saveBounds', event.sender.id
+saveBounds   = (event) -> prefs.save() # log 'saveBounds', event.sender.id
     
     

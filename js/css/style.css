@@ -23,6 +23,12 @@ body {
   scroll: none;
   overflow: hidden;
   pointer-events: auto;
+  display: flex;
+}
+.kachelImg {
+  margin: auto;
+  width: 70%;
+  height: 70%;
 }
 .menuItem {
   -webkit-app-region: no-drag;
