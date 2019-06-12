@@ -47,12 +47,3 @@ body.kachelFocus {
 .popupCombo {
   color: #333;
 }
-::-webkit-scrollbar-corner {
-  background-color: #222;
-}
-::-webkit-scrollbar-thumb {
-  background-color: #444;
-}
-::-webkit-scrollbar-thumb:hover {
-  background-color: #b00;
-}
