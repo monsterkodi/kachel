@@ -6,7 +6,7 @@
 000   000  000   000   0000000  000   000  00000000  0000000    
 ###
 
-{ post, elem, win, $, _ } = require 'kxk'
+{ post, scheme, elem, win, $, _ } = require 'kxk'
 
 class Kachel extends win
 
@@ -29,6 +29,7 @@ class Kachel extends win
         @main.addEventListener 'mouseup'   @onMouseUp
         
         post.on 'combo' @onCombo
+        post.on 'toggleScheme' -> scheme.toggle()
     
     onMouseDown: (event) => @moved = false
     onMouseUp:   (event) => if not @moved then @onClick()
@@ -52,9 +53,10 @@ class Kachel extends win
     onMenuAction: (action) =>
         
         switch action
-            when 'New'   then post.toMain 'newKachel'
-            when 'Close' then @win.close()
-            when 'Quit'  then post.toMain 'quit'
+            when 'New'    then post.toMain 'newKachel'
+            when 'Close'  then @win.close()
+            when 'Quit'   then post.toMain 'quit'
+            when 'Scheme' then post.toWins 'toggleScheme'
             
     #  0000000   0000000   00     00  0000000     0000000   
     # 000       000   000  000   000  000   000  000   000  
@@ -63,9 +65,7 @@ class Kachel extends win
     #  0000000   0000000   000   000  0000000     0000000   
     
     onCombo: (combo, info) ->
-        
-        log 'combo', info
-        
+                
         switch combo
             when 'left''right''up''down' then post.toMain 'focusKachel', @id, combo
             

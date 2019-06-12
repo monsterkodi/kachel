@@ -1,3 +1,12 @@
+body {
+  background-color: #ddd;
+}
+body.kachelFocus {
+  background-color: #ddd;
+}
 #main {
-  background: #eee;
+  background: #ddd;
+}
+#main.kachelFocus {
+  background-color: #fff;
 }

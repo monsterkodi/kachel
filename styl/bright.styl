@@ -5,8 +5,19 @@
 // 000   000  000   000  000  000   000  000   000     000     
 // 0000000    000   000  000   0000000   000   000     000     
 
-bgColor         = #eee
-frameColor      = #fff
+bgColor             = #ddd
+frameFocusColor     = #ddd
+focusColor          = #fff
+textBlurColor       = #444
+textActiveColor     = #222
+textFocusColor      = #000
+
+body
+    background-color     bgColor
+    &.kachelFocus
+        background-color frameFocusColor
 
 #main
-    background          bgColor
+    background           bgColor
+    &.kachelFocus
+        background-color focusColor

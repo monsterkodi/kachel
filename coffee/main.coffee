@@ -81,6 +81,12 @@ onNewKachel = ->
         
 post.on 'newKachel', onNewKachel
 
+# 00000000    0000000   000   0000000  00000000
+# 000   000  000   000  000  000       000     
+# 0000000    000000000  000  0000000   0000000 
+# 000   000  000   000  000       000  000     
+# 000   000  000   000  000  0000000   00000000
+
 raised  = false
 raising = false
 
@@ -122,6 +128,12 @@ post.on 'raiseKacheln' onRaiseKacheln
 
 post.on 'quit' KachelApp.quitApp
 
+# 00000000   0000000    0000000  000   000   0000000  
+# 000       000   000  000       000   000  000       
+# 000000    000   000  000       000   000  0000000   
+# 000       000   000  000       000   000       000  
+# 000        0000000    0000000   0000000   0000000   
+
 onFocusKachel = (winId, direction) ->
     switch direction
         when 'left''up'    then raise relWin winId, -1
@@ -132,6 +144,12 @@ post.on 'focusKachel' onFocusKachel
 kachelClosed = (event) -> # log 'kachelClosed'
 saveBounds   = (event) -> prefs.save() # log 'saveBounds', event.sender.id
     
+# 000   000  000  000   000   0000000  
+# 000 0 000  000  0000  000  000       
+# 000000000  000  000 0 000  0000000   
+# 000   000  000  000  0000       000  
+# 00     00  000  000   000  0000000   
+
 wins        = -> BrowserWindow.getAllWindows().sort (a,b) -> a.id - b.id
 activeWin   = -> BrowserWindow.getFocusedWindow()
 kacheln     = -> wins().filter (w) -> w != mainWin

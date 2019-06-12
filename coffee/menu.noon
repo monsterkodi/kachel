@@ -8,5 +8,6 @@
 New      cmdctrl+n n
 Close    cmdctrl+w w
 Quit     cmdctrl+q
+Scheme   cmdctrl+i
 
     
