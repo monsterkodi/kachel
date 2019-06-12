@@ -23,11 +23,11 @@ winEvents = (win) ->
     
 shortcut = slash.win() and 'ctrl+alt+k' or 'command+alt+k'
     
-new app
+KachelApp = new app
     dir:            __dirname
     pkg:            require '../package.json'
     shortcut:       shortcut
-    index:          'index.html'
+    index:          'mainwin.html'
     icon:           '../img/app.ico'
     tray:           '../img/menu.png'
     about:          '../img/about.png'
@@ -74,14 +74,14 @@ onNewKachel = ->
         webPreferences:
             nodeIntegration: true
 
-    win.loadURL "file://#{__dirname}/../js/kachel.html"
+    win.loadURL "file://#{__dirname}/../js/default.html"
     win.on 'ready-to-show', -> win.show()
     winEvents win
     win
         
 post.on 'newKachel', onNewKachel
 
-raised = false
+raised  = false
 raising = false
 
 raise = (win) ->
@@ -118,7 +118,16 @@ onRaiseKacheln = ->
     raised = true
     raise mainWin
 
-post.on 'raiseKacheln', onRaiseKacheln        
+post.on 'raiseKacheln' onRaiseKacheln        
+
+post.on 'quit' KachelApp.quitApp
+
+onFocusKachel = (winId, direction) ->
+    switch direction
+        when 'left''up'    then raise relWin winId, -1
+        when 'right''down' then raise relWin winId,  1
+
+post.on 'focusKachel' onFocusKachel
         
 kachelClosed = (event) -> # log 'kachelClosed'
 saveBounds   = (event) -> prefs.save() # log 'saveBounds', event.sender.id
@@ -127,3 +136,8 @@ wins        = -> BrowserWindow.getAllWindows().sort (a,b) -> a.id - b.id
 activeWin   = -> BrowserWindow.getFocusedWindow()
 kacheln     = -> wins().filter (w) -> w != mainWin
     
+relWin = (winId, delta) ->
+    wl = wins()
+    w = BrowserWindow.fromId winId
+    wi = wl.indexOf w
+    wl[(wl.length+wi+delta)%wl.length]

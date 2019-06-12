@@ -1,5 +1,11 @@
+body.kachelFocus {
+  background-color: #444;
+}
 #main {
   background: #181818;
+}
+#main.kachelFocus {
+  background-color: #222;
 }
 .menuItem {
   color: #666;
