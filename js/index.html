@@ -9,5 +9,8 @@
   <body>
     <div id="main" tabindex="0"></div>
   </body>
-  <script>require('./window.js')</script>
+  <script>
+    MainWin = require('./mainwin.js');
+    new MainWin();
+  </script>
 </html>
