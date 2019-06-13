@@ -31,8 +31,8 @@ class Kachel extends win
         post.on 'combo' @onCombo
         post.on 'toggleScheme' -> scheme.toggle()
     
-    onMouseDown: (event) => @moved = false
-    onMouseUp:   (event) => if not @moved then @onClick()
+    onMouseDown: (event) => log '▾';@moved = false
+    onMouseUp:   (event) => log '▴';if not @moved then @onClick()
     onWinMove:   (event) => @moved = true; @onMove event
     onWinLoad:   (event) => @onLoad  event
     onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; @main.classList.add    'kachelFocus'; @onFocus event
@@ -53,7 +53,7 @@ class Kachel extends win
     onMenuAction: (action) =>
         
         switch action
-            when 'New'    then post.toMain 'newKachel'
+            when 'New'    then post.toMain 'newKachel', {}
             when 'Close'  then @win.close()
             when 'Quit'   then post.toMain 'quit'
             when 'Scheme' then post.toWins 'toggleScheme'

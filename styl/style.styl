@@ -32,9 +32,10 @@ body
     font-size           15px
     overflow            hidden
     -webkit-user-select none
+    -webkit-app-region  drag
     
 #main
-    -webkit-app-region  drag
+    -webkit-app-region  none
     position            absolute
     left                frameWidth
     right               frameWidth
@@ -42,13 +43,14 @@ body
     bottom              frameWidth
     scroll              none
     overflow            hidden
-    pointer-events      auto
+    pointer-events      all
     display             flex
         
 .kachelImg
     margin              auto
     width               70%
     height              70%
+    cursor              pointer
     
 //  0000000   00000000   000  0000000    
 // 000        000   000  000  000   000  
@@ -72,20 +74,20 @@ body
     height              80%
 
 .grid2x2_11
-    grid-row            1
     grid-column         1
+    grid-row            1
 
 .grid2x2_12
-    grid-row            1
     grid-column         2
+    grid-row            1
 
 .grid2x2_21
-    grid-row            2
     grid-column         1
+    grid-row            2
     
 .grid2x2_22
-    grid-row            2
     grid-column         2
+    grid-row            2
     
 // 00     00  00000000  000   000  000   000  
 // 000   000  000       0000  000  000   000  

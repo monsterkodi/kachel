@@ -22,7 +22,7 @@ winEvents = (win) ->
     win.setHasShadow false
     
 shortcut = slash.win() and 'ctrl+alt+k' or 'command+alt+k'
-    
+
 KachelApp = new app
     dir:            __dirname
     pkg:            require '../package.json'
@@ -49,7 +49,7 @@ KachelApp = new app
 # 000  000   000   000  000       000   000  000       000      
 # 000   000  000   000   0000000  000   000  00000000  0000000  
 
-onNewKachel = ->
+onNewKachel = (url:'default.html')->
 
     win = new electron.BrowserWindow
         
@@ -74,7 +74,7 @@ onNewKachel = ->
         webPreferences:
             nodeIntegration: true
 
-    win.loadURL "file://#{__dirname}/../js/default.html"
+    win.loadURL "file://#{__dirname}/../js/#{url}"
     win.on 'ready-to-show', -> win.show()
     winEvents win
     win

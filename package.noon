@@ -16,7 +16,8 @@ license         Unlicense
 bugs
                 url  https://github.com/monsterkodi/kachel/issues
 dependencies
-                kxk  ^0.315.0
+                kxk             ^0.315.0
+                systeminformation  ^4.9.2
 devDependencies
                 appdmg          ^0.6.0
                 electron        ^5.0.3
