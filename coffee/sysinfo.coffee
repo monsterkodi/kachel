@@ -30,7 +30,7 @@ class Sysinfo extends Kachel
             elem 'div' class:'grid2x2_11'
             elem 'div' class:'grid2x2_12'
             elem 'div' class:'grid2x2_21'
-            elem 'div' class:'grid2x2_22'
+            elem 'div' class:'grid2x2_22', children[utils.pie fill:'#ff0' angle:90, start:180]
         ]
     
         @main.appendChild grid
@@ -39,7 +39,7 @@ class Sysinfo extends Kachel
             
             sysinfo.getDynamicData (data) =>
                 
-                log data
+                n# log data
             
                 # 000       0000000    0000000   0000000    
                 # 000      000   000  000   000  000   000  
@@ -88,6 +88,8 @@ class Sysinfo extends Kachel
                 # 000  000   000  
                 # 000  000   000  
                 # 000   0000000   
+                
+                return if not data.disksIO?
                 
                 r_sec = data.disksIO.rIO_sec
                 w_sec = data.disksIO.wIO_sec
