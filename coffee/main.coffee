@@ -16,7 +16,6 @@ mainWin = null
 
 winEvents = (win) ->
     win.on 'closed', kachelClosed
-    win.on 'move',   saveBounds
     win.on 'focus',  onWinFocus
     win.on 'blur',   onWinBlur
     win.setHasShadow false
@@ -39,9 +38,17 @@ KachelApp = new app
     height:         50
     resizable:      true
     maximizable:    false
+    saveBounds:     false
     onWinReady:     (win) ->
         mainWin = win
         winEvents win
+        loadKacheln()
+        
+loadKacheln = ->
+    
+    for kachelId,kachelData of prefs.get 'kacheln' {}
+        log 'newKachel', kachelId, kachelData
+        onNewKachel kachelData
 
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
@@ -49,8 +56,13 @@ KachelApp = new app
 # 000  000   000   000  000       000   000  000       000      
 # 000   000  000   000   0000000  000   000  00000000  0000000  
 
-onNewKachel = (url:'default.html')->
+onNewKachel = (html:'default', winId:)->
 
+    if winId
+        oldWin = winWithId winId
+        bounds = oldWin.getBounds()
+        oldWin.close()
+    
     win = new electron.BrowserWindow
         
         movable:         true
@@ -74,7 +86,10 @@ onNewKachel = (url:'default.html')->
         webPreferences:
             nodeIntegration: true
 
-    win.loadURL "file://#{__dirname}/../js/#{url}"
+    if bounds
+        win.setBounds bounds
+            
+    win.loadURL "file://#{__dirname}/../js/#{html}.html"
     win.on 'ready-to-show', -> win.show()
     winEvents win
     win
@@ -110,11 +125,13 @@ onWinFocus = (event) ->
             raising = false
     
 onHideKacheln = ->
+    
     for win in kacheln()
         hide win
     raised = false
 
 onRaiseKacheln = ->
+    
     if raised
         onHideKacheln()
         return
@@ -150,9 +167,10 @@ saveBounds   = (event) -> prefs.save() # log 'saveBounds', event.sender.id
 # 000   000  000  000  0000       000  
 # 00     00  000  000   000  0000000   
 
-wins        = -> BrowserWindow.getAllWindows().sort (a,b) -> a.id - b.id
-activeWin   = -> BrowserWindow.getFocusedWindow()
-kacheln     = -> wins().filter (w) -> w != mainWin
+wins      = -> BrowserWindow.getAllWindows().sort (a,b) -> a.id - b.id
+activeWin = -> BrowserWindow.getFocusedWindow()
+kacheln   = -> wins().filter (w) -> w != mainWin
+winWithId = (id) -> BrowserWindow.fromId id
     
 relWin = (winId, delta) ->
     wl = wins()

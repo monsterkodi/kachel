@@ -6,11 +6,11 @@
 000   000  000   000   0000000  000   000  00000000  0000000    
 ###
 
-{ post, scheme, elem, win, $, _ } = require 'kxk'
+{ post, scheme, prefs, elem, win, $, _ } = require 'kxk'
 
 class Kachel extends win
 
-    @: ->
+    @: (@kachelId:) ->
         
         super
             dir:    __dirname
@@ -24,25 +24,43 @@ class Kachel extends win
         @win.on 'move'  @onWinMove
         @win.on 'blur'  @onWinBlur
         @win.on 'focus' @onWinFocus
+        @win.on 'move'  @onWinMove
+        @win.on 'close' @onWinClose
         
         @main.addEventListener 'mousedown' @onMouseDown
         @main.addEventListener 'mouseup'   @onMouseUp
         
         post.on 'combo' @onCombo
         post.on 'toggleScheme' -> scheme.toggle()
+        
+        if @kachelId != 'main'
+            prefs.set "kacheln:#{@kachelId}" @kachelData()
+        
+        bounds = prefs.get "bounds:#{@kachelId}"
+        if bounds?
+            @win.setPosition bounds.x, bounds.y 
     
-    onMouseDown: (event) => log '▾';@moved = false
-    onMouseUp:   (event) => log '▴';if not @moved then @onClick()
+    kachelData: -> html:@kachelId
+            
+    onMouseDown: (event) => @moved = false
+    onMouseUp:   (event) => if not @moved then @onClick()
     onWinMove:   (event) => @moved = true; @onMove event
-    onWinLoad:   (event) => @onLoad  event
     onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; @main.classList.add    'kachelFocus'; @onFocus event
     onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @main.classList.remove 'kachelFocus'; @onBlur  event
+    onWinMove:   (event) => prefs.set "bounds:#{@kachelId}", @win.getBounds(); log prefs.get "bounds:#{@kachelId}"; @onMove event
+    onWinLoad:   (event) => prefs.set "bounds:#{@kachelId}", @win.getBounds(); @onLoad  event
+    onWinClose:  (event) => 
+        if @kachelId != 'main'
+            prefs.del "kacheln:#{@kachelId}" 
+        @onClose event
     
     onLoad:  -> # to be overridden in subclasses
     onMove:  -> # to be overridden in subclasses
     onClick: -> # to be overridden in subclasses
     onFocus: -> # to be overridden in subclasses
     onBlur:  -> # to be overridden in subclasses
+    onMove:  -> # to be overridden in subclasses
+    onClose: -> # to be overridden in subclasses
         
     # 00     00  00000000  000   000  000   000
     # 000   000  000       0000  000  000   000

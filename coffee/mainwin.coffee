@@ -6,13 +6,15 @@
 000   000  000   000  000  000   000  00     00  000  000   000
 ###
 
-{ post, elem } = require 'kxk'
+{ post, elem, _ } = require 'kxk'
 
 Kachel = require './kachel'
 
 class MainWin extends Kachel
         
-    @: -> super
+    @: (@kachelId:'main') -> 
+    
+        super
     
     onLoad: ->
         

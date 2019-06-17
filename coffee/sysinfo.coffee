@@ -6,7 +6,7 @@
 0000000      000     0000000   000  000   000  000        0000000   
 ###
 
-{ elem } = require 'kxk'
+{ elem, _ } = require 'kxk'
 
 utils   = require './utils'
 Kachel  = require './kachel'
@@ -14,7 +14,7 @@ sysinfo = require 'systeminformation'
 
 class Sysinfo extends Kachel
         
-    @: -> 
+    @: (@kachelId:'sysinfo') -> 
         
         @rx_max = 0
         @tx_max = 0
