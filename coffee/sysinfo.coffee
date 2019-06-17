@@ -30,7 +30,7 @@ class Sysinfo extends Kachel
             elem 'div' class:'grid2x2_11'
             elem 'div' class:'grid2x2_12'
             elem 'div' class:'grid2x2_21'
-            elem 'div' class:'grid2x2_22', children[utils.pie fill:'#ff0' angle:90, start:180]
+            elem 'div' class:'grid2x2_22'
         ]
     
         @main.appendChild grid
@@ -39,8 +39,6 @@ class Sysinfo extends Kachel
             
             sysinfo.getDynamicData (data) =>
                 
-                n# log data
-            
                 # 000       0000000    0000000   0000000    
                 # 000      000   000  000   000  000   000  
                 # 000      000   000  000000000  000   000  
@@ -48,9 +46,9 @@ class Sysinfo extends Kachel
                 # 0000000   0000000   000   000  0000000    
                 
                 grid.childNodes[0].innerHTML = ''
-                pie = utils.circle fill:'#44f'
-                utils.pie svg:pie, fill:'#080' angle:360*data.currentLoad.currentload/100
-                utils.pie svg:pie, fill:'#f80' angle:360*data.currentLoad.currentload_user/100
+                pie = utils.circle clss:'sysinfo_load_bgr'
+                utils.pie svg:pie, clss:'sysinfo_load_sys' angle:360*data.currentLoad.currentload/100
+                utils.pie svg:pie, clss:'sysinfo_load_usr' angle:360*data.currentLoad.currentload_user/100
                 grid.childNodes[0].appendChild pie
                     
                 # 00     00  00000000  00     00  
@@ -59,11 +57,11 @@ class Sysinfo extends Kachel
                 # 000 0 000  000       000 0 000  
                 # 000   000  00000000  000   000  
                 
-                grid.childNodes[1].innerHTML = ''
-                pie = utils.circle fill:'#44f'
-                utils.pie svg:pie, fill:'#88f' angle:360*data.mem.used/data.mem.total
-                utils.pie svg:pie, fill:'#f80' angle:360*data.mem.active/data.mem.total
-                grid.childNodes[1].appendChild pie
+                grid.childNodes[2].innerHTML = ''
+                pie = utils.circle clss:'sysinfo_mem_bgr'
+                utils.pie svg:pie, clss:'sysinfo_mem_used'   angle:360*data.mem.used/data.mem.total
+                utils.pie svg:pie, clss:'sysinfo_mem_active' angle:360*data.mem.active/data.mem.total
+                grid.childNodes[2].appendChild pie
 
                 # 000   000  00000000  000000000  
                 # 0000  000  000          000     
@@ -77,11 +75,11 @@ class Sysinfo extends Kachel
                 @rx_max = Math.max @rx_max, rx_sec
                 @tx_max = Math.max @tx_max, tx_sec
                 
-                grid.childNodes[2].innerHTML = ''
-                pie = utils.circle fill:'#44f'
-                utils.pie svg:pie, fill:'#88f' angle:180*rx_sec/@rx_max
-                utils.pie svg:pie, fill:'#f80' angle:180*tx_sec/@tx_max, start:180
-                grid.childNodes[2].appendChild pie
+                grid.childNodes[1].innerHTML = ''
+                pie = utils.circle clss:'sysinfo_net_bgr'
+                utils.pie svg:pie, clss:'sysinfo_net_recv' angle:180*rx_sec/@rx_max
+                utils.pie svg:pie, clss:'sysinfo_net_send' angle:180*tx_sec/@tx_max, start:180
+                grid.childNodes[1].appendChild pie
                 
                 # 000   0000000   
                 # 000  000   000  
@@ -98,9 +96,9 @@ class Sysinfo extends Kachel
                 @w_max = Math.max @w_max, w_sec
                 
                 grid.childNodes[3].innerHTML = ''
-                pie = utils.circle fill:'#44f'
-                utils.pie svg:pie, fill:'#88f' angle:180*r_sec/@r_max
-                utils.pie svg:pie, fill:'#f80' angle:180*w_sec/@w_max, start:180
+                pie = utils.circle clss:'sysinfo_disk_bgr'
+                utils.pie svg:pie, clss:'sysinfo_disk_read'  angle:180*r_sec/@r_max
+                utils.pie svg:pie, clss:'sysinfo_disk_write' angle:180*w_sec/@w_max, start:180
                 grid.childNodes[3].appendChild pie
                 
         setInterval info, 1000
