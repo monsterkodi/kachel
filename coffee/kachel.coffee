@@ -47,7 +47,7 @@ class Kachel extends win
     onWinMove:   (event) => @moved = true; @onMove event
     onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; @main.classList.add    'kachelFocus'; @onFocus event
     onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @main.classList.remove 'kachelFocus'; @onBlur  event
-    onWinMove:   (event) => prefs.set "bounds:#{@kachelId}", @win.getBounds(); log prefs.get "bounds:#{@kachelId}"; @onMove event
+    onWinMove:   (event) => prefs.set "bounds:#{@kachelId}", @win.getBounds(); @onMove event
     onWinLoad:   (event) => prefs.set "bounds:#{@kachelId}", @win.getBounds(); @onLoad  event
     onWinClose:  (event) => 
         if @kachelId != 'main'

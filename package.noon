@@ -19,7 +19,6 @@ dependencies
                 kxk             ^0.315.0
                 systeminformation  ^4.9.2
 devDependencies
-                appdmg          ^0.6.0
                 electron        ^5.0.3
                 electron-packager  ^13.1.1
                 electron-rebuild  ^1.8.5

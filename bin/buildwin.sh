@@ -3,12 +3,12 @@ cd `dirname $0`/..
 
 if rm -rf kachel-win32-x64; then
     
-    konrad
+    if node_modules/.bin/konrad; then
 
-    node_modules/.bin/electron-rebuild
-
-    node_modules/electron-packager/cli.js . --overwrite --icon=img/app.ico
+        node_modules/.bin/electron-rebuild
     
-    rm -rf kachel-win32-x64/resources/app/inno
-
+        node_modules/electron-packager/cli.js . --overwrite --icon=img/app.ico
+        
+        rm -rf kachel-win32-x64/resources/app/inno
+    fi
 fi

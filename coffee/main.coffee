@@ -47,7 +47,7 @@ KachelApp = new app
 loadKacheln = ->
     
     for kachelId,kachelData of prefs.get 'kacheln' {}
-        log 'newKachel', kachelId, kachelData
+        # log 'newKachel', kachelId, kachelData
         onNewKachel kachelData
 
 # 000   000   0000000    0000000  000   000  00000000  000      
