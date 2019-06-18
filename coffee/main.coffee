@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, prefs, slash, app } = require 'kxk'
+{ post, prefs, slash, klog, app } = require 'kxk'
 
 electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
@@ -15,9 +15,9 @@ kachelSize = 150
 mainWin = null
 
 winEvents = (win) ->
-    win.on 'closed', kachelClosed
-    win.on 'focus',  onWinFocus
-    win.on 'blur',   onWinBlur
+    # win.on 'closed' kachelClosed
+    win.on 'focus'  onWinFocus
+    win.on 'blur'   onWinBlur
     win.setHasShadow false
     
 shortcut = slash.win() and 'ctrl+alt+k' or 'command+alt+k'
@@ -43,12 +43,13 @@ KachelApp = new app
         mainWin = win
         winEvents win
         loadKacheln()
-        
+
 loadKacheln = ->
     
     for kachelId,kachelData of prefs.get 'kacheln' {}
-        # log 'newKachel', kachelId, kachelData
         onNewKachel kachelData
+
+# KachelApp.app.on 'ready' loadKacheln
 
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
@@ -56,13 +57,8 @@ loadKacheln = ->
 # 000  000   000   000  000       000   000  000       000      
 # 000   000  000   000   0000000  000   000  00000000  0000000  
 
-onNewKachel = (html:'default', winId:)->
+onNewKachel = (html:'default', data:) ->
 
-    if winId
-        oldWin = winWithId winId
-        bounds = oldWin.getBounds()
-        oldWin.close()
-    
     win = new electron.BrowserWindow
         
         movable:         true
@@ -85,12 +81,14 @@ onNewKachel = (html:'default', winId:)->
         maxHeight:       kachelSize
         webPreferences:
             nodeIntegration: true
-
-    if bounds
-        win.setBounds bounds
-            
+    
     win.loadURL "file://#{__dirname}/../js/#{html}.html"
-    win.on 'ready-to-show', -> win.show()
+    
+    win.webContents.on 'dom-ready' (event) ->
+        # klog 'win-ready', event.sender.id, win.id, data
+        post.toWin win.id, 'initData' data if data?
+        win.show()
+        
     winEvents win
     win
         
@@ -158,8 +156,7 @@ onFocusKachel = (winId, direction) ->
 
 post.on 'focusKachel' onFocusKachel
         
-kachelClosed = (event) -> # log 'kachelClosed'
-saveBounds   = (event) -> prefs.save() # log 'saveBounds', event.sender.id
+# kachelClosed = (event) -> # log 'kachelClosed'
     
 # 000   000  000  000   000   0000000  
 # 000 0 000  000  0000  000  000       

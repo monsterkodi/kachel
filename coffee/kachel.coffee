@@ -6,7 +6,7 @@
 000   000  000   000   0000000  000   000  00000000  0000000    
 ###
 
-{ post, scheme, prefs, elem, win, $, _ } = require 'kxk'
+{ post, scheme, prefs, elem, win, klog, $, _ } = require 'kxk'
 
 class Kachel extends win
 
@@ -38,7 +38,7 @@ class Kachel extends win
         
         bounds = prefs.get "bounds:#{@kachelId}"
         if bounds?
-            @win.setPosition bounds.x, bounds.y 
+            @win.setPosition bounds.x, bounds.y
     
     kachelData: -> html:@kachelId
             
@@ -51,6 +51,7 @@ class Kachel extends win
     onWinLoad:   (event) => prefs.set "bounds:#{@kachelId}", @win.getBounds(); @onLoad  event
     onWinClose:  (event) => 
         if @kachelId != 'main'
+            klog 'prefs.del' "kacheln:#{@kachelId}" 
             prefs.del "kacheln:#{@kachelId}" 
         @onClose event
     

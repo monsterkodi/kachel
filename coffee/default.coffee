@@ -6,8 +6,9 @@
 0000000    00000000  000       000   000   0000000   0000000   000     
 ###
 
-{ post, elem, _ } = require 'kxk'
+{ post, slash, klog, elem, _ } = require 'kxk'
 
+electron = require 'electron'
 Kachel = require './kachel'
 
 class Default extends Kachel
@@ -25,10 +26,28 @@ class Default extends Kachel
     
         @main.appendChild grid
         
-    openApp: => log 'openApp'
     openGit: => log 'openGit'
     openNpm: => log 'openNpm'
     openCmd: => log 'openCmd'; post.toMain 'newKachel' html:'sysinfo' winId:@win.id
     onClick: => log 'onClick'
+    openApp: => 
+        
+        dir = slash.win() and 'C:/Program Files/' or '/Applications'
+        electron.remote.dialog.showOpenDialog
+            title: "Open Application"
+            defaultPath: dir
+            properties: ['openFile', 'multiSelections']
+            , @appsChosen
+            
+    appsChosen: (files) => 
+        
+        if not files instanceof Array
+            files = [files]
+        for file in files
+            @appChosen file
+            
+    appChosen: (file) ->
+        
+        post.toMain 'newKachel' html:'appl' data:app:file
 
 module.exports = Default

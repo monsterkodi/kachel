@@ -35,6 +35,12 @@ svg {
   height: 70%;
   cursor: pointer;
 }
+.applicon {
+  margin: auto;
+  width: 80%;
+  height: 80%;
+  cursor: pointer;
+}
 .grid2x2 {
   display: grid;
   grid-template-columns: 50% 50%;
