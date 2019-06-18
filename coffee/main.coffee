@@ -36,7 +36,7 @@ KachelApp = new app
     maxHeight:      50
     width:          50
     height:         50
-    resizable:      true
+    resizable:      false #true
     maximizable:    false
     saveBounds:     false
     onWinReady:     (win) ->
@@ -47,7 +47,8 @@ KachelApp = new app
 loadKacheln = ->
     
     for kachelId,kachelData of prefs.get 'kacheln' {}
-        onNewKachel kachelData
+        if kachelId != 'appl'
+            onNewKachel kachelData
 
 # KachelApp.app.on 'ready' loadKacheln
 

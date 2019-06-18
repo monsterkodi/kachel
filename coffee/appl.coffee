@@ -18,14 +18,11 @@ class Appl extends Kachel
         
         super
         
-    onClick: ->
-        
-        klog 'onClick appl' @appPath
-        open @appPath
+    onClick: -> open @appPath
         
     onInitData: (data) =>
         
-        klog 'onInitData', data
+        # klog 'onInitData', data
         @appPath = data.app
         @kachelId = 'appl'+@appPath
         prefs.set "kacheln:#{@kachelId}:data:app" @appPath

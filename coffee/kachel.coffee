@@ -83,9 +83,10 @@ class Kachel extends win
     # 000       000   000  000 0 000  000   000  000   000  
     #  0000000   0000000   000   000  0000000     0000000   
     
-    onCombo: (combo, info) ->
+    onCombo: (combo, info) =>
                 
         switch combo
-            when 'left''right''up''down' then post.toMain 'focusKachel', @id, combo
+            when 'left''right''up''down' then post.toMain 'focusKachel' @id, combo
+            when 'enter''space' then @onClick()
             
 module.exports = Kachel
