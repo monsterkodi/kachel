@@ -48,6 +48,8 @@ class Default extends Kachel
             
     appChosen: (file) ->
         
+        file = slash.removeDrive slash.path file
+        log file
         post.toMain 'newKachel' html:'appl' data:app:file
 
 module.exports = Default
