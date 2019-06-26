@@ -18,11 +18,13 @@ class Appl extends Kachel
         
         super
         
-    onClick: -> open @appPath
+    onClick: -> 
+        klog "open #{@appPath}"
+        open @appPath
         
     onInitData: (data) =>
         
-        # klog 'onInitData', data
+        klog 'onInitData', data
         @appPath = data.app
         @kachelId = 'appl'+@appPath
         prefs.set "kacheln:#{@kachelId}:data:app" @appPath
@@ -37,6 +39,8 @@ class Appl extends Kachel
                 @exeIcon data.app, iconDir, @setIcon
             else
                 @setIcon @appIcon data.app, iconDir
+        else
+            @setIcon iconPath
                 
         bounds = prefs.get "bounds:#{@kachelId}"
         if bounds?

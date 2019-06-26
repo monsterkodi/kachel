@@ -93,7 +93,23 @@ onNewKachel = (html:'default', data:) ->
     winEvents win
     win
         
-post.on 'newKachel', onNewKachel
+post.on 'newKachel' onNewKachel
+
+onArrange = ->
+    
+    snap = 20
+    wa = electron.screen.getPrimaryDisplay().workAreaSize
+    [sw, sh] = [wa.width, wa.height]
+
+    for w in kacheln()
+        b = w.getBounds()
+        log Math.abs(b.x + b.width - sw)
+        if Math.abs(b.x) < snap 
+            log '<' w.id, b
+        else if Math.abs(b.x + b.width - sw) < snap 
+            log '>' w.id, b
+
+post.on 'arrange' onArrange
 
 # 00000000    0000000   000   0000000  00000000
 # 000   000  000   000  000  000       000     
