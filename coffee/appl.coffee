@@ -14,8 +14,6 @@ class Appl extends Kachel
         
     @: (@kachelId:'appl') -> 
     
-        post.on 'initData' @onInitData
-        
         super
         
     onClick: -> 
@@ -24,7 +22,6 @@ class Appl extends Kachel
         
     onInitData: (data) =>
         
-        klog 'onInitData', data
         @appPath = data.app
         @kachelId = 'appl'+@appPath
         prefs.set "kacheln:#{@kachelId}:data:app" @appPath

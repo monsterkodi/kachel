@@ -6,11 +6,11 @@
 000   000  000   000   0000000  000   000  00000000  0000000    
 ###
 
-{ post, scheme, prefs, elem, win, klog, $, _ } = require 'kxk'
+{ post, scheme, prefs, slash, klog, elem, win, $ } = require 'kxk'
 
 class Kachel extends win
 
-    @: (@kachelId:) ->
+    @: (@kachelId:'kachel') ->
         
         super
             dir:    __dirname
@@ -30,6 +30,7 @@ class Kachel extends win
         @main.addEventListener 'mousedown' @onMouseDown
         @main.addEventListener 'mouseup'   @onMouseUp
         
+        post.on 'initData' @onInitData
         post.on 'combo' @onCombo
         post.on 'toggleScheme' -> scheme.toggle()
         
@@ -41,7 +42,7 @@ class Kachel extends win
             @win.setPosition bounds.x, bounds.y
     
     kachelData: -> html:@kachelId
-            
+      
     onMouseDown: (event) => @moved = false
     onMouseUp:   (event) => if not @moved then @onClick()
     onWinMove:   (event) => @moved = true; @onMove event
@@ -51,9 +52,21 @@ class Kachel extends win
     onWinLoad:   (event) => prefs.set "bounds:#{@kachelId}", @win.getBounds(); @onLoad  event
     onWinClose:  (event) => 
         if @kachelId != 'main'
-            klog 'prefs.del' "kacheln:#{@kachelId}" 
             prefs.del "kacheln:#{@kachelId}" 
         @onClose event
+        
+    onInitData:  (data) =>
+
+        @indexPath = data.index
+        @kachelId = 'kachel'+@indexPath
+        prefs.set "kacheln:#{@kachelId}:data:index" @indexPath
+        prefs.set "kacheln:#{@kachelId}:html" 'kachel'
+    
+        @win.loadURL slash.fileUrl slash.join __dirname, @indexPath
+                
+        bounds = prefs.get "bounds:#{@kachelId}"
+        if bounds?
+            @win.setPosition bounds.x, bounds.y
     
     onLoad:  -> # to be overridden in subclasses
     onMove:  -> # to be overridden in subclasses
