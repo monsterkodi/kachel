@@ -17,8 +17,8 @@ class Appl extends Kachel
         super
         
     onClick: -> 
-        klog "open #{@appPath}"
-        open @appPath
+        klog "open #{slash.unslash @appPath}"
+        open slash.unslash @appPath
         
     onInitData: (data) =>
         

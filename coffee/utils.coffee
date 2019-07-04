@@ -26,18 +26,17 @@ class utils
     @svg: (width:55, height:55) ->
         
         svg = document.createElementNS 'http://www.w3.org/2000/svg' 'svg'
-        svg.setAttribute 'width'  "#{width}px"
-        svg.setAttribute 'height' "#{height}px"
+        svg.setAttribute 'viewBox' '-50 -50 100 100'
         svg
         
-    @circle: (radius:27.5, cx:27.5, cy:27.5, clss:, svg:) ->
+    @circle: (radius:50, cx:0, cy:0, clss:, svg:) ->
         
         svg ?= @svg width:2*radius, height:2*radius
         g = @append svg, 'g'
         c = @append g, 'circle', cx:cx, cy:cy, r:radius, class:clss
         svg
         
-    @pie: (radius:27.5, cx:27.5, cy:27.5, angle:0, start:0, clss:, svg:) ->
+    @pie: (radius:50, cx:0, cy:0, angle:0, start:0, clss:, svg:) ->
 
         start = clamp 0, 360, start%360
         angle = clamp 0, 360, (start+angle)%360

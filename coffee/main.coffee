@@ -11,11 +11,10 @@
 electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
-kachelSize = 150
+kachelSize = 120
 mainWin = null
 
 winEvents = (win) ->
-    # win.on 'closed' kachelClosed
     win.on 'focus'  onWinFocus
     win.on 'blur'   onWinBlur
     win.setHasShadow false
@@ -49,8 +48,6 @@ loadKacheln = ->
     for kachelId,kachelData of prefs.get 'kacheln' {}
         if kachelId != 'appl'
             onNewKachel kachelData
-
-# KachelApp.app.on 'ready' loadKacheln
 
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
@@ -95,19 +92,47 @@ onNewKachel = (html:'default', data:) ->
         
 post.on 'newKachel' onNewKachel
 
+#  0000000   00000000   00000000    0000000   000   000   0000000   00000000  
+# 000   000  000   000  000   000  000   000  0000  000  000        000       
+# 000000000  0000000    0000000    000000000  000 0 000  000  0000  0000000   
+# 000   000  000   000  000   000  000   000  000  0000  000   000  000       
+# 000   000  000   000  000   000  000   000  000   000   0000000   00000000  
+
 onArrange = ->
     
-    snap = 20
+    snap = kachelSize/2
     wa = electron.screen.getPrimaryDisplay().workAreaSize
     [sw, sh] = [wa.width, wa.height]
-
+    changed = []
+    
     for w in kacheln()
+        
         b = w.getBounds()
-        log Math.abs(b.x + b.width - sw)
+        
         if Math.abs(b.x) < snap 
-            log '<' w.id, b
+            d = b.x
+            b.x -= d
+            w.setBounds b
+            changed.push w.id
         else if Math.abs(b.x + b.width - sw) < snap 
-            log '>' w.id, b
+            d = Math.abs(b.x + b.width - sw)
+            b.x += d
+            w.setBounds b
+            changed.push w.id
+
+        if Math.abs(b.y) < snap 
+            d = b.y
+            b.y -= d
+            w.setBounds b
+            changed.push w.id
+        else if Math.abs(b.y + b.height - sh) < snap 
+            d = Math.abs(b.y + b.height - sh)
+            b.y += d
+            w.setBounds b
+            changed.push w.id
+            
+    for id in changed
+        post.toWin id, 'saveBounds'
 
 post.on 'arrange' onArrange
 
