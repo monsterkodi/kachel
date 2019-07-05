@@ -17,10 +17,10 @@ body {
 #main {
   -webkit-app-region: none;
   position: absolute;
-  left: 6px;
-  right: 6px;
-  top: 6px;
-  bottom: 6px;
+  left: 4%;
+  right: 4%;
+  top: 4%;
+  bottom: 4%;
   scroll: none;
   overflow: hidden;
   pointer-events: all;
@@ -135,8 +135,8 @@ svg {
 }
 .popupItem {
   padding: 2px;
-  padding-left: 12px;
-  padding-right: 82px;
+  padding-left: 8%;
+  padding-right: 78%;
   cursor: pointer;
 }
 .popupItem.separator {
@@ -148,21 +148,21 @@ svg {
   margin-bottom: 6px;
 }
 .popupItem:last-child {
-  padding-bottom: 6px;
+  padding-bottom: 4%;
 }
 .popupItem:first-child {
-  padding-top: 6px;
+  padding-top: 4%;
 }
 .popupCombo {
   pointer-events: none;
   position: absolute;
-  right: 12px;
+  right: 8%;
 }
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4%;
 }
 ::-webkit-scrollbar {
-  height: 6px;
+  height: 4%;
   background-color: transparent;
 }
 ::-webkit-scrollbar-track {

@@ -8,6 +8,7 @@
 
 { post, prefs, slash, clamp, klog, app } = require 'kxk'
 
+Bounds   = require './bounds'
 electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
@@ -73,17 +74,12 @@ onNewKachel = (html:'default', data:) ->
         backgroundColor: '#181818'
         width:           kachelSize
         height:          kachelSize
-        minWidth:        kachelSize
-        minHeight:       kachelSize
-        maxWidth:        kachelSize
-        maxHeight:       kachelSize
         webPreferences:
             nodeIntegration: true
     
     win.loadURL "file://#{__dirname}/../js/#{html}.html"
     
     win.webContents.on 'dom-ready' (event) ->
-        # klog 'win-ready', event.sender.id, win.id, data
         post.toWin win.id, 'initData' data if data?
         win.show()
         
@@ -101,38 +97,17 @@ post.on 'newKachel' onNewKachel
 onArrange = ->
     
     snap = kachelSize/2
-    wa = electron.screen.getPrimaryDisplay().workAreaSize
-    [sw, sh] = [wa.width, wa.height]
-    changed = []
     
     for w in kacheln()
         
         b = w.getBounds()
+        b = Bounds.onScreen b
+        b = Bounds.onGrid b
         
-        if Math.abs(b.x) < snap 
-            d = b.x
-            b.x -= d
-            w.setBounds b
-            changed.push w.id
-        else if Math.abs(b.x + b.width - sw) < snap 
-            d = Math.abs(b.x + b.width - sw)
-            b.x += d
-            w.setBounds b
-            changed.push w.id
-
-        if Math.abs(b.y) < snap 
-            d = b.y
-            b.y -= d
-            w.setBounds b
-            changed.push w.id
-        else if Math.abs(b.y + b.height - sh) < snap 
-            d = Math.abs(b.y + b.height - sh)
-            b.y += d
-            w.setBounds b
-            changed.push w.id
-            
-    for id in changed
-        post.toWin id, 'saveBounds'
+        w.setBounds b
+        
+    for w in kacheln()
+        post.toWin w.id, 'saveBounds'
 
 post.on 'arrange' onArrange
 
@@ -147,13 +122,15 @@ onKachelSize = (action) ->
     switch action
         when 'increase' then kachelSize += 32
         when 'decrease' then kachelSize -= 32
-        when 'reset'    then kachelSize = 160
+        when 'reset'    then kachelSize = 128
         
-    kachelSize = clamp 32 320 kachelSize
+    kachelSize = clamp 64 160 kachelSize
+   
+    # klog 'kachelSize' kachelSize
     
     for w in kacheln()
         b = w.getBounds()
-        b.width = kachelSize
+        b.width  = kachelSize
         b.height = kachelSize
         w.setBounds b
         

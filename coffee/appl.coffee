@@ -41,7 +41,7 @@ class Appl extends Kachel
                 
         bounds = prefs.get "bounds:#{@kachelId}"
         if bounds?
-            @win.setPosition bounds.x, bounds.y
+            @win.setBounds bounds
                 
     setIcon: (iconPath) =>
         

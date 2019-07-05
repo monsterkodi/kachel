@@ -1,11 +1,11 @@
 body {
-  background-color: #181818;
+  background-color: #202020;
 }
 body.kachelFocus {
   background-color: #333;
 }
 #main {
-  background-color: #181818;
+  background-color: #202020;
 }
 #main.kachelFocus {
   background-color: #222;

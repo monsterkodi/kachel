@@ -41,11 +41,13 @@ class Kachel extends win
         
         bounds = prefs.get "bounds:#{@kachelId}"
         if bounds?
-            @win.setPosition bounds.x, bounds.y
+            @win.setBounds bounds
     
     kachelData: -> html:@kachelId
       
-    onSaveBounds:        => klog "#{@kachelId}", @win.getBounds().x; prefs.set "bounds:#{@kachelId}", @win.getBounds()
+    onSaveBounds:        => 
+        # klog "#{@kachelId}", @win.getBounds().x 
+        prefs.set "bounds:#{@kachelId}" @win.getBounds()
     onMouseDown: (event) => @moved = false
     onMouseUp:   (event) => if not @moved then @onClick()
     onWinMove:   (event) => @moved = true; @onMove event
@@ -69,7 +71,7 @@ class Kachel extends win
                 
         bounds = prefs.get "bounds:#{@kachelId}"
         if bounds?
-            @win.setPosition bounds.x, bounds.y
+            @win.setBounds bounds
     
     onLoad:  -> # to be overridden in subclasses
     onMove:  -> # to be overridden in subclasses
@@ -94,7 +96,7 @@ class Kachel extends win
             when 'Arrange'      then post.toMain 'arrange'
             when 'IncreaseSize' then post.toMain 'kachelSize' 'increase'
             when 'DecreaseSize' then post.toMain 'kachelSize' 'decrease'
-            when 'IncreaseSize' then post.toMain 'kachelSize' 'reset'
+            when 'ResetSize'    then post.toMain 'kachelSize' 'reset'
             else
                 klog 'action' action
             
