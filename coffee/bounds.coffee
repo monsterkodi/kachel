@@ -24,19 +24,19 @@ class Bounds
         b.x = clamp 0, sw - b.width,  b.x
         b.y = clamp 0, sh - b.height, b.y
         
-        if b.x + b.width  > sw - b.width then b.x = sw-b.width
+        if b.x + b.width  > sw - b.width  then b.x = sw-b.width
         if b.y + b.height > sh - b.height then b.y = sh-b.height
-        if b.x < b.width  then b.x = 0
+        if b.x      < b.width  then b.x = 0
         if b.y - sy < b.height then b.y = sy
         
         b
         
     @onGrid: (b) ->
-        klog 'size' @sw(), @sh(), @sy(), electron.screen.getPrimaryDisplay().workAreaSize
+        # klog 'size' @sw(), @sh(), @sy(), electron.screen.getPrimaryDisplay().workAreaSize
         snap = 32
-        klog 'snap' b.x, b.x % snap
-        if b.x % snap
-            klog 'mod' b.x % snap
+        # klog 'snap' b.x, b.x % snap
+        # if b.x % snap
+            # klog 'mod' b.x % snap
             # b.x -= b.x % snap
         b
         

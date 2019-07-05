@@ -12,7 +12,8 @@ Bounds   = require './bounds'
 electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
-kachelSize = 160
+kachelSizes = [72,108,144,216]
+kachelSize  = 1
 mainWin = null
 
 winEvents = (win) ->
@@ -72,8 +73,8 @@ onNewKachel = (html:'default', data:) ->
         transparent:     false
         fullscreenenable: false
         backgroundColor: '#181818'
-        width:           kachelSize
-        height:          kachelSize
+        width:           kachelSizes[kachelSize]
+        height:          kachelSizes[kachelSize]
         webPreferences:
             nodeIntegration: true
     
@@ -96,7 +97,7 @@ post.on 'newKachel' onNewKachel
 
 onArrange = ->
     
-    snap = kachelSize/2
+    snap = kachelSizes[kachelSize]/2
     
     for w in kacheln()
         
@@ -117,21 +118,32 @@ post.on 'arrange' onArrange
 #      000  000   000     000       
 # 0000000   000  0000000  00000000  
 
-onKachelSize = (action) ->
+onKachelSize = (action, wid) ->
+    
+    if wid
+        size = 0
+        while kachelSizes[size] < winWithId(wid).getBounds().width
+            size++
+    else
+        size = kachelSize
     
     switch action
-        when 'increase' then kachelSize += 32
-        when 'decrease' then kachelSize -= 32
-        when 'reset'    then kachelSize = 128
-        
-    kachelSize = clamp 64 160 kachelSize
+        when 'increase' then size += 1
+        when 'decrease' then size -= 1
+        when 'reset'    then size  = 1
    
-    # klog 'kachelSize' kachelSize
+    size = clamp 0 kachelSizes.length-1 size
+        
+    if wid
+        k = [winWithId wid]
+    else
+        k = kacheln()
+        kachelSize = size
     
-    for w in kacheln()
+    for w in k
         b = w.getBounds()
-        b.width  = kachelSize
-        b.height = kachelSize
+        b.width  = kachelSizes[size]
+        b.height = kachelSizes[size]
         w.setBounds b
         
     onArrange()

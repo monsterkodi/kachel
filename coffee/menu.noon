@@ -10,7 +10,10 @@ Close           cmdctrl+w w
 Quit            cmdctrl+q q
 Scheme          cmdctrl+i i
 Arrange         cmdctrl+a a
-IncreaseSize    cmdctrl+= =
-DecreaseSize    cmdctrl+- -
-ResetSize       cmdctrl+0 0
+IncreaseSize    cmdctrl+= 
+DecreaseSize    cmdctrl+- 
+ResetSize       cmdctrl+0 
+Increase        =
+Decrease        -
+Reset           0
     
