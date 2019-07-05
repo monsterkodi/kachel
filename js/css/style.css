@@ -29,6 +29,35 @@ body {
 svg {
   display: block;
 }
+.clock {
+  width: 100%;
+  height: 100%;
+}
+.face {
+  stroke: #333;
+  fill: #222;
+  stroke-width: 2;
+}
+.major {
+  stroke-linecap: round;
+  stroke: #333;
+  stroke-width: 2;
+}
+.hour {
+  stroke-linecap: round;
+  stroke: #888;
+  stroke-width: 3;
+}
+.minute {
+  stroke-linecap: round;
+  stroke: #555;
+  stroke-width: 2;
+}
+.second {
+  stroke-linecap: round;
+  stroke: #333;
+  stroke-width: 1;
+}
 .kachelImg {
   margin: auto;
   width: 70%;

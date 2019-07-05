@@ -23,10 +23,11 @@ class utils
         p.appendChild @opt e, o
         e
         
-    @svg: (width:55, height:55) ->
+    @svg: (width:55, height:55, clss:) ->
         
         svg = document.createElementNS 'http://www.w3.org/2000/svg' 'svg'
         svg.setAttribute 'viewBox' '-50 -50 100 100'
+        svg.setAttribute 'class' clss if clss
         svg
         
     @circle: (radius:50, cx:0, cy:0, clss:, svg:) ->

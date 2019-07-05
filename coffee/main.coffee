@@ -6,12 +6,12 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, prefs, slash, klog, app } = require 'kxk'
+{ post, prefs, slash, clamp, klog, app } = require 'kxk'
 
 electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
-kachelSize = 120
+kachelSize = 160
 mainWin = null
 
 winEvents = (win) ->
@@ -135,6 +135,31 @@ onArrange = ->
         post.toWin id, 'saveBounds'
 
 post.on 'arrange' onArrange
+
+#  0000000  000  0000000  00000000  
+# 000       000     000   000       
+# 0000000   000    000    0000000   
+#      000  000   000     000       
+# 0000000   000  0000000  00000000  
+
+onKachelSize = (action) ->
+    
+    switch action
+        when 'increase' then kachelSize += 32
+        when 'decrease' then kachelSize -= 32
+        when 'reset'    then kachelSize = 160
+        
+    kachelSize = clamp 32 320 kachelSize
+    
+    for w in kacheln()
+        b = w.getBounds()
+        b.width = kachelSize
+        b.height = kachelSize
+        w.setBounds b
+        
+    onArrange()
+
+post.on 'kachelSize' onKachelSize
 
 # 00000000    0000000   000   0000000  00000000
 # 000   000  000   000  000  000       000     

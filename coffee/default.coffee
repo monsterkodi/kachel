@@ -27,7 +27,7 @@ class Default extends Kachel
         @main.appendChild grid
         
     openGit: => post.toMain 'newKachel' html:'kachel'  data:index:'../kacheln/clock/public/index.html'
-    openNpm: => log 'openNpm'
+    openNpm: => post.toMain 'newKachel' html:'clock'   
     openCmd: => post.toMain 'newKachel' html:'sysinfo' winId:@win.id
     onClick: => log 'onClick'
     openApp: => 

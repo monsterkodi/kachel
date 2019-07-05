@@ -87,11 +87,16 @@ class Kachel extends win
     
     onMenuAction: (action) =>
         switch action
-            when 'New'     then post.toMain 'newKachel', {}
-            when 'Close'   then @win.close()
-            when 'Quit'    then post.toMain 'quit'
-            when 'Scheme'  then post.toWins 'toggleScheme'
-            when 'Arrange' then post.toMain 'arrange'
+            when 'New'          then post.toMain 'newKachel', {}
+            when 'Close'        then @win.close()
+            when 'Quit'         then post.toMain 'quit'
+            when 'Scheme'       then post.toWins 'toggleScheme'
+            when 'Arrange'      then post.toMain 'arrange'
+            when 'IncreaseSize' then post.toMain 'kachelSize' 'increase'
+            when 'DecreaseSize' then post.toMain 'kachelSize' 'decrease'
+            when 'IncreaseSize' then post.toMain 'kachelSize' 'reset'
+            else
+                klog 'action' action
             
     #  0000000   0000000   00     00  0000000     0000000   
     # 000       000   000  000   000  000   000  000   000  
