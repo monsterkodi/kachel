@@ -1,5 +1,6 @@
 node_modules
 Icon?
+.DS_Store
 *.dmg
 *-x64
 inno
