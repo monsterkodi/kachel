@@ -61,21 +61,22 @@ onNewKachel = (html:'default', data:) ->
 
     win = new electron.BrowserWindow
         
-        movable:         true
-        transparent:     true
-        autoHideMenuBar: true
-        frame:           false
-        resizable:       false
-        maximizable:     false
-        minimizable:     false
-        fullscreen:      false
-        show:            false
-        transparent:     false
-        fullscreenenable: false
-        backgroundColor: '#181818'
-        width:           kachelSizes[kachelSize]
-        height:          kachelSizes[kachelSize]
-        webPreferences:
+        movable:            true
+        transparent:        true
+        autoHideMenuBar:    true
+        acceptFirstMouse:   true
+        frame:              false
+        resizable:          false
+        maximizable:        false
+        minimizable:        false
+        fullscreen:         false
+        show:               false
+        transparent:        false
+        fullscreenenable:   false
+        backgroundColor:    '#181818'
+        width:              kachelSizes[kachelSize]
+        height:             kachelSizes[kachelSize]
+        webPreferences:   
             nodeIntegration: true
     
     win.loadURL "file://#{__dirname}/../js/#{html}.html"

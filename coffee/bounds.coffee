@@ -17,6 +17,7 @@ class Bounds
     @sy: -> electron.screen.getPrimaryDisplay().workAreaSize.y
 
     @onScreen: (b) ->
+        
         sw = @sw()
         sh = @sh()
         sy = @sy()
