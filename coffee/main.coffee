@@ -24,22 +24,23 @@ winEvents = (win) ->
 shortcut = slash.win() and 'ctrl+alt+k' or 'command+alt+k'
 
 KachelApp = new app
-    dir:            __dirname
-    pkg:            require '../package.json'
-    shortcut:       shortcut
-    index:          'mainwin.html'
-    icon:           '../img/app.ico'
-    tray:           '../img/menu.png'
-    about:          '../img/about.png'
-    minWidth:       50
-    minHeight:      50
-    maxWidth:       50
-    maxHeight:      50
-    width:          50
-    height:         50
-    resizable:      false #true
-    maximizable:    false
-    saveBounds:     false
+    dir:                __dirname
+    pkg:                require '../package.json'
+    shortcut:           shortcut
+    index:              'mainwin.html'
+    icon:               '../img/app.ico'
+    tray:               '../img/menu.png'
+    about:              '../img/about.png'
+    minWidth:           50
+    minHeight:          50
+    maxWidth:           50
+    maxHeight:          50
+    width:              50
+    height:             50
+    acceptFirstMouse:   true
+    resizable:          false #true
+    maximizable:        false
+    saveBounds:         false
     onWinReady:     (win) ->
         mainWin = win
         winEvents win
@@ -65,6 +66,7 @@ onNewKachel = (html:'default', data:) ->
         transparent:        true
         autoHideMenuBar:    true
         acceptFirstMouse:   true
+        hasShadow:          false
         frame:              false
         resizable:          false
         maximizable:        false
@@ -96,21 +98,8 @@ post.on 'newKachel' onNewKachel
 # 000   000  000   000  000   000  000   000  000  0000  000   000  000       
 # 000   000  000   000  000   000  000   000  000   000   0000000   00000000  
 
-onArrange = ->
+onArrange = -> Bounds.arrange kacheln()
     
-    snap = kachelSizes[kachelSize]/2
-    
-    for w in kacheln()
-        
-        b = w.getBounds()
-        b = Bounds.onScreen b
-        b = Bounds.onGrid b
-        
-        w.setBounds b
-        
-    for w in kacheln()
-        post.toWin w.id, 'saveBounds'
-
 post.on 'arrange' onArrange
 
 #  0000000  000  0000000  00000000  

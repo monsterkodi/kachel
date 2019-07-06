@@ -6,7 +6,7 @@
 0000000     0000000    0000000   000   000  0000000    0000000 
 ###
 
-{ clamp, klog } = require 'kxk'
+{ post, clamp, klog } = require 'kxk'
 
 electron = require 'electron'
 
@@ -14,7 +14,7 @@ class Bounds
     
     @sw: -> electron.screen.getPrimaryDisplay().workAreaSize.width
     @sh: -> electron.screen.getPrimaryDisplay().workAreaSize.height
-    @sy: -> electron.screen.getPrimaryDisplay().workAreaSize.y
+    @sy: -> electron.screen.getPrimaryDisplay().workArea.y
 
     @onScreen: (b) ->
         
@@ -33,7 +33,7 @@ class Bounds
         b
         
     @onGrid: (b) ->
-        # klog 'size' @sw(), @sh(), @sy(), electron.screen.getPrimaryDisplay().workAreaSize
+        klog 'size' @sw(), @sh(), @sy(), b
         snap = 32
         # klog 'snap' b.x, b.x % snap
         # if b.x % snap
@@ -41,25 +41,38 @@ class Bounds
             # b.x -= b.x % snap
         b
         
-    @onGrid2: (b) ->
+    @overlap: (a,b) ->
+        not (a.x > b.x+b.width  or
+             b.x > a.x+a.width  or
+             a.y > b.y+b.height or
+             b.y > a.y+a.height)
         
-        snap = parseInt b.width/2
+    @arrange: (kacheln) ->
         
-        if Math.abs(b.x) < snap 
-            d = b.x
-            b.x -= d
-        else if Math.abs(b.x + b.width - @sw()) < snap 
-            d = Math.abs(b.x + b.width - @sw())
-            b.x += d
+        index = 0
+        infos = kacheln.map (k) => 
+            kachel: k
+            index:  index++
+            bounds: @onScreen k.getBounds()
+        
+        infos.sort (a,b) -> 
+            dx = a.bounds.x - b.bounds.x
+            if dx == 0
+                a.bounds.y - b.bounds.y
+            else
+                dx
 
-        if Math.abs(b.y) < snap 
-            d = b.y
-            b.y -= d
-        else if Math.abs(b.y + b.height - @sh()) < snap 
-            d = Math.abs(b.y + b.height - @sh())
-            b.y += d
-        b
+        for index in [0...infos.length]
+            pinned = infos[0..index]
+            check  = infos[index+1..]
+            for k in check
+                pb = pinned[-1].bounds
+                if @overlap pb, k.bounds
+                    k.bounds.y = pb.y + pb.height
+            
+        for info in infos
+            # klog info.bounds.x, info.bounds.y
+            info.kachel.setBounds info.bounds
+            post.toWin info.kachel.id, 'saveBounds'
         
-    @noOverlap: (b) -> b
-
 module.exports = Bounds
