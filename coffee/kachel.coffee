@@ -45,16 +45,20 @@ class Kachel extends win
     
     kachelData: -> html:@kachelId
       
-    onSaveBounds:        => 
+    onSaveBounds: => 
         # klog "#{@kachelId}", @win.getBounds().x 
         prefs.set "bounds:#{@kachelId}" @win.getBounds()
     onMouseDown: (event) => @moved = false
-    onMouseUp:   (event) => if not @moved then @onClick()
-    onWinMove:   (event) => @moved = true; @onMove event
     onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; @main.classList.add    'kachelFocus'; @onFocus event
     onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @main.classList.remove 'kachelFocus'; @onBlur  event
-    onWinMove:   (event) => @onSaveBounds(); @onMove event
+    onWinMove:   (event) => @moved = true;   @onMove event
     onWinLoad:   (event) => @onSaveBounds(); @onLoad event
+    onMouseUp:   (event) => 
+        if not @moved 
+            @onClick() 
+        else 
+            post.toMain 'snapKachel' @id
+            
     onWinClose:  (event) => 
         if @kachelId != 'main'
             prefs.del "kacheln:#{@kachelId}" 
