@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, prefs, slash, clamp, klog, app } = require 'kxk'
+{ post, prefs, slash, clamp, empty, klog, app } = require 'kxk'
 
 Bounds   = require './bounds'
 electron = require 'electron'
@@ -41,16 +41,14 @@ KachelApp = new app
     resizable:          false #true
     maximizable:        false
     saveBounds:         false
-    onWinReady:     (win) ->
+    onWinReady: (win) ->
+        
         mainWin = win
         winEvents win
-        loadKacheln()
-
-loadKacheln = ->
-    
-    for kachelId,kachelData of prefs.get 'kacheln' {}
-        if kachelId not in ['appl' 'folder']
-            onNewKachel kachelData
+        
+        for kachelId,kachelData of prefs.get 'kacheln' {}
+            if kachelId not in ['appl' 'folder']
+                post.emit 'newKachel' kachelData
 
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
@@ -58,7 +56,7 @@ loadKacheln = ->
 # 000  000   000   000  000       000   000  000       000      
 # 000   000  000   000   0000000  000   000  00000000  0000000  
 
-onNewKachel = (html:'default', data:) ->
+post.on 'newKachel' (html:'default', data:) ->
 
     win = new electron.BrowserWindow
         
@@ -90,17 +88,13 @@ onNewKachel = (html:'default', data:) ->
     winEvents win
     win
         
-post.on 'newKachel' onNewKachel
-
 #  0000000   00000000   00000000    0000000   000   000   0000000   00000000  
 # 000   000  000   000  000   000  000   000  0000  000  000        000       
 # 000000000  0000000    0000000    000000000  000 0 000  000  0000  0000000   
 # 000   000  000   000  000   000  000   000  000  0000  000   000  000       
 # 000   000  000   000  000   000  000   000  000   000   0000000   00000000  
 
-onArrange = -> Bounds.arrange kacheln()
-    
-post.on 'arrange' onArrange
+post.on 'arrange' -> Bounds.arrange kacheln()
 
 post.on 'snapKachel' (wid) -> Bounds.snap kacheln(), winWithId wid
 
@@ -110,7 +104,7 @@ post.on 'snapKachel' (wid) -> Bounds.snap kacheln(), winWithId wid
 #      000  000   000     000       
 # 0000000   000  0000000  00000000  
 
-onKachelSize = (action, wid) ->
+post.on 'kachelSize' (action, wid) ->
     
     if wid
         size = 0
@@ -139,10 +133,6 @@ onKachelSize = (action, wid) ->
         w.setBounds b
         Bounds.snap kacheln(), w
         
-    # onArrange()
-
-post.on 'kachelSize' onKachelSize
-
 # 00000000    0000000   000   0000000  00000000
 # 000   000  000   000  000  000       000     
 # 0000000    000000000  000  0000000   0000000 
@@ -151,44 +141,23 @@ post.on 'kachelSize' onKachelSize
 
 raised  = false
 raising = false
-
-raise = (win) ->
-    win.showInactive()
-    win.focus()
-    
-hide = (win) ->
-    win.hide()
-
-onWinBlur = (event) -> 
-    if event.sender == mainWin 
-        raised = false
-
-onWinFocus = (event) -> 
-    if event.sender == mainWin
-        if not raised and not raising
-            onRaiseKacheln()
-        else if raising
-            raised = true
-            raising = false
-    
-onHideKacheln = ->
-    
-    for win in kacheln()
-        hide win
-    raised = false
-
-onRaiseKacheln = ->
+        
+post.on 'raiseKacheln' ->
     
     if raised
-        onHideKacheln()
+        for win in kacheln()
+            win.hide()
+        raised = false
         return
     raising = true
     for win in kacheln()
-        raise win
+        raiseWin win
     raised = true
-    raise mainWin
-
-post.on 'raiseKacheln' onRaiseKacheln        
+    raiseWin mainWin
+    
+raiseWin = (win) ->
+    win.showInactive()
+    win.focus()
 
 post.on 'quit' KachelApp.quitApp
 
@@ -198,15 +167,21 @@ post.on 'quit' KachelApp.quitApp
 # 000       000   000  000       000   000       000  
 # 000        0000000    0000000   0000000   0000000   
 
-onFocusKachel = (winId, direction) ->
-    switch direction
-        when 'left''up'    then raise relWin winId, -1
-        when 'right''down' then raise relWin winId,  1
+post.on 'focusKachel' (winId, direction) ->
+    raiseWin neighborWin winId, direction
+     
+onWinBlur = (event) -> 
+    if event.sender == mainWin 
+        raised = false
 
-post.on 'focusKachel' onFocusKachel
+onWinFocus = (event) -> 
+    if event.sender == mainWin
+        if not raised and not raising
+            post.emit 'raiseKacheln'
+        else if raising
+            raised = true
+            raising = false
         
-# kachelClosed = (event) -> # log 'kachelClosed'
-    
 # 000   000  000  000   000   0000000  
 # 000 0 000  000  0000  000  000       
 # 000000000  000  000 0 000  0000000   
@@ -218,6 +193,40 @@ activeWin = -> BrowserWindow.getFocusedWindow()
 kacheln   = -> wins().filter (w) -> w != mainWin
 winWithId = (id) -> BrowserWindow.fromId id
     
+neighborWin = (winId, direction) ->
+    
+    kachel = winWithId winId
+    kb = kachel.getBounds()
+    ks = kacheln().filter (k) -> k != kachel
+    ks = ks.filter (k) ->
+        b = k.getBounds()
+        switch direction
+            when 'right' then b.x >= kb.x+kb.width
+            when 'down'  then b.y >= kb.y+kb.height
+            when 'left'  then kb.x >= b.x+b.width 
+            when 'up'    then kb.y >= b.y+b.height
+
+    return kachel if empty ks
+            
+    ks.sort (a,b) ->
+        ab = a.getBounds()
+        bb = b.getBounds()
+        switch direction
+            when 'right' 
+                a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (ab.x - kb.x)
+                b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (bb.x - kb.x)
+            when 'left'  
+                a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (kb.x - ab.x)
+                b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (kb.x - bb.x)
+            when 'down'  
+                a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (ab.y - kb.y)
+                b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (bb.y - kb.y)
+            when 'up'    
+                a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (kb.y - ab.y)
+                b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
+        a-b
+    ks[0]
+                
 relWin = (winId, delta) ->
     wl = wins()
     w = BrowserWindow.fromId winId
