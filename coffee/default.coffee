@@ -16,20 +16,57 @@ class Default extends Kachel
     @: (@kachelId:'default') -> super
     
     onLoad: =>
-        
-        grid = elem 'div' class:'grid2x2' children:[
-            elem 'img' class:'grid2x2_11' click:@openApp, src:__dirname + '/../img/app.png' 
-            elem 'img' class:'grid2x2_12' click:@openCmd, src:__dirname + '/../img/cmd.png' 
-            elem 'img' class:'grid2x2_21' click:@openGit, src:__dirname + '/../img/git.png'    
-            elem 'img' class:'grid2x2_22' click:@openNpm, src:__dirname + '/../img/npm.png'     
+
+        children = [
+            elem 'img' class:'grid2x2_11' click:@openApp,    src:__dirname + '/../img/app.png'   
+            elem 'img' class:'grid2x2_12' click:@openFolder, src:__dirname + '/../img/folder.png'    
+            elem 'img' class:'grid2x2_21' click:@openInfo,   src:__dirname + '/../img/info.png' 
+            elem 'img' class:'grid2x2_22' click:@openClock,  src:__dirname + '/../img/clock.png'     
         ]
+        
+        for child in children
+            child.ondragstart = -> false
+        
+        grid = elem 'div' class:'grid2x2' children:children
     
         @main.appendChild grid
         
-    openGit: => post.toMain 'newKachel' html:'kachel'  data:index:'../kacheln/clock/public/index.html'
-    openNpm: => post.toMain 'newKachel' html:'clock'   
-    openCmd: => post.toMain 'newKachel' html:'sysinfo' winId:@win.id
+    openClock: => post.toMain 'newKachel' html:'clock'   
+    openInfo: => post.toMain 'newKachel' html:'sysinfo' winId:@win.id
     onClick: => log 'onClick'
+    
+    # 0000000    000  00000000   
+    # 000   000  000  000   000  
+    # 000   000  000  0000000    
+    # 000   000  000  000   000  
+    # 0000000    000  000   000  
+    
+    openFolder: => 
+        dir = slash.untilde '~'
+        electron.remote.dialog.showOpenDialog
+            title: "Open Folder"
+            defaultPath: dir
+            properties: ['openDirectory', 'multiSelections']
+            , @dirsChosen
+            
+    dirsChosen: (files) => 
+        
+        if not files instanceof Array
+            files = [files]
+        for file in files
+            @dirChosen file
+            
+    dirChosen: (file) ->
+        
+        file = slash.removeDrive slash.path file
+        post.toMain 'newKachel' html:'folder' data:folder:file
+            
+    #  0000000   00000000   00000000   
+    # 000   000  000   000  000   000  
+    # 000000000  00000000   00000000   
+    # 000   000  000        000        
+    # 000   000  000        000        
+    
     openApp: => 
         
         dir = slash.win() and 'C:/Program Files/' or '/Applications'

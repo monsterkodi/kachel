@@ -55,7 +55,7 @@ class Kachel extends win
     onWinLoad:   (event) => @onSaveBounds(); @onLoad event
     onMouseUp:   (event) => 
         if not @moved 
-            @onClick() 
+            @onClick event
         else 
             post.toMain 'snapKachel' @id
             
@@ -64,14 +64,7 @@ class Kachel extends win
             prefs.del "kacheln:#{@kachelId}" 
         @onClose event
         
-    onInitData:  (data) =>
-
-        @indexPath = data.index
-        @kachelId = 'kachel'+@indexPath
-        prefs.set "kacheln:#{@kachelId}:data:index" @indexPath
-        prefs.set "kacheln:#{@kachelId}:html" 'kachel'
-    
-        @win.loadURL slash.fileUrl slash.join __dirname, @indexPath
+    onInitData: =>
                 
         bounds = prefs.get "bounds:#{@kachelId}"
         if bounds?

@@ -77,23 +77,47 @@ class Bounds
         
     @snap: (kacheln, kachel) ->
         
-        infos = @getInfos kacheln
+        # klog "snap #{kachel.id}"
         b = kachel.getBounds()
         
+        horz = false
+        vert = false
+        
+        sw = @sw()
+        sh = @sh()
+        sy = @sy()
+        
+        if b.x < 0 or b.x < 72
+            horz = true
+            b.x = 0
+        else if b.x + b.width > sw or b.x + b.width > sw - 72
+            horz = true
+            b.x = sw - b.width
+
+        if b.y < 0 or b.y < 72
+            vert = true
+            b.y = 0
+        else if b.y + b.height > sh or b.y + b.height > sh - 72
+            vert = true
+            b.y = sh - b.height
+            
+        infos = @getInfos kacheln
         for info in infos
             continue if info.kachel == kachel
             if @overlap b, info.bounds
                 b.y = info.bounds.y + info.bounds.height
         
-        if n = @closeNeighbor infos, kachel, 'up'
-            b.y = n.bounds.y + n.bounds.height
-        else if n = @closeNeighbor infos, kachel, 'down'
-            b.y = n.bounds.y - b.height
+        if not vert
+            if n = @closeNeighbor infos, kachel, 'up'
+                b.y = n.bounds.y + n.bounds.height
+            else if n = @closeNeighbor infos, kachel, 'down'
+                b.y = n.bounds.y - b.height
 
-        if n = @closeNeighbor infos, kachel, 'right'
-            b.x = n.bounds.x - b.width
-        else if n = @closeNeighbor infos, kachel, 'left'
-            b.x = n.bounds.x + n.bounds.width
+        if not horz
+            if n = @closeNeighbor infos, kachel, 'right'
+                b.x = n.bounds.x - b.width
+            else if n = @closeNeighbor infos, kachel, 'left'
+                b.x = n.bounds.x + n.bounds.width
             
         kachel.setBounds b
         post.toWin kachel.id, 'saveBounds'

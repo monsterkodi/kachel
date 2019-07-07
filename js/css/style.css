@@ -12,10 +12,9 @@ body {
   font-size: 15px;
   overflow: hidden;
   -webkit-user-select: none;
-  -webkit-app-region: drag;
 }
 #main {
-  -webkit-app-region: none;
+  -webkit-app-region: drag;
   position: absolute;
   left: 4%;
   right: 4%;
@@ -69,6 +68,16 @@ svg {
   width: 80%;
   height: 80%;
   cursor: pointer;
+}
+.foldername {
+  position: absolute;
+  font-size: 10px;
+  font-family: Bahnschrift Light, Helvetica Neue, Ebrima, Varela Round, Helvetica, Arial;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  color: #fff;
 }
 .grid2x2 {
   display: grid;

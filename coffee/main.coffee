@@ -49,7 +49,7 @@ KachelApp = new app
 loadKacheln = ->
     
     for kachelId,kachelData of prefs.get 'kacheln' {}
-        if kachelId != 'appl'
+        if kachelId not in ['appl' 'folder']
             onNewKachel kachelData
 
 # 000   000   0000000    0000000  000   000  00000000  000      
@@ -137,8 +137,9 @@ onKachelSize = (action, wid) ->
         b.width  = kachelSizes[size]
         b.height = kachelSizes[size]
         w.setBounds b
+        Bounds.snap kacheln(), w
         
-    onArrange()
+    # onArrange()
 
 post.on 'kachelSize' onKachelSize
 

@@ -6,18 +6,16 @@
 000   000  000        000        0000000  
 ###
 
-{ post, childp, prefs, slash, open, klog, elem, fs, _ } = require 'kxk'
+{ post, childp, prefs, slash, osascript, open, klog, elem, os, fs, _ } = require 'kxk'
 
 Kachel = require './kachel'
 
 class Appl extends Kachel
         
-    @: (@kachelId:'appl') -> 
-    
-        super
+    @: (@kachelId:'appl') -> super
         
-    onClick: -> 
-        klog "open #{slash.unslash @appPath}"
+    onClick: (event) ->
+        # klog "open #{slash.unslash @appPath}"
         open slash.unslash @appPath
         
     onInitData: (data) =>
@@ -39,14 +37,14 @@ class Appl extends Kachel
         else
             @setIcon iconPath
                 
-        bounds = prefs.get "bounds:#{@kachelId}"
-        if bounds?
-            @win.setBounds bounds
+        super
                 
     setIcon: (iconPath) =>
         
         return if not iconPath
-        @main.appendChild elem 'img' class:'applicon' click:@openApp, src:slash.fileUrl iconPath
+        img = elem 'img' class:'applicon' click:@openApp, src:slash.fileUrl iconPath
+        img.ondragstart = -> false
+        @main.appendChild img
                    
     exeIcon: (exePath, outDir, cb) ->
 
