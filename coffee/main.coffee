@@ -151,9 +151,9 @@ post.on 'raiseKacheln' ->
         return
     raising = true
     for win in kacheln()
-        raiseWin win
+        win.showInactive()
     raised = true
-    raiseWin mainWin
+    raiseWin focusKachel ? mainWin
     
 raiseWin = (win) ->
     win.showInactive()
@@ -169,7 +169,12 @@ post.on 'quit' KachelApp.quitApp
 
 post.on 'focusKachel' (winId, direction) ->
     raiseWin neighborWin winId, direction
-     
+   
+focusKachel = null
+post.on 'kachelFocus' (winId) -> 
+    if winId != mainWin.id
+        focusKachel = winWithId winId
+    
 onWinBlur = (event) -> 
     if event.sender == mainWin 
         raised = false
@@ -227,8 +232,3 @@ neighborWin = (winId, direction) ->
         a-b
     ks[0]
                 
-relWin = (winId, delta) ->
-    wl = wins()
-    w = BrowserWindow.fromId winId
-    wi = wl.indexOf w
-    wl[(wl.length+wi+delta)%wl.length]

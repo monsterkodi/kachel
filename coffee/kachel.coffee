@@ -49,7 +49,7 @@ class Kachel extends win
         # klog "#{@kachelId}", @win.getBounds().x 
         prefs.set "bounds:#{@kachelId}" @win.getBounds()
     onMouseDown: (event) => @moved = false
-    onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; @main.classList.add    'kachelFocus'; @onFocus event
+    onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; @main.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
     onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @main.classList.remove 'kachelFocus'; @onBlur  event
     onWinMove:   (event) => @moved = true;   @onMove event
     onWinLoad:   (event) => @onSaveBounds(); @onLoad event
