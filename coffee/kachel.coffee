@@ -56,7 +56,7 @@ class Kachel extends win
         @win.setSize     @startBounds.width, @startBounds.height
         
     onDragStop: (drag, event) =>
-        if drag.deltaSum.x == 0 == drag.deltaSum.y
+        if not drag.deltaSum? or drag.deltaSum.x == 0 == drag.deltaSum.y
             @onClick event
         else
             post.toMain 'snapKachel' @id
@@ -96,7 +96,7 @@ class Kachel extends win
     
     onMenuAction: (action) =>
         switch action
-            when 'New'          then post.toMain 'newKachel', {}
+            when 'New'          then post.toMain 'newKachel' {}
             when 'Close'        then @win.close()
             when 'Quit'         then post.toMain 'quit'
             when 'Scheme'       then post.toWins 'toggleScheme'
