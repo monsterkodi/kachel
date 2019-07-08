@@ -22,8 +22,8 @@ class Appl extends Kachel
         
         @appPath = data.app
         @kachelId = 'appl'+@appPath
-        prefs.set "kacheln:#{@kachelId}:data:app" @appPath
-        prefs.set "kacheln:#{@kachelId}:html" 'appl'
+        prefs.set "kacheln▸#{@kachelId}▸data▸app" @appPath
+        prefs.set "kacheln▸#{@kachelId}▸html" 'appl'
     
         iconDir = slash.join slash.userData(), 'icons'
         fs.mkdir iconDir, recursive:true

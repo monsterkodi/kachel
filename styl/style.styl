@@ -32,10 +32,13 @@ body
     font-size           15px
     overflow            hidden
     -webkit-user-select none
-    -webkit-app-region  drag
+    // -webkit-app-region  drag
+    
+// img
+    // -webkit-app-region  no-drag // only needed on windows
     
 #main
-    -webkit-app-region  drag
+    // -webkit-app-region  drag
     position            absolute
     left                frameWidth
     right               frameWidth
@@ -89,7 +92,7 @@ svg
     width               80%
     height              80%
     cursor              pointer
-    
+        
 .foldername
     position            absolute
     font-size           10px

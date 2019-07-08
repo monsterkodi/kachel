@@ -12,16 +12,10 @@ Kachel = require './kachel'
 
 class MainWin extends Kachel
         
-    @: (@kachelId:'main') -> 
+    @: (@kachelId:'main') -> super
     
-        super
-    
-    onLoad: ->
+    onLoad: -> @main.appendChild elem 'img', class:'kachelImg' src:__dirname + '/../img/about.png'    
         
-        @main.appendChild elem 'img', class:'kachelImg' src:__dirname + '/../img/about.png'    
-        
-    onClick: ->
-        
-        post.toMain 'raiseKacheln'
+    onClick: -> post.toMain 'raiseKacheln'
 
 module.exports = MainWin

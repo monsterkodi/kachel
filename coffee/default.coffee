@@ -32,7 +32,7 @@ class Default extends Kachel
         @main.appendChild grid
         
     openClock: => post.toMain 'newKachel' html:'clock'   
-    openInfo: => post.toMain 'newKachel' html:'sysinfo' winId:@win.id
+    openInfo:  => post.toMain 'newKachel' html:'sysinfo' winId:@win.id
     onClick: => log 'onClick'
     
     # 0000000    000  00000000   
@@ -46,11 +46,11 @@ class Default extends Kachel
         electron.remote.dialog.showOpenDialog
             title: "Open Folder"
             defaultPath: dir
-            properties: ['openDirectory', 'multiSelections']
+            properties: ['openDirectory' 'multiSelections']
             , @dirsChosen
             
     dirsChosen: (files) => 
-        
+        return if not files
         if not files instanceof Array
             files = [files]
         for file in files
@@ -58,7 +58,7 @@ class Default extends Kachel
             
     dirChosen: (file) ->
         
-        file = slash.removeDrive slash.path file
+        file = slash.path file
         post.toMain 'newKachel' html:'folder' data:folder:file
             
     #  0000000   00000000   00000000   
@@ -77,7 +77,7 @@ class Default extends Kachel
             , @appsChosen
             
     appsChosen: (files) => 
-        
+        return if not files
         if not files instanceof Array
             files = [files]
         for file in files

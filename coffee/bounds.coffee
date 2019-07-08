@@ -77,7 +77,6 @@ class Bounds
         
     @snap: (kacheln, kachel) ->
         
-        # klog "snap #{kachel.id}"
         b = kachel.getBounds()
         
         horz = false

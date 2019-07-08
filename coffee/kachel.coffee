@@ -6,29 +6,31 @@
 000   000  000   000   0000000  000   000  00000000  0000000    
 ###
 
-{ post, scheme, prefs, slash, klog, elem, win, $ } = require 'kxk'
+{ drag, post, scheme, prefs, slash, klog, kstr, elem, win, os, $ } = require 'kxk'
 
 class Kachel extends win
 
     @: (@kachelId:'kachel') ->
         
         super
+            prefsSeperator: '▸'
             dir:    __dirname
             pkg:    require '../package.json'
             menu:   '../coffee/menu.noon'
             onLoad: @onWinLoad
     
         @main =$ '#main'
-        @moved = false
+        @drag  = new drag
+            target:   document.body
+            onStart:  @onDragStart
+            onMove:   @onDragMove
+            onStop:   @onDragStop
         
         @win.on 'move'  @onWinMove
         @win.on 'blur'  @onWinBlur
         @win.on 'focus' @onWinFocus
         @win.on 'move'  @onWinMove
         @win.on 'close' @onWinClose
-                
-        @main.addEventListener 'mousedown' @onMouseDown
-        @main.addEventListener 'mouseup'   @onMouseUp
         
         post.on 'initData'   @onInitData
         post.on 'saveBounds' @onSaveBounds
@@ -37,37 +39,44 @@ class Kachel extends win
         
         if @kachelId != 'main'
             @win.setSkipTaskbar true
-            prefs.set "kacheln:#{@kachelId}" @kachelData()
+            prefs.set "kacheln▸#{@kachelId}" @kachelData()
         
-        bounds = prefs.get "bounds:#{@kachelId}"
+        bounds = prefs.get "bounds▸#{@kachelId}"
         if bounds?
             @win.setBounds bounds
-    
+            
     kachelData: -> html:@kachelId
       
+    onDragStart: (drag, event) => 
+        @startBounds = @win.getBounds()
+        # klog "drag Start #{@id}"
+        
+    onDragMove: (drag, event) => 
+        @win.setPosition @startBounds.x + drag.deltaSum.x, @startBounds.y + drag.deltaSum.y
+        @win.setSize     @startBounds.width, @startBounds.height
+        
+    onDragStop: (drag, event) =>
+        if drag.deltaSum.x == 0 == drag.deltaSum.y
+            @onClick event
+        else
+            post.toMain 'snapKachel' @id
+    
     onSaveBounds: => 
-        # klog "#{@kachelId}", @win.getBounds().x 
-        prefs.set "bounds:#{@kachelId}" @win.getBounds()
-    onMouseDown: (event) => @moved = false
+        prefs.set "bounds▸#{@kachelId}" @win.getBounds()
+        
     onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; @main.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
     onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @main.classList.remove 'kachelFocus'; @onBlur  event
-    onWinMove:   (event) => @moved = true;   @onMove event
-    # onWinLoad:   (event) => @onSaveBounds(); @onLoad event
     onWinLoad:   (event) => @onLoad event
-    onMouseUp:   (event) => 
-        if not @moved 
-            @onClick event
-        else 
-            post.toMain 'snapKachel' @id
-            
+    onWinMove:   (event) => @onMove event
+                
     onWinClose:  (event) => 
         if @kachelId != 'main'
-            prefs.del "kacheln:#{@kachelId}" 
+            prefs.del "kacheln▸#{@kachelId}" 
         @onClose event
         
     onInitData: =>
                 
-        bounds = prefs.get "bounds:#{@kachelId}"
+        bounds = prefs.get "bounds▸#{@kachelId}"
         if bounds?
             @win.setBounds bounds
     

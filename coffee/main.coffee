@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, prefs, slash, clamp, empty, klog, app } = require 'kxk'
+{ post, prefs, slash, clamp, empty, klog, app, os } = require 'kxk'
 
 Bounds   = require './bounds'
 electron = require 'electron'
@@ -38,6 +38,9 @@ KachelApp = new app
     width:              50
     height:             50
     acceptFirstMouse:   true
+    prefsSeperator:     '▸'
+    onOtherInstance:    -> post.emit 'raiseKacheln'
+    onShortcut:         -> post.emit 'raiseKacheln'
     resizable:          false #true
     maximizable:        false
     saveBounds:         false
@@ -48,6 +51,7 @@ KachelApp = new app
         
         for kachelId,kachelData of prefs.get 'kacheln' {}
             if kachelId not in ['appl' 'folder']
+                klog 'newKachel' kachelData
                 post.emit 'newKachel' kachelData
 
 # 000   000   0000000    0000000  000   000  00000000  000      
@@ -144,16 +148,27 @@ raising = false
         
 post.on 'raiseKacheln' ->
     
+    for win in kacheln()
+        if not win.isVisible()
+            raised = false
+            break
+            
+    raising = true
     if raised
         for win in kacheln()
             win.hide()
-        raised = false
+        raised  = false
+        raising = false
         return
-    raising = true
-    for win in kacheln()
-        win.showInactive()
+        
+    for win in kacheln().concat [mainWin]
+        if os.platform() == 'win32'
+            raiseWin win
+        else
+            win.showInactive()
     raised = true
     raiseWin focusKachel ? mainWin
+    raising = false
     
 raiseWin = (win) ->
     win.showInactive()
@@ -167,25 +182,20 @@ post.on 'quit' KachelApp.quitApp
 # 000       000   000  000       000   000       000  
 # 000        0000000    0000000   0000000   0000000   
 
-post.on 'focusKachel' (winId, direction) ->
-    raiseWin neighborWin winId, direction
+post.on 'focusKachel' (winId, direction) -> raiseWin neighborWin winId, direction
    
 focusKachel = null
 post.on 'kachelFocus' (winId) -> 
-    if winId != mainWin.id
+    if winId != mainWin.id and not raising
         focusKachel = winWithId winId
-    
+        
 onWinBlur = (event) -> 
-    if event.sender == mainWin 
+    if not raising and event.sender == focusKachel
         raised = false
 
 onWinFocus = (event) -> 
-    if event.sender == mainWin
-        if not raised and not raising
-            post.emit 'raiseKacheln'
-        else if raising
-            raised = true
-            raising = false
+    if not raising
+        raised = true
         
 # 000   000  000  000   000   0000000  
 # 000 0 000  000  0000  000  000       
@@ -231,4 +241,4 @@ neighborWin = (winId, direction) ->
                 b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
         a-b
     ks[0]
-                
+     

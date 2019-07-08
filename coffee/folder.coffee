@@ -20,10 +20,16 @@ class Folder extends Kachel
         
         @folderPath = data.folder
         @kachelId = 'folder'+@folderPath
-        prefs.set "kacheln:#{@kachelId}:data:folder" @folderPath
-        prefs.set "kacheln:#{@kachelId}:html" 'folder'
+        prefs.set "kacheln▸#{@kachelId}▸data▸folder" @folderPath
+        prefs.set "kacheln▸#{@kachelId}▸html" 'folder'
     
         resolve = slash.resolve @folderPath
+        
+        klog 'resolve' resolve
+        klog 'home' slash.untilde '~'
+        klog 'desk' slash.untilde '~/Desktop'
+        klog 'down' slash.untilde '~/Downloads'
+        
         if resolve == slash.untilde '~'
             @setIcon slash.join __dirname, '..' 'img' 'home.png'
         else if resolve == slash.untilde '~/.Trash'
