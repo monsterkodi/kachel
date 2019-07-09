@@ -108,6 +108,7 @@ class Kachel extends win
             when 'Increase'     then post.toMain 'kachelSize' 'increase' @id
             when 'Decrease'     then post.toMain 'kachelSize' 'decrease' @id
             when 'Reset'        then post.toMain 'kachelSize' 'reset'    @id
+            when 'Screenshot'   then @screenshot()
             else
                 klog 'action' action
             
