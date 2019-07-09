@@ -10,17 +10,8 @@ body.kachelFocus {
 #main.kachelFocus {
   background-color: #222;
 }
-.sysinfo_load_bgr {
-  fill: #400;
-}
-.sysinfo_load_sys {
-  fill: #f80;
-}
-.sysinfo_load_usr {
-  fill: #ff0;
-}
 .sysinfo_mem_bgr {
-  fill: #008;
+  fill: #2b2b2b;
 }
 .sysinfo_mem_used {
   fill: #22f;
@@ -28,8 +19,17 @@ body.kachelFocus {
 .sysinfo_mem_active {
   fill: #88f;
 }
+.sysinfo_load_bgr {
+  fill: #202020;
+}
+.sysinfo_load_sys {
+  fill: #f80;
+}
+.sysinfo_load_usr {
+  fill: #ff0;
+}
 .sysinfo_net_bgr {
-  fill: #030;
+  fill: #222;
 }
 .sysinfo_net_recv {
   fill: #080;
@@ -38,13 +38,13 @@ body.kachelFocus {
   fill: #0a0;
 }
 .sysinfo_disk_bgr {
-  fill: #282828;
+  fill: #242424;
 }
 .sysinfo_disk_read {
   fill: #666;
 }
 .sysinfo_disk_write {
-  fill: #aaa;
+  fill: #444;
 }
 .menuItem {
   color: #666;

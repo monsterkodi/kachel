@@ -99,6 +99,7 @@ class Kachel extends win
             when 'New'          then post.toMain 'newKachel' {}
             when 'Close'        then @win.close()
             when 'Quit'         then post.toMain 'quit'
+            when 'About'        then post.toMain 'showAbout'
             when 'Scheme'       then post.toWins 'toggleScheme'
             when 'Arrange'      then post.toMain 'arrange'
             when 'IncreaseSize' then post.toMain 'kachelSize' 'increase'

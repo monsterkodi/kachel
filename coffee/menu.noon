@@ -13,6 +13,7 @@ Arrange         cmdctrl+a a
 IncreaseSize    cmdctrl+= 
 DecreaseSize    cmdctrl+- 
 ResetSize       cmdctrl+0 
+About           cmdctrl+alt+/
 Increase        =
 Decrease        -
 Reset           0

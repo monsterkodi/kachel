@@ -123,6 +123,9 @@ class Bounds
         
     @arrange: (kacheln) ->
         
+        klog 'no arrange'
+        return
+        
         infos = @getInfos kacheln 
                         
         for index in [0...infos.length]

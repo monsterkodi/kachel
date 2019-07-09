@@ -23,7 +23,7 @@ class utils
         p.appendChild @opt e, o
         e
         
-    @svg: (width:55, height:55, clss:) ->
+    @svg: (width:100, height:100, clss:) ->
         
         svg = document.createElementNS 'http://www.w3.org/2000/svg' 'svg'
         svg.setAttribute 'viewBox' '-50 -50 100 100'
