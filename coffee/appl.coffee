@@ -52,7 +52,7 @@ class Appl extends Kachel
         any2Ico = slash.path __dirname + '/../bin/Quick_Any2Ico.exe'
         
         if slash.isFile any2Ico
-            
+        
             childp.exec "\"#{any2Ico}\" -formats=512 -res=\"#{exePath}\" -icon=\"#{pngPath}\"", {}, (err,stdout,stderr) -> 
                 if not err? 
                     cb pngPath
@@ -65,6 +65,7 @@ class Appl extends Kachel
                 extractIcon = require 'win-icon-extractor'
                 extractIcon(exePath).then (result) ->
                     if result
+                        klog 'extractIcon result' result.length
                         data = result.slice 'data:image/png;base64,'.length
                         fs.writeFile pngPath, data, {encoding: 'base64'}, (err) ->
                             if not err?

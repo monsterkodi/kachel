@@ -21,13 +21,16 @@
     "url": "https://github.com/monsterkodi/kachel/issues"
   },
   "dependencies": {
-    "kxk": "^0.316.0",
+    "kxk": "^0.322.0",
     "simple-plist": "^1.0.0",
-    "systeminformation": "^4.11.4"
+    "systeminformation": "^4.14.2"
+  },
+  "optionalDependencies": {
+    "win-icon-extractor": "https://github.com/monsterkodi/win-icon-extractor.git"
   },
   "devDependencies": {
-    "electron": "^5.0.4",
-    "electron-packager": "^13.1.1",
+    "electron": "^5.0.6",
+    "electron-packager": "^14.0.1",
     "electron-rebuild": "^1.8.5",
     "konrad": "^0.133.0",
     "sds": "^3.2.0"

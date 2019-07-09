@@ -14,7 +14,12 @@ class Folder extends Kachel
         
     @: (@kachelId:'folder') -> super
         
-    onClick: (event) -> open slash.unslash @folderPath
+    onClick: (event) -> 
+        
+        if os.platform() == 'win32' and @folderPath.endsWith '$Recycle.Bin'
+            childp.execSync "start shell:RecycleBinFolder"
+        else
+            open slash.unslash @folderPath
         
     onInitData: (data) =>
         
@@ -24,15 +29,12 @@ class Folder extends Kachel
         prefs.set "kacheln▸#{@kachelId}▸html" 'folder'
     
         resolve = slash.resolve @folderPath
-        
-        klog 'resolve' resolve
-        klog 'home' slash.untilde '~'
-        klog 'desk' slash.untilde '~/Desktop'
-        klog 'down' slash.untilde '~/Downloads'
-        
+                
         if resolve == slash.untilde '~'
             @setIcon slash.join __dirname, '..' 'img' 'home.png'
         else if resolve == slash.untilde '~/.Trash'
+            @setIcon slash.join __dirname, '..' 'img' 'recycle5.png'
+        else if resolve.indexOf('$Recycle.Bin') >= 0
             @setIcon slash.join __dirname, '..' 'img' 'recycle5.png'
         else if resolve == slash.untilde '~/Desktop'
             @setIcon slash.join __dirname, '..' 'img' 'desktop.png'

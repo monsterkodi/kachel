@@ -6,7 +6,7 @@
 0000000    00000000  000       000   000   0000000   0000000   000     
 ###
 
-{ post, slash, klog, elem, _ } = require 'kxk'
+{ post, slash, klog, elem, os, _ } = require 'kxk'
 
 electron = require 'electron'
 Kachel = require './kachel'
@@ -77,6 +77,7 @@ class Default extends Kachel
             , @appsChosen
             
     appsChosen: (files) => 
+        
         return if not files
         if not files instanceof Array
             files = [files]
