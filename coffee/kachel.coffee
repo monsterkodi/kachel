@@ -37,6 +37,8 @@ class Kachel extends win
         post.on 'combo'      @onCombo
         post.on 'toggleScheme' -> scheme.toggle()
         
+        @main.addEventListener 'mouseenter' => @win.focus()
+        
         if @kachelId != 'main'
             @win.setSkipTaskbar true
             prefs.set "kacheln▸#{@kachelId}" @kachelData()
@@ -64,8 +66,8 @@ class Kachel extends win
     onSaveBounds: => 
         prefs.set "bounds▸#{@kachelId}" @win.getBounds()
         
-    onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; @main.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
-    onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @main.classList.remove 'kachelFocus'; @onBlur  event
+    onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
+    onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
     onWinLoad:   (event) => @onLoad event
     onWinMove:   (event) => @onMove event
                 

@@ -67,6 +67,7 @@ post.on 'newKachel' (html:'default', data:) ->
         transparent:        true
         autoHideMenuBar:    true
         acceptFirstMouse:   true
+        transparent:        true
         hasShadow:          false
         frame:              false
         resizable:          false
@@ -74,7 +75,6 @@ post.on 'newKachel' (html:'default', data:) ->
         minimizable:        false
         fullscreen:         false
         show:               false
-        transparent:        false
         fullscreenenable:   false
         backgroundColor:    '#181818'
         width:              kachelSizes[kachelSize]

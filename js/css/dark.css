@@ -1,14 +1,30 @@
 body {
   background-color: #202020;
+  border-top: 1px solid #222;
+  border-left: 1px solid #212121;
+  border-right: 1px solid #1e1e1e;
+  border-bottom: 1px solid #1c1c1c;
 }
 body.kachelFocus {
-  background-color: #333;
+  border-top: 1px solid #555;
+  border-left: 1px solid #444;
+  border-right: 1px solid #111;
+  border-bottom: 1px solid #000;
+}
+body.kachelHover {
+  border-top: 1px solid #333;
+  border-left: 1px solid #222;
+  border-right: 1px solid #111;
+  border-bottom: 1px solid #000;
+}
+body:active {
+  border-top: 1px solid #000;
+  border-left: 1px solid #111;
+  border-right: 1px solid #222;
+  border-bottom: 1px solid #333;
 }
 #main {
   background-color: #202020;
-}
-#main.kachelFocus {
-  background-color: #222;
 }
 .sysinfo_mem_bgr {
   fill: #2b2b2b;

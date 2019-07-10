@@ -109,9 +109,6 @@ svg {
   grid-column: 2;
   grid-row: 2;
 }
-.menuItem {
-  -webkit-app-region: no-drag;
-}
 .menu {
   height: titlebarHeight;
   pointer-events: auto;
@@ -121,7 +118,6 @@ svg {
   flex-direction: row;
 }
 .menuItem {
-  -webkit-app-region: no-drag;
   cursor: pointer;
   padding-left: 10px;
   padding-right: 10px;
