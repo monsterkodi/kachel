@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, prefs, slash, clamp, empty, klog, app, os } = require 'kxk'
+{ post, prefs, slash, clamp, empty, klog, kpos, app, os } = require 'kxk'
 
 Bounds   = require './bounds'
 electron = require 'electron'
@@ -14,7 +14,11 @@ BrowserWindow = electron.BrowserWindow
 
 kachelSizes = [72,108,144,216]
 kachelSize  = 1
+focusKachel = null
+mousePos = kpos 0,0
+mouseTimer = null
 mainWin = null
+infos   = []
 
 winEvents = (win) ->
     win.on 'focus'  onWinFocus
@@ -41,10 +45,11 @@ KachelApp = new app
     prefsSeperator:     '▸'
     onOtherInstance:    -> post.emit 'raiseKacheln'
     onShortcut:         -> post.emit 'raiseKacheln'
-    resizable:          false #true
+    onQuit:             -> clearInterval mouseTimer
+    resizable:          false
     maximizable:        false
     saveBounds:         false
-    onWinReady: (win) ->
+    onWinReady: (win) =>
         
         mainWin = win
         winEvents win
@@ -52,6 +57,28 @@ KachelApp = new app
         for kachelId,kachelData of prefs.get 'kacheln' {}
             if kachelId not in ['appl' 'folder']
                 post.emit 'newKachel' kachelData
+
+        # 00     00   0000000   000   000   0000000  00000000  
+        # 000   000  000   000  000   000  000       000       
+        # 000000000  000   000  000   000  0000000   0000000   
+        # 000 0 000  000   000  000   000       000  000       
+        # 000   000   0000000    0000000   0000000   00000000  
+        
+        checkMouse = =>
+            oldPos = kpos mousePos ? {x:0 y:0}
+            mousePos = electron.screen.getCursorScreenPoint()
+            if oldPos.distSquare(mousePos) < 10 then return
+            if infos?.kachelBounds? 
+                if not Bounds.contains infos.kachelBounds, mousePos
+                    return
+            if k = Bounds.kachelAtPos infos, mousePos
+                if focusKachel 
+                    if focusKachel.id != k.kachel.id
+                        k.kachel.focus()
+                else
+                    k.kachel.focus()
+                
+        mouseTimer = setInterval checkMouse, 50
 
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
@@ -87,20 +114,33 @@ post.on 'newKachel' (html:'default', data:) ->
     win.webContents.on 'dom-ready' (event) ->
         post.toWin win.id, 'initData' data if data?
         win.show()
-        
+              
     winEvents win
     win
         
-#  0000000   00000000   00000000    0000000   000   000   0000000   00000000  
-# 000   000  000   000  000   000  000   000  0000  000  000        000       
-# 000000000  0000000    0000000    000000000  000 0 000  000  0000  0000000   
-# 000   000  000   000  000   000  000   000  000  0000  000   000  000       
-# 000   000  000   000  000   000  000   000  000   000   0000000   00000000  
+#  0000000  000   000   0000000   00000000   
+# 000       0000  000  000   000  000   000  
+# 0000000   000 0 000  000000000  00000000   
+#      000  000  0000  000   000  000        
+# 0000000   000   000  000   000  000        
 
-post.on 'arrange' -> Bounds.arrange kacheln()
+post.on 'snapKachel' (wid) -> 
 
-post.on 'snapKachel' (wid) -> Bounds.snap kacheln(), winWithId wid
+    infos = Bounds.getInfos kacheln()
+    Bounds.snap infos, winWithId wid
+    infos = Bounds.getInfos kacheln()
 
+post.on 'kachelMove' (dir, wid) ->
+    
+    klog "move #{id} #{dir}"
+
+post.on 'kachelBounds' (wid, kachelId) ->
+    
+    bounds = prefs.get "bounds▸#{kachelId}"
+    if bounds?
+        winWithId(wid).setBounds bounds
+        infos = Bounds.getInfos kacheln()
+    
 #  0000000  000  0000000  00000000  
 # 000       000     000   000       
 # 0000000   000    000    0000000   
@@ -183,7 +223,6 @@ post.on 'quit' KachelApp.quitApp
 
 post.on 'focusKachel' (winId, direction) -> raiseWin neighborWin winId, direction
    
-focusKachel = null
 post.on 'kachelFocus' (winId) -> 
     if winId != mainWin.id and not raising
         focusKachel = winWithId winId
@@ -195,7 +234,7 @@ onWinBlur = (event) ->
 onWinFocus = (event) -> 
     if not raising
         raised = true
-        
+            
 # 000   000  000  000   000   0000000  
 # 000 0 000  000  0000  000  000       
 # 000000000  000  000 0 000  0000000   

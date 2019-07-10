@@ -37,16 +37,12 @@ class Kachel extends win
         post.on 'combo'      @onCombo
         post.on 'toggleScheme' -> scheme.toggle()
         
-        @main.addEventListener 'mouseenter' => @win.focus()
-        
         if @kachelId != 'main'
             @win.setSkipTaskbar true
             prefs.set "kacheln▸#{@kachelId}" @kachelData()
         
-        bounds = prefs.get "bounds▸#{@kachelId}"
-        if bounds?
-            @win.setBounds bounds
-            
+        post.toMain 'kachelBounds' @id, @kachelId
+                                
     kachelData: -> html:@kachelId
       
     onContextMenu: (event) => stopEvent event 
@@ -78,10 +74,8 @@ class Kachel extends win
         @onClose event
         
     onInitData: =>
-                
-        bounds = prefs.get "bounds▸#{@kachelId}"
-        if bounds?
-            @win.setBounds bounds
+              
+        post.toMain 'kachelBounds' @id, @kachelId
     
     onLoad:  -> # to be overridden in subclasses
     onMove:  -> # to be overridden in subclasses
@@ -104,13 +98,16 @@ class Kachel extends win
             when 'Quit'         then post.toMain 'quit'
             when 'About'        then post.toMain 'showAbout'
             when 'Scheme'       then post.toWins 'toggleScheme'
-            when 'Arrange'      then post.toMain 'arrange'
             when 'IncreaseSize' then post.toMain 'kachelSize' 'increase'
             when 'DecreaseSize' then post.toMain 'kachelSize' 'decrease'
             when 'ResetSize'    then post.toMain 'kachelSize' 'reset'
             when 'Increase'     then post.toMain 'kachelSize' 'increase' @id
             when 'Decrease'     then post.toMain 'kachelSize' 'decrease' @id
             when 'Reset'        then post.toMain 'kachelSize' 'reset'    @id
+            when 'MoveUp'       then post.toMain 'kachelMove' 'up'       @id
+            when 'MoveDown'     then post.toMain 'kachelMove' 'down'     @id
+            when 'MoveLeft'     then post.toMain 'kachelMove' 'left'     @id
+            when 'MoveRight'    then post.toMain 'kachelMove' 'right'    @id
             when 'DevTools'     then @win.webContents.toggleDevTools()
             when 'Reload'       then @win.webContents.reloadIgnoringCache()
             when 'Screenshot'   then @screenshot()

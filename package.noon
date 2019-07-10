@@ -1,6 +1,6 @@
 name            kachel
 productName     kachel
-version         0.19.0
+version         0.20.0
 description     experiment
 main            js/main.js
 repository
@@ -17,9 +17,9 @@ bugs
                 url  https://github.com/monsterkodi/kachel/issues
 dependencies
                 empty-trash     ^3.0.0
-                kxk             ^0.322.0
+                kxk             ^0.324.0
                 simple-plist    ^1.0.0
-                systeminformation  ^4.14.2
+                systeminformation  ^4.14.3
 optionalDependencies
                 win-icon-extractor  https://github.com/monsterkodi/win-icon-extractor.git
 devDependencies

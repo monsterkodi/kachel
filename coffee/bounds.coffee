@@ -33,27 +33,54 @@ class Bounds
         b
         
     @overlap: (a,b) ->
+        
         not (a.x > b.x+b.width  or
              b.x > a.x+a.width  or
              a.y > b.y+b.height or
              b.y > a.y+a.height)
              
     @borderDist: (b) ->
+        
         dx = if b.x < @sw()/2 then b.x else @sw() - (b.x + b.width)
         dy = if b.y < @sh()/2 then b.y else @sh() - (b.y + b.height)
         Math.min dx, dy
+      
+    @contains: (b, p) ->
+        
+        p.x >= b.x and p.x <= b.x+b.width and p.y >= b.y and p.y <= b.y+b.height
+        
+    @kachelAtPos: (infos, p) ->
+        
+        for k in infos
+            return k if @contains k.bounds, p
         
     @getInfos: (kacheln) ->
         
         index = 0
+        minX = minY = 9999
+        maxX = maxY = 0
+        
         infos = kacheln.map (k) => 
+            
+            b = @onScreen k.getBounds()
+            minX = Math.min minX, b.x
+            minY = Math.min minY, b.y
+            maxX = Math.max maxX, b.x+b.width
+            maxY = Math.max maxY, b.y+b.height
+            
             kachel: k
             index:  index++
-            bounds: @onScreen k.getBounds()
+            bounds: b
             
         infos.sort (a,b) =>
             @borderDist(a.bounds) - @borderDist(b.bounds)
 
+        infos.kachelBounds = 
+            x:      minX
+            y:      minY
+            width:  maxX-minX
+            height: maxY-minY
+            
         infos
         
     @gapRight: (a, b) -> b.x - (a.x + a.width)
@@ -75,7 +102,7 @@ class Bounds
             continue if info.kachel == kachel
             return info if @isCloseNeighbor kb, info, dir
         
-    @snap: (kacheln, kachel) ->
+    @snap: (infos, kachel) ->
         
         b = kachel.getBounds()
         
@@ -99,8 +126,7 @@ class Bounds
         else if b.y + b.height > sh or b.y + b.height > sh - 72
             vert = true
             b.y = sh - b.height
-            
-        infos = @getInfos kacheln
+                
         for info in infos
             continue if info.kachel == kachel
             if @overlap b, info.bounds

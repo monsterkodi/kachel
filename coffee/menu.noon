@@ -6,7 +6,7 @@
 # 000   000  00000000  000   000   0000000
 
 New             cmdctrl+n n
-Close           cmdctrl+w w
+Close           cmdctrl+w w delete
 Quit            cmdctrl+q q
 Scheme          cmdctrl+i i
 IncreaseSize    cmdctrl+= 
@@ -16,6 +16,10 @@ About           cmdctrl+alt+/
 Screenshot      cmdctrl+alt+s
 Reload          alt+cmdctrl+l
 DevTools        alt+cmdctrl+i
+MoveDown        cmdctrl+down
+MoveRight       cmdctrl+right
+MoveUp          cmdctrl+up
+MoveLeft        cmdctrl+left
 Increase        =
 Decrease        -
 Reset           0
