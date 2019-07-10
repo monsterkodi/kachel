@@ -14,7 +14,9 @@ class Appl extends Kachel
         
     @: (@kachelId:'appl') -> super
         
-    onClick: (event) -> open slash.unslash @appPath 
+    onClick: (event) -> 
+        klog 'open' slash.unslash @appPath 
+        open slash.unslash @appPath 
     
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     

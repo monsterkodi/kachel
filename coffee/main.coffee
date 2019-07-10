@@ -21,6 +21,8 @@ mouseTimer  = null
 mousePos    = kpos 0,0
 infos       = []
 
+updateInfos = -> infos = Bounds.getInfos kacheln()
+
 winEvents = (win) ->
     win.on 'focus'  onWinFocus
     win.on 'blur'   onWinBlur
@@ -66,6 +68,7 @@ KachelApp = new app
         # 000   000   0000000    0000000   0000000   00000000  
         
         checkMouse = =>
+            
             return if dragging
             oldPos = kpos mousePos ? {x:0 y:0}
             mousePos = electron.screen.getCursorScreenPoint()
@@ -74,7 +77,7 @@ KachelApp = new app
                 if not Bounds.contains infos.kachelBounds, mousePos
                     return
             if k = Bounds.kachelAtPos infos, mousePos
-                if focusKachel 
+                if focusKachel
                     if focusKachel.id != k.kachel.id
                         k.kachel.focus()
                 else
@@ -116,7 +119,9 @@ post.on 'newKachel' (html:'default', data:) ->
     win.webContents.on 'dom-ready' (event) ->
         post.toWin win.id, 'initData' data if data?
         win.show()
-              
+          
+    win.on 'close' onKachelClose
+        
     winEvents win
     win
         
@@ -126,14 +131,17 @@ post.on 'newKachel' (html:'default', data:) ->
 #      000  000  0000  000   000  000        
 # 0000000   000   000  000   000  000        
 
-post.on 'dragStart' (wid) -> dragging = true
-post.on 'dragEnd'   (wid) -> dragging = false
+post.on 'dragStart' (wid) -> 
+    dragging = true
+
+post.on 'dragStop'  (wid) -> 
+    dragging = false
 
 post.on 'snapKachel' (wid) -> 
 
-    infos = Bounds.getInfos kacheln()
+    updateInfos()
     Bounds.snap infos, winWithId wid
-    infos = Bounds.getInfos kacheln()
+    updateInfos()
 
 # 00     00   0000000   000   000  00000000  
 # 000   000  000   000  000   000  000       
@@ -160,7 +168,7 @@ post.on 'kachelMove' (dir, wid) ->
             if g > 0
                 nb[d] = b[d] + s * g
                 kachel.setBounds nb
-                infos = Bounds.getInfos kacheln()
+                updateInfos()
                 true
                 
         r = switch dir 
@@ -174,21 +182,21 @@ post.on 'kachelMove' (dir, wid) ->
         if neighbor.bounds.width == b.width
             kachel.setBounds neighbor.bounds
             neighbor.kachel.setBounds b
-            infos = Bounds.getInfos kacheln()
+            updateInfos()
             return
         
     if Bounds.isOnScreen nb
         kachel.setBounds nb
     else    
         kachel.setBounds b
-    infos = Bounds.getInfos kacheln()
+    updateInfos()
 
 post.on 'kachelBounds' (wid, kachelId) ->
     
     bounds = prefs.get "bounds▸#{kachelId}"
     if bounds?
         winWithId(wid).setBounds bounds
-        infos = Bounds.getInfos kacheln()
+        updateInfos()
     
 #  0000000  000  0000000  00000000  
 # 000       000     000   000       
@@ -275,6 +283,11 @@ post.on 'focusKachel' (winId, direction) -> raiseWin neighborWin winId, directio
 post.on 'kachelFocus' (winId) -> 
     if winId != mainWin.id and not raising
         focusKachel = winWithId winId
+        
+onKachelClose = (event) ->
+    if focusKachel == event.sender
+        focusKachel = null 
+    setTimeout updateInfos, 200
         
 onWinBlur = (event) -> 
     if not raising and event.sender == focusKachel

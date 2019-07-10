@@ -153,6 +153,7 @@ class Bounds
         kb = kachel.getBounds()
         
         infos.sort (a,b) -> 
+            return 0 if not a or not b
             switch dir
                 when 'left''right' then Math.abs(a.bounds.y - kb.y) - Math.abs(b.bounds.y - kb.y)
                 when 'up''down'    then Math.abs(a.bounds.x - kb.x) - Math.abs(b.bounds.x - kb.x)
@@ -197,9 +198,9 @@ class Bounds
         if b.y < 0 or b.y < 72
             vert = true
             b.y = 0
-        else if b.y + b.height > sh or b.y + b.height > sh - 72
+        else if b.y + b.height > sh+sy or b.y + b.height > sh+sy - 72
             vert = true
-            b.y = sh - b.height
+            b.y = sh+sy - b.height
                 
         for info in infos
             continue if info.kachel == kachel

@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000  00     00  000  000   000
 ###
 
-{ post, elem, _ } = require 'kxk'
+{ post, klog, elem, _ } = require 'kxk'
 
 Kachel = require './kachel'
 
@@ -16,7 +16,9 @@ class MainWin extends Kachel
     
     onLoad: -> @main.appendChild elem 'img', class:'kachelImg' src:__dirname + '/../img/about.png'    
         
-    onClick: -> post.toMain 'newKachel' {}
+    onClick: -> 
+        klog 'newKachel'
+        post.toMain 'newKachel' {}
     
     onContextMenu: => post.toMain 'raiseKacheln'
 
