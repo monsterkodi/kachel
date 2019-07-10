@@ -145,13 +145,6 @@ post.on 'kachelMove' (dir, wid) ->
     
     kachel = winWithId wid
     b = Bounds.validBounds kachel
-    
-    if neighbor = Bounds.nextNeighbor infos, kachel, dir
-        if neighbor.bounds.width == b.width
-            kachel.setBounds neighbor.bounds
-            neighbor.kachel.setBounds b
-            infos = Bounds.getInfos kacheln()
-            return
           
     nb = x:b.x, y:b.y, width:b.width, height:b.height
     switch dir 
@@ -159,6 +152,30 @@ post.on 'kachelMove' (dir, wid) ->
         when 'down'     then nb.y = b.y + b.height
         when 'right'    then nb.x = b.x + b.width 
         when 'left'     then nb.x = b.x - b.width 
+        
+    if info = Bounds.overlapInfo infos, nb
+        
+        gap = (s, d, f, b, o) ->
+            g = f b, o
+            if g > 0
+                nb[d] = b[d] + s * g
+                kachel.setBounds nb
+                infos = Bounds.getInfos kacheln()
+                true
+                
+        r = switch dir 
+            when 'up'    then gap -1 'y' Bounds.gapUp,    b, info.bounds
+            when 'down'  then gap +1 'y' Bounds.gapDown,  b, info.bounds
+            when 'right' then gap +1 'x' Bounds.gapRight, b, info.bounds
+            when 'left'  then gap -1 'x' Bounds.gapLeft,  b, info.bounds
+        return if r
+        
+    if neighbor = Bounds.nextNeighbor infos, kachel, dir
+        if neighbor.bounds.width == b.width
+            kachel.setBounds neighbor.bounds
+            neighbor.kachel.setBounds b
+            infos = Bounds.getInfos kacheln()
+            return
         
     if Bounds.isOnScreen nb
         kachel.setBounds nb

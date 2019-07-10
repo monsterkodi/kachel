@@ -15,6 +15,12 @@ class Clock extends Kachel
         
     @: (@kachelId:'clock') -> super
     
+    # 000       0000000    0000000   0000000    
+    # 000      000   000  000   000  000   000  
+    # 000      000   000  000000000  000   000  
+    # 000      000   000  000   000  000   000  
+    # 0000000   0000000   000   000  0000000    
+    
     onLoad: ->
         
         svg = utils.svg clss:'clock'
@@ -32,6 +38,12 @@ class Clock extends Kachel
         @onTick()
         setInterval @onTick, 1000
         
+    # 000000000  000   0000000  000   000  
+    #    000     000  000       000  000   
+    #    000     000  000       0000000    
+    #    000     000  000       000  000   
+    #    000     000   0000000  000   000  
+    
     onTick: =>
         
         time = new Date()

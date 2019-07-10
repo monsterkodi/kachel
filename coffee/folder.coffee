@@ -15,6 +15,12 @@ class Folder extends Kachel
         
     @: (@kachelId:'folder') -> super
         
+    #  0000000  000      000   0000000  000   000  
+    # 000       000      000  000       000  000   
+    # 000       000      000  000       0000000    
+    # 000       000      000  000       000  000   
+    #  0000000  0000000  000   0000000  000   000  
+    
     onClick: (event) -> 
         
         if os.platform() == 'win32' and @folderPath.endsWith '$Recycle.Bin'
@@ -22,6 +28,12 @@ class Folder extends Kachel
         else
             open slash.unslash @folderPath
         
+    # 000  000   000  000  000000000  
+    # 000  0000  000  000     000     
+    # 000  000 0 000  000     000     
+    # 000  000  0000  000     000     
+    # 000  000   000  000     000     
+    
     onInitData: (data) =>
         
         @folderPath = data.folder
@@ -51,6 +63,12 @@ class Folder extends Kachel
         
         super
        
+    # 000000000  00000000    0000000    0000000  000   000  
+    #    000     000   000  000   000  000       000   000  
+    #    000     0000000    000000000  0000000   000000000  
+    #    000     000   000  000   000       000  000   000  
+    #    000     000   000  000   000  0000000   000   000  
+    
     checkTrash: (trashFolder) ->
         
         fs.readdir trashFolder, (err, files) =>
@@ -66,7 +84,6 @@ class Folder extends Kachel
     onContextMenu: => 
         
         if @isTrash
-            klog 'empty trash'
             emptyTrash = require 'empty-trash'
             emptyTrash()
                 
@@ -81,6 +98,12 @@ class Folder extends Kachel
         fs.watch trashFolder, (change, file) =>
             @checkTrash trashFolder
         
+    # 000   0000000   0000000   000   000  
+    # 000  000       000   000  0000  000  
+    # 000  000       000   000  000 0 000  
+    # 000  000       000   000  000  0000  
+    # 000   0000000   0000000   000   000  
+    
     setIcon: (iconPath) =>
         
         return if not iconPath

@@ -94,13 +94,19 @@ class Bounds
     #  0000000       0      00000000  000   000  0000000  000   000  000        
     
     @overlap: (a,b) ->
+        
         if not a or not b
-            klog a, b
             return false
-        not (a.x > b.x+b.width  or
-             b.x > a.x+a.width  or
-             a.y > b.y+b.height or
-             b.y > a.y+a.height)
+        not (a.x > b.x+b.width-1  or
+             b.x > a.x+a.width-1  or
+             a.y > b.y+b.height-1 or
+             b.y > a.y+a.height-1)
+             
+    @overlapInfo: (infos, b) ->
+        
+        for info in infos
+            if @overlap info.bounds, b
+                return info
              
     @borderDist: (b) ->
         

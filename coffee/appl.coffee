@@ -14,10 +14,14 @@ class Appl extends Kachel
         
     @: (@kachelId:'appl') -> super
         
-    onClick: (event) ->
-        # klog "open #{slash.unslash @appPath}"
-        open slash.unslash @appPath
-        
+    onClick: (event) -> open slash.unslash @appPath 
+    
+    # 000  000   000  000  000000000  
+    # 000  0000  000  000     000     
+    # 000  000 0 000  000     000     
+    # 000  000  0000  000     000     
+    # 000  000   000  000     000     
+    
     onInitData: (data) =>
         
         @appPath = data.app
@@ -39,6 +43,12 @@ class Appl extends Kachel
                 
         super
                 
+    # 000   0000000   0000000   000   000  
+    # 000  000       000   000  0000  000  
+    # 000  000       000   000  000 0 000  
+    # 000  000       000   000  000  0000  
+    # 000   0000000   0000000   000   000  
+    
     setIcon: (iconPath) =>
         
         return if not iconPath
@@ -46,6 +56,12 @@ class Appl extends Kachel
         img.ondragstart = -> false
         @main.appendChild img
                    
+    # 00000000  000   000  00000000  
+    # 000        000 000   000       
+    # 0000000     00000    0000000   
+    # 000        000 000   000       
+    # 00000000  000   000  00000000  
+    
     exeIcon: (exePath, outDir, cb) ->
 
         pngPath = slash.resolve slash.join outDir, slash.base(exePath) + ".png"
@@ -80,6 +96,12 @@ class Appl extends Kachel
                 error err
                 cb()
             
+    #  0000000   00000000   00000000   
+    # 000   000  000   000  000   000  
+    # 000000000  00000000   00000000   
+    # 000   000  000        000        
+    # 000   000  000        000        
+    
     appIcon: (appPath, outDir) ->
         
         size = 110
