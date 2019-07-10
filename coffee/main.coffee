@@ -341,4 +341,12 @@ neighborWin = (winId, direction) ->
                 b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
         a-b
     ks[0]
-     
+    
+post.on 'requestData' (provider) ->
+    
+    klog "requestData #{provider}"
+    
+post.onGet 'getData' (provider) ->
+    
+    klog "getData #{provider}"
+    
