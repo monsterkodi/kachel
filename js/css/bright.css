@@ -1,14 +1,24 @@
 body {
   background-color: #fff;
+  border-top: 1px solid #f8f8f8;
+  border-left: 1px solid #f0f0f0;
+  border-right: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e0e0e0;
 }
 body.kachelFocus {
-  background-color: #ddd;
+  border-top: 1px solid #333;
+  border-left: 1px solid #222;
+  border-right: 1px solid #111;
+  border-bottom: 1px solid #000;
+}
+body:active {
+  border-top: 1px solid #999;
+  border-left: 1px solid #bbb;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #eee;
 }
 #main {
   background: #fff;
-}
-#main.kachelFocus {
-  background-color: #fff;
 }
 .sysinfo_load_bgr {
   fill: #fee;
@@ -45,4 +55,20 @@ body.kachelFocus {
 }
 .sysinfo_disk_write {
   fill: #aaa;
+}
+.face {
+  stroke: #eee;
+  fill: #fff;
+}
+.major {
+  stroke: #eee;
+}
+.hour {
+  stroke: #000;
+}
+.minute {
+  stroke: #888;
+}
+.second {
+  stroke: #ddd;
 }

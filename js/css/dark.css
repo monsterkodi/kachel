@@ -11,12 +11,6 @@ body.kachelFocus {
   border-right: 1px solid #111;
   border-bottom: 1px solid #000;
 }
-body.kachelHover {
-  border-top: 1px solid #333;
-  border-left: 1px solid #222;
-  border-right: 1px solid #111;
-  border-bottom: 1px solid #000;
-}
 body:active {
   border-top: 1px solid #000;
   border-left: 1px solid #111;
@@ -61,6 +55,22 @@ body:active {
 }
 .sysinfo_disk_write {
   fill: #444;
+}
+.face {
+  stroke: #333;
+  fill: #222;
+}
+.major {
+  stroke: #333;
+}
+.hour {
+  stroke: #888;
+}
+.minute {
+  stroke: #555;
+}
+.second {
+  stroke: #333;
 }
 .menuItem {
   color: #666;
