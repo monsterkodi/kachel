@@ -14,11 +14,12 @@ BrowserWindow = electron.BrowserWindow
 
 kachelSizes = [72,108,144,216]
 kachelSize  = 1
+dragging    = false
+mainWin     = null
 focusKachel = null
-mousePos = kpos 0,0
-mouseTimer = null
-mainWin = null
-infos   = []
+mouseTimer  = null
+mousePos    = kpos 0,0
+infos       = []
 
 winEvents = (win) ->
     win.on 'focus'  onWinFocus
@@ -65,6 +66,7 @@ KachelApp = new app
         # 000   000   0000000    0000000   0000000   00000000  
         
         checkMouse = =>
+            return if dragging
             oldPos = kpos mousePos ? {x:0 y:0}
             mousePos = electron.screen.getCursorScreenPoint()
             if oldPos.distSquare(mousePos) < 10 then return
@@ -124,15 +126,45 @@ post.on 'newKachel' (html:'default', data:) ->
 #      000  000  0000  000   000  000        
 # 0000000   000   000  000   000  000        
 
+post.on 'dragStart' (wid) -> dragging = true
+post.on 'dragEnd'   (wid) -> dragging = false
+
 post.on 'snapKachel' (wid) -> 
 
     infos = Bounds.getInfos kacheln()
     Bounds.snap infos, winWithId wid
     infos = Bounds.getInfos kacheln()
 
+# 00     00   0000000   000   000  00000000  
+# 000   000  000   000  000   000  000       
+# 000000000  000   000   000 000   0000000   
+# 000 0 000  000   000     000     000       
+# 000   000   0000000       0      00000000  
+
 post.on 'kachelMove' (dir, wid) ->
     
-    klog "move #{id} #{dir}"
+    kachel = winWithId wid
+    b = Bounds.validBounds kachel
+    
+    if neighbor = Bounds.nextNeighbor infos, kachel, dir
+        if neighbor.bounds.width == b.width
+            kachel.setBounds neighbor.bounds
+            neighbor.kachel.setBounds b
+            infos = Bounds.getInfos kacheln()
+            return
+          
+    nb = x:b.x, y:b.y, width:b.width, height:b.height
+    switch dir 
+        when 'up'       then nb.y = b.y - b.height
+        when 'down'     then nb.y = b.y + b.height
+        when 'right'    then nb.x = b.x + b.width 
+        when 'left'     then nb.x = b.x - b.width 
+        
+    if Bounds.isOnScreen nb
+        kachel.setBounds nb
+    else    
+        kachel.setBounds b
+    infos = Bounds.getInfos kacheln()
 
 post.on 'kachelBounds' (wid, kachelId) ->
     

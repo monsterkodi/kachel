@@ -16,44 +16,12 @@ class Bounds
     @sh: -> electron.screen.getPrimaryDisplay().workAreaSize.height
     @sy: -> electron.screen.getPrimaryDisplay().workArea.y
 
-    @onScreen: (b) ->
-        
-        sw = @sw()
-        sh = @sh()
-        sy = @sy()
-        
-        b.x = clamp 0, sw - b.width,  b.x
-        b.y = clamp 0, sh - b.height, b.y
-        
-        if b.x + b.width  > sw - b.width  then b.x = sw-b.width
-        if b.y + b.height > sh - b.height then b.y = sh-b.height
-        if b.x      < b.width  then b.x = 0
-        if b.y - sy < b.height then b.y = sy
-        
-        b
-        
-    @overlap: (a,b) ->
-        
-        not (a.x > b.x+b.width  or
-             b.x > a.x+a.width  or
-             a.y > b.y+b.height or
-             b.y > a.y+a.height)
-             
-    @borderDist: (b) ->
-        
-        dx = if b.x < @sw()/2 then b.x else @sw() - (b.x + b.width)
-        dy = if b.y < @sh()/2 then b.y else @sh() - (b.y + b.height)
-        Math.min dx, dy
-      
-    @contains: (b, p) ->
-        
-        p.x >= b.x and p.x <= b.x+b.width and p.y >= b.y and p.y <= b.y+b.height
-        
-    @kachelAtPos: (infos, p) ->
-        
-        for k in infos
-            return k if @contains k.bounds, p
-        
+    # 000  000   000  00000000   0000000    0000000  
+    # 000  0000  000  000       000   000  000       
+    # 000  000 0 000  000000    000   000  0000000   
+    # 000  000  0000  000       000   000       000  
+    # 000  000   000  000        0000000   0000000   
+    
     @getInfos: (kacheln) ->
         
         index = 0
@@ -62,7 +30,7 @@ class Bounds
         
         infos = kacheln.map (k) => 
             
-            b = @onScreen k.getBounds()
+            b = @validBounds k
             minX = Math.min minX, b.x
             minY = Math.min minY, b.y
             maxX = Math.max maxX, b.x+b.width
@@ -82,12 +50,90 @@ class Bounds
             height: maxY-minY
             
         infos
+    
+    #  0000000   0000000  00000000   00000000  00000000  000   000  
+    # 000       000       000   000  000       000       0000  000  
+    # 0000000   000       0000000    0000000   0000000   000 0 000  
+    #      000  000       000   000  000       000       000  0000  
+    # 0000000    0000000  000   000  00000000  00000000  000   000  
+    
+    @validBounds: (kachel) -> @onScreen kachel.getBounds()
         
+    @onScreen: (b) ->
+        
+        sw = @sw()
+        sh = @sh()
+        sy = @sy()
+        
+        b.x = clamp 0, sw - b.width,  b.x
+        b.y = clamp 0, sh - b.height, b.y
+        
+        if b.x + b.width  > sw - b.width  then b.x = sw-b.width
+        if b.y + b.height > sy+sh - b.height then b.y = sy+sh-b.height
+        if b.x      < b.width  then b.x = 0
+        if b.y - sy < b.height then b.y = sy
+        
+        b
+        
+    @isOnScreen: (b) ->
+        
+        if b.y < 0 or b.x < 0 then return false
+        
+        sw = @sw()
+        sh = @sh()
+        sy = @sy()
+        
+        if b.x + b.width  > sw then return false
+        if b.y + b.height > sy+sh then return false
+        true
+        
+    #  0000000   000   000  00000000  00000000   000       0000000   00000000   
+    # 000   000  000   000  000       000   000  000      000   000  000   000  
+    # 000   000   000 000   0000000   0000000    000      000000000  00000000   
+    # 000   000     000     000       000   000  000      000   000  000        
+    #  0000000       0      00000000  000   000  0000000  000   000  000        
+    
+    @overlap: (a,b) ->
+        if not a or not b
+            klog a, b
+            return false
+        not (a.x > b.x+b.width  or
+             b.x > a.x+a.width  or
+             a.y > b.y+b.height or
+             b.y > a.y+a.height)
+             
+    @borderDist: (b) ->
+        
+        dx = if b.x < @sw()/2 then b.x else @sw() - (b.x + b.width)
+        dy = if b.y < @sh()/2 then b.y else @sh() - (b.y + b.height)
+        Math.min dx, dy
+      
+    #  0000000   0000000   000   000  000000000   0000000   000  000   000   0000000  
+    # 000       000   000  0000  000     000     000   000  000  0000  000  000       
+    # 000       000   000  000 0 000     000     000000000  000  000 0 000  0000000   
+    # 000       000   000  000  0000     000     000   000  000  000  0000       000  
+    #  0000000   0000000   000   000     000     000   000  000  000   000  0000000   
+    
+    @contains: (b, p) ->
+        
+        p.x >= b.x and p.x <= b.x+b.width and p.y >= b.y and p.y <= b.y+b.height
+        
+    @kachelAtPos: (infos, p) ->
+        
+        for k in infos
+            return k if @contains k.bounds, p
+            
     @gapRight: (a, b) -> b.x - (a.x + a.width)
     @gapLeft:  (a, b) -> a.x - (b.x + b.width)
     @gapUp:    (a, b) -> a.y - (b.y + b.height)
     @gapDown:  (a, b) -> b.y - (a.y + a.height)
         
+    # 000   000  00000000  000   0000000   000   000  0000000     0000000   00000000   
+    # 0000  000  000       000  000        000   000  000   000  000   000  000   000  
+    # 000 0 000  0000000   000  000  0000  000000000  0000000    000   000  0000000    
+    # 000  0000  000       000  000   000  000   000  000   000  000   000  000   000  
+    # 000   000  00000000  000   0000000   000   000  0000000     0000000   000   000  
+    
     @isCloseNeighbor: (bounds, info, dir) ->
         
         switch dir
@@ -97,11 +143,33 @@ class Bounds
             when 'up'    then return 0 <= @gapUp(   bounds, info.bounds) < bounds.height
         
     @closeNeighbor: (infos, kachel, dir) ->
+        
         kb = kachel.getBounds()
+        
+        infos.sort (a,b) -> 
+            switch dir
+                when 'left''right' then Math.abs(a.bounds.y - kb.y) - Math.abs(b.bounds.y - kb.y)
+                when 'up''down'    then Math.abs(a.bounds.x - kb.x) - Math.abs(b.bounds.x - kb.x)
+        
         for info in infos
             continue if info.kachel == kachel
-            return info if @isCloseNeighbor kb, info, dir
+            if @isCloseNeighbor kb, info, dir
+                return info 
+
+    @nextNeighbor: (infos, kachel, dir) ->
         
+        if neighbor = @closeNeighbor infos, kachel, dir
+            kb = kachel.getBounds()
+            switch dir
+                when 'left''right' then return neighbor if neighbor.bounds.y == kb.y    
+                when 'up''down'    then return neighbor if neighbor.bounds.x == kb.x    
+                
+    #  0000000  000   000   0000000   00000000   
+    # 000       0000  000  000   000  000   000  
+    # 0000000   000 0 000  000000000  00000000   
+    #      000  000  0000  000   000  000        
+    # 0000000   000   000  000   000  000        
+    
     @snap: (infos, kachel) ->
         
         b = kachel.getBounds()

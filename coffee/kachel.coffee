@@ -47,21 +47,25 @@ class Kachel extends win
       
     onContextMenu: (event) => stopEvent event 
     
-    onDragStart: (drag, event) => @startBounds = @win.getBounds()
+    onDragStart: (drag, event) => 
+    
+        @startBounds = @win.getBounds()
+        post.toMain 'dragStart' @id
         
     onDragMove: (drag, event) => 
         @win.setPosition @startBounds.x + drag.deltaSum.x, @startBounds.y + drag.deltaSum.y
         @win.setSize     @startBounds.width, @startBounds.height
         
     onDragStop: (drag, event) =>
+        
+        post.toMain 'dragStop' @id
         if not drag.deltaSum? or drag.deltaSum.x == 0 == drag.deltaSum.y
             if event.button == 0
                 @onClick event
         else
             post.toMain 'snapKachel' @id
     
-    onSaveBounds: => 
-        prefs.set "bounds▸#{@kachelId}" @win.getBounds()
+    onSaveBounds: => prefs.set "bounds▸#{@kachelId}" @win.getBounds()
         
     onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
     onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
