@@ -6,7 +6,7 @@
 000   000  000   000   0000000  000   000  00000000  0000000    
 ###
 
-{ drag, post, scheme, prefs, slash, klog, kstr, elem, win, os, $ } = require 'kxk'
+{ drag, post, scheme, stopEvent, prefs, slash, klog, kstr, elem, win, os, $ } = require 'kxk'
 
 class Kachel extends win
 
@@ -49,9 +49,9 @@ class Kachel extends win
             
     kachelData: -> html:@kachelId
       
-    onDragStart: (drag, event) => 
-        @startBounds = @win.getBounds()
-        # klog "drag Start #{@id}"
+    onContextMenu: (event) => stopEvent event 
+    
+    onDragStart: (drag, event) => @startBounds = @win.getBounds()
         
     onDragMove: (drag, event) => 
         @win.setPosition @startBounds.x + drag.deltaSum.x, @startBounds.y + drag.deltaSum.y
@@ -59,7 +59,8 @@ class Kachel extends win
         
     onDragStop: (drag, event) =>
         if not drag.deltaSum? or drag.deltaSum.x == 0 == drag.deltaSum.y
-            @onClick event
+            if event.button == 0
+                @onClick event
         else
             post.toMain 'snapKachel' @id
     
@@ -110,6 +111,8 @@ class Kachel extends win
             when 'Increase'     then post.toMain 'kachelSize' 'increase' @id
             when 'Decrease'     then post.toMain 'kachelSize' 'decrease' @id
             when 'Reset'        then post.toMain 'kachelSize' 'reset'    @id
+            when 'DevTools'     then @win.webContents.toggleDevTools()
+            when 'Reload'       then @win.webContents.reloadIgnoringCache()
             when 'Screenshot'   then @screenshot()
             else
                 klog 'action' action

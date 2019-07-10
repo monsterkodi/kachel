@@ -55,9 +55,7 @@ class Folder extends Kachel
         
         fs.readdir trashFolder, (err, files) =>
             return if valid err
-            klog 'checkTrash' files.length 
             if files.length
-                klog 'checkTrash' files
                 @dot = utils.svg clss:'overlay'
                 utils.circle radius:12 clss:'trashDot' svg:@dot
                 @main.appendChild @dot
@@ -65,15 +63,22 @@ class Folder extends Kachel
                 @main.removeChild @dot
                 delete @dot
         
+    onContextMenu: => 
+        
+        if @isTrash
+            klog 'empty trash'
+            emptyTrash = require 'empty-trash'
+            emptyTrash()
+                
     addTrash: (trashFolder) ->
-                     
-        if os.platform() == 'win32'
-            trashFolder = 'shell:RecycleBinFolder'
+            
+        @isTrash = true
+        # if os.platform() == 'win32'
+            # trashFolder = 'shell:RecycleBinFolder'
         
         @checkTrash trashFolder
         
         fs.watch trashFolder, (change, file) =>
-            klog 'watchTrash' change, file, trashFolder
             @checkTrash trashFolder
         
     setIcon: (iconPath) =>

@@ -120,24 +120,5 @@ class Bounds
             
         kachel.setBounds b
         post.toWin kachel.id, 'saveBounds'
-        
-    @arrange: (kacheln) ->
-        
-        klog 'no arrange'
-        return
-        
-        infos = @getInfos kacheln 
-                        
-        for index in [0...infos.length]
-            pinned = infos[0..index]
-            check  = infos[index+1..]
-            pb = pinned[-1].bounds
-            for k in check
-                if @overlap pb, k.bounds
-                    k.bounds.y = pb.y + pb.height
-            
-        for info in infos
-            info.kachel.setBounds info.bounds
-            post.toWin info.kachel.id, 'saveBounds'
-        
+                
 module.exports = Bounds

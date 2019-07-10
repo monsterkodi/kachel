@@ -8,10 +8,16 @@ body {
   left: 0;
   top: 0;
   margin: 0;
+  border-style: solid;
+  border-radius: 4.2px;
+  border-width: 0.5px;
   font-family: "Meslo LG S", "Liberation Mono", "Menlo", "Cousine", "Andale Mono", monospace;
   font-size: 15px;
   overflow: hidden;
   -webkit-user-select: none;
+}
+body:active {
+  margin: 1px;
 }
 #main {
   position: absolute;
