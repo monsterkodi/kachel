@@ -24,22 +24,23 @@ class Default extends Kachel
     onLoad: =>
 
         children = [
-            elem 'img' class:'grid2x2_11' click:@openApp,    src:__dirname + '/../img/app.png'   
-            elem 'img' class:'grid2x2_12' click:@openFolder, src:__dirname + '/../img/folder.png'    
-            elem 'img' class:'grid2x2_21' click:@openInfo,   src:__dirname + '/../img/info.png' 
-            elem 'img' class:'grid2x2_22' click:@openClock,  src:__dirname + '/../img/clock.png'     
+            elem 'img' class:'grid3x3_11' click:@openApp,    src:__dirname + '/../img/app.png'   
+            elem 'img' class:'grid3x3_12' click:@openFolder, src:__dirname + '/../img/folder.png'    
+            elem 'img' class:'grid3x3_13' click:@openFile,   src:__dirname + '/../img/folder.png'    
+            elem 'img' class:'grid3x3_21' click:@openInfo,   src:__dirname + '/../img/info.png' 
+            elem 'img' class:'grid3x3_22' click:@openClock,  src:__dirname + '/../img/clock.png'     
         ]
         
         for child in children
             child.ondragstart = -> false
         
-        grid = elem 'div' class:'grid2x2' children:children
+        grid = elem 'div' class:'grid3x3' children:children
     
         @main.appendChild grid
         
     openClock: => post.toMain 'newKachel' html:'clock'   
-    openInfo:  => post.toMain 'newKachel' html:'sysinfo' winId:@win.id
-    onClick: => log 'onClick'
+    openInfo:  => post.toMain 'newKachel' html:'sysdish' winId:@win.id
+    onClick:   => log 'onClick'
     
     # 0000000    000  00000000   
     # 000   000  000  000   000  
@@ -48,6 +49,7 @@ class Default extends Kachel
     # 0000000    000  000   000  
     
     openFolder: => 
+        
         dir = slash.untilde '~'
         electron.remote.dialog.showOpenDialog
             title: "Open Folder"
@@ -56,6 +58,7 @@ class Default extends Kachel
             , @dirsChosen
             
     dirsChosen: (files) => 
+        
         return if not files
         if not files instanceof Array
             files = [files]
@@ -66,6 +69,34 @@ class Default extends Kachel
         
         file = slash.path file
         post.toMain 'newKachel' html:'folder' data:folder:file
+        
+    # 0000000    000  00000000   
+    # 000   000  000  000   000  
+    # 000   000  000  0000000    
+    # 000   000  000  000   000  
+    # 0000000    000  000   000  
+    
+    openFile: => 
+        
+        dir = slash.untilde '~'
+        electron.remote.dialog.showOpenDialog
+            title: "Open File"
+            defaultPath: dir
+            properties: ['openFile' 'multiSelections']
+            , @filesChosen
+            
+    filesChosen: (files) => 
+        
+        return if not files
+        if not files instanceof Array
+            files = [files]
+        for file in files
+            @fileChosen file
+            
+    fileChosen: (file) ->
+        
+        file = slash.path file
+        post.toMain 'newKachel' html:'file' data:file:file
             
     #  0000000   00000000   00000000   
     # 000   000  000   000  000   000  
@@ -79,7 +110,7 @@ class Default extends Kachel
         electron.remote.dialog.showOpenDialog
             title: "Open Application"
             defaultPath: dir
-            properties: ['openFile', 'multiSelections']
+            properties: ['openFile' 'multiSelections']
             , @appsChosen
             
     appsChosen: (files) => 

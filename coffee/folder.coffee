@@ -107,7 +107,8 @@ class Folder extends Kachel
     setIcon: (iconPath) =>
         
         return if not iconPath
-        img = elem 'img' class:'applicon' click:@openApp, src:slash.fileUrl iconPath
+        # img = elem 'img' class:'applicon' click:@openApp, src:slash.fileUrl iconPath
+        img = elem 'img' class:'applicon' src:slash.fileUrl iconPath
         img.ondragstart = -> false
         @main.appendChild img
         

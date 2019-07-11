@@ -20,6 +20,7 @@ focusKachel = null
 mouseTimer  = null
 mousePos    = kpos 0,0
 infos       = []
+providers   = {}
 
 updateInfos = -> infos = Bounds.getInfos kacheln()
 
@@ -342,11 +343,14 @@ neighborWin = (winId, direction) ->
         a-b
     ks[0]
     
-post.on 'requestData' (provider) ->
+post.on 'requestData' (provider, wid) ->
     
-    klog "requestData #{provider}"
+    if not providers[provider]
+        providers[provider] = new (require "./#{provider}")
+        
+    providers[provider].addReceiver wid
     
 post.onGet 'getData' (provider) ->
     
-    klog "getData #{provider}"
+    providers[provider]?.getData()
     
