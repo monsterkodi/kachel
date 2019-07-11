@@ -26,9 +26,10 @@ class Default extends Kachel
         children = [
             elem 'img' class:'grid3x3_11' click:@openApp,    src:__dirname + '/../img/app.png'   
             elem 'img' class:'grid3x3_12' click:@openFolder, src:__dirname + '/../img/folder.png'    
-            elem 'img' class:'grid3x3_13' click:@openFile,   src:__dirname + '/../img/folder.png'    
-            elem 'img' class:'grid3x3_21' click:@openInfo,   src:__dirname + '/../img/info.png' 
-            elem 'img' class:'grid3x3_22' click:@openClock,  src:__dirname + '/../img/clock.png'     
+            # elem 'img' class:'grid3x3_13' click:@openFile,   src:__dirname + '/../img/folder.png'    
+            elem 'img' class:'grid3x3_21' click:@openDish,   src:__dirname + '/../img/info.png' 
+            elem 'img' class:'grid3x3_22' click:@openInfo,   src:__dirname + '/../img/info.png' 
+            elem 'img' class:'grid3x3_23' click:@openClock,  src:__dirname + '/../img/clock.png'     
         ]
         
         for child in children
@@ -39,7 +40,8 @@ class Default extends Kachel
         @main.appendChild grid
         
     openClock: => post.toMain 'newKachel' html:'clock'   
-    openInfo:  => post.toMain 'newKachel' html:'sysdish' winId:@win.id
+    openDish:  => post.toMain 'newKachel' html:'sysdish' winId:@win.id
+    openInfo:  => post.toMain 'newKachel' html:'sysinfo' winId:@win.id
     onClick:   => log 'onClick'
     
     # 0000000    000  00000000   

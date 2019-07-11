@@ -11,6 +11,10 @@
 electron = require 'electron'
 
 class Bounds
+
+    @setBounds: (kachel, b) ->
+        kachel.setBounds b
+        post.toWin kachel.id, 'saveBounds'
     
     @sw: -> electron.screen.getPrimaryDisplay().workAreaSize.width
     @sh: -> electron.screen.getPrimaryDisplay().workAreaSize.height
@@ -153,7 +157,6 @@ class Bounds
         kb = kachel.getBounds()
         
         infos.sort (a,b) -> 
-            return 0 if not a or not b
             switch dir
                 when 'left''right' then Math.abs(a.bounds.y - kb.y) - Math.abs(b.bounds.y - kb.y)
                 when 'up''down'    then Math.abs(a.bounds.x - kb.x) - Math.abs(b.bounds.x - kb.x)
@@ -177,9 +180,9 @@ class Bounds
     #      000  000  0000  000   000  000        
     # 0000000   000   000  000   000  000        
     
-    @snap: (infos, kachel) ->
+    @snap: (infos, kachel, b) ->
         
-        b = kachel.getBounds()
+        b ?= kachel.getBounds()
         
         horz = false
         vert = false
@@ -218,8 +221,6 @@ class Bounds
                 b.x = n.bounds.x - b.width
             else if n = @closeNeighbor infos, kachel, 'left'
                 b.x = n.bounds.x + n.bounds.width
-            
-        kachel.setBounds b
-        post.toWin kachel.id, 'saveBounds'
+        b
                 
 module.exports = Bounds

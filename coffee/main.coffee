@@ -24,6 +24,10 @@ providers   = {}
 
 updateInfos = -> infos = Bounds.getInfos kacheln()
 
+setKachelBounds = (kachel, b) ->
+    Bounds.setBounds kachel, b
+    updateInfos()
+
 winEvents = (win) ->
     win.on 'focus'  onWinFocus
     win.on 'blur'   onWinBlur
@@ -141,8 +145,8 @@ post.on 'dragStop'  (wid) ->
 post.on 'snapKachel' (wid) -> 
 
     updateInfos()
-    Bounds.snap infos, winWithId wid
-    updateInfos()
+    kachel = winWithId wid
+    setKachelBounds kachel, Bounds.snap infos, kachel
 
 # 00     00   0000000   000   000  00000000  
 # 000   000  000   000  000   000  000       
@@ -168,8 +172,7 @@ post.on 'kachelMove' (dir, wid) ->
             g = f b, o
             if g > 0
                 nb[d] = b[d] + s * g
-                kachel.setBounds nb
-                updateInfos()
+                setKachelBounds kachel, nb
                 true
                 
         r = switch dir 
@@ -181,24 +184,19 @@ post.on 'kachelMove' (dir, wid) ->
         
     if neighbor = Bounds.nextNeighbor infos, kachel, dir
         if neighbor.bounds.width == b.width
-            kachel.setBounds neighbor.bounds
-            neighbor.kachel.setBounds b
+            Bounds.setBounds kachel, neighbor.bounds
+            Bounds.setBounds neighbor.kachel, b
             updateInfos()
             return
         
-    if Bounds.isOnScreen nb
-        kachel.setBounds nb
-    else    
-        kachel.setBounds b
-    updateInfos()
+    setKachelBounds kachel, Bounds.isOnScreen(nb) and nb or b
 
 post.on 'kachelBounds' (wid, kachelId) ->
     
     bounds = prefs.get "bounds▸#{kachelId}"
     if bounds?
-        winWithId(wid).setBounds bounds
-        updateInfos()
-    
+        setKachelBounds winWithId(wid), bounds
+        
 #  0000000  000  0000000  00000000  
 # 000       000     000   000       
 # 0000000   000    000    0000000   
@@ -207,32 +205,21 @@ post.on 'kachelBounds' (wid, kachelId) ->
 
 post.on 'kachelSize' (action, wid) ->
     
-    if wid
-        size = 0
-        while kachelSizes[size] < winWithId(wid).getBounds().width
-            size++
-    else
-        size = kachelSize
+    size = 0
+    while kachelSizes[size] < winWithId(wid).getBounds().width
+        size++
     
     switch action
-        when 'increase' then size += 1
-        when 'decrease' then size -= 1
-        when 'reset'    then size  = 1
+        when 'increase' then size += 1; return if size > kachelSizes.length-1
+        when 'decrease' then size -= 1; return if size < 0
+        when 'reset'    then return if size == 1; size = 1
    
-    size = clamp 0 kachelSizes.length-1 size
-        
-    if wid
-        k = [winWithId wid]
-    else
-        k = kacheln()
-        kachelSize = size
+    w = winWithId wid
     
-    for w in k
-        b = w.getBounds()
-        b.width  = kachelSizes[size]
-        b.height = kachelSizes[size]
-        w.setBounds b
-        Bounds.snap kacheln(), w
+    b = w.getBounds()
+    b.width  = kachelSizes[size]
+    b.height = kachelSizes[size]
+    setKachelBounds w, Bounds.snap infos, w, b
         
 # 00000000    0000000   000   0000000  00000000
 # 000   000  000   000  000  000       000     

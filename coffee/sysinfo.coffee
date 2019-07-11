@@ -6,7 +6,7 @@
 0000000      000     0000000   000  000   000  000        0000000   
 ###
 
-{ elem, _ } = require 'kxk'
+{ elem, post, elem, empty, klog, _ } = require 'kxk'
 
 utils   = require './utils'
 Kachel  = require './kachel'
@@ -15,110 +15,97 @@ class Sysinfo extends Kachel
         
     @: (@kachelId:'sysinfo') -> 
         
-        @rx_max = 0
-        @tx_max = 0
-
-        @r_max = 0
-        @w_max = 0
-
-        @hist_length = 100
-        
-        @load_hist_usr = []
-        @load_hist_sys = []
-        
-        @rx_hist = []
-        @tx_hist = []
-
-        @r_hist = []
-        @w_hist = []
-        
         super
+        
+        @history = 
+            net: []
+            dsk: []
+            cpu: []
+        @max = 
+            net: [0 0]
+            dsk: [0 0]
+            cpu: [0 0]
+            
+        @colors =
+            net: [[  0 100   0] [  0  70  0]] 
+            dsk: [[100 100 100] [ 70  70 70]] 
+            cpu: [[255 255   0] [255 100  0]] 
+        @tops = 
+            dsk: '0%'
+            net: '33%'
+            cpu: '66%'
         
         post.toMain 'requestData' 'sysdata' @id
         post.on 'data' @onData
+        
+    # 0000000     0000000   000   000  000   000  0000000     0000000  
+    # 000   000  000   000  000   000  0000  000  000   000  000       
+    # 0000000    000   000  000   000  000 0 000  000   000  0000000   
+    # 000   000  000   000  000   000  000  0000  000   000       000  
+    # 0000000     0000000    0000000   000   000  0000000    0000000   
     
-    onData: (data) ->
+    onBounds: ->
         
         @main.innerHTML = ''
-        svg = utils.svg clss:'clock'
-        @main.appendChild svg
         
-        # 000   0000000   
-        # 000  000   000  
-        # 000  000   000  
-        # 000  000   000  
-        # 000   0000000   
+        br = @main.getBoundingClientRect()
+        w = parseInt br.width
+        h = parseInt br.height/3
         
-        if data.disksIO?
+        @width  = w*2
+        @height = h*2
         
-            r_sec = data.disksIO.rIO_sec
-            w_sec = data.disksIO.wIO_sec
+        @canvas = {}            
+        for n in ['dsk' 'net' 'cpu']
+            canvas = elem 'canvas' class:"histCanvas" width:@width-1 height:@height
+            x = parseInt -@width/4
+            y = parseInt  -@height/4
+            canvas.style.transform = "translate3d(#{x}px, #{y}px, 0px) scale3d(0.5, 0.5, 1)"
+            canvas.style.top = @tops[n]
+            @main.appendChild canvas
+            @canvas[n] = canvas
             
-            @r_max = Math.max @r_max, r_sec
-            @w_max = Math.max @w_max, w_sec
-            
-            @r_hist.push r_sec
-            @w_hist.push w_sec
-            
-            while @r_hist.length > @hist_length
-                @r_hist.shift()
-            while @w_hist.length > @hist_length
-                @w_hist.shift()
-            
-            pie = utils.circle clss:'sysinfo_disk_bgr' svg:svg
-            utils.pie svg:pie, clss:'sysinfo_disk_read'  angle:180*r_sec/@r_max
-            utils.pie svg:pie, clss:'sysinfo_disk_write' angle:180*w_sec/@w_max, start:180
-        
-        # 000   000  00000000  000000000  
-        # 0000  000  000          000     
-        # 000 0 000  0000000      000     
-        # 000  0000  000          000     
-        # 000   000  00000000     000     
-        
-        rx_sec = data.networkStats[0].rx_sec
-        tx_sec = data.networkStats[0].tx_sec
-        
-        @rx_max = Math.max @rx_max, rx_sec
-        @tx_max = Math.max @tx_max, tx_sec
-        
-        @tx_hist.push tx_sec
-        @rx_hist.push rx_sec
-        
-        while @tx_hist.length > @hist_length
-            @tx_hist.shift()
-        while @r_hist.length > @hist_length
-            @r_hist.shift()
+    # 0000000     0000000   000000000   0000000   
+    # 000   000  000   000     000     000   000  
+    # 000   000  000000000     000     000000000  
+    # 000   000  000   000     000     000   000  
+    # 0000000    000   000     000     000   000  
     
-        pie = utils.circle radius:47 clss:'sysinfo_net_bgr' svg:svg
-        utils.pie svg:pie, radius:47 clss:'sysinfo_net_recv' angle:180*rx_sec/@rx_max
-        utils.pie svg:pie, radius:47 clss:'sysinfo_net_send' angle:180*tx_sec/@tx_max, start:180
+    onData: (data) =>
+        
+        for n in ['dsk' 'net' 'cpu']
+            hist = @history[n]
+            switch n
+                when 'dsk' then if data.disksIO? 
+                                hist.push [data.disksIO.rIO_sec, data.disksIO.wIO_sec]
+                when 'net' then hist.push [data.networkStats[0].rx_sec, data.networkStats[0].tx_sec]
+                when 'cpu' then hist.push [data.currentLoad.currentload/100, data.currentLoad.currentload_user/100]
+                
+            continue if empty hist
             
-        # 000       0000000    0000000   0000000    
-        # 000      000   000  000   000  000   000  
-        # 000      000   000  000000000  000   000  
-        # 000      000   000  000   000  000   000  
-        # 0000000   0000000   000   000  0000000    
-        
-        @load_hist_sys.push data.currentLoad.currentload/100
-        @load_hist_usr.push data.currentLoad.currentload_user/100
-
-        while @load_hist_sys.length > @hist_length
-            @load_hist_sys.shift()
-        while @load_hist_usr.length > @hist_length
-            @load_hist_usr.shift()
-        
-        pie = utils.circle radius:44 clss:'sysinfo_load_bgr' svg:svg
-        utils.pie svg:pie, radius:44 clss:'sysinfo_load_sys' angle:360*data.currentLoad.currentload/100
-        utils.pie svg:pie, radius:44 clss:'sysinfo_load_usr' angle:360*data.currentLoad.currentload_user/100
-            
-        # 00     00  00000000  00     00  
-        # 000   000  000       000   000  
-        # 000000000  0000000   000000000  
-        # 000 0 000  000       000 0 000  
-        # 000   000  00000000  000   000  
-        
-        pie = utils.circle radius:18 clss:'sysinfo_mem_bgr' svg:svg
-        utils.pie svg:pie, radius:18 clss:'sysinfo_mem_used'   angle:360*data.mem.used/data.mem.total
-        utils.pie svg:pie, radius:18 clss:'sysinfo_mem_active' angle:360*data.mem.active/data.mem.total
-                                
+            hist.shift() while hist.length > @width
+                
+            canvas = @canvas[n]
+            canvas.height = canvas.height
+            ctx = canvas.getContext '2d'
+            max = [@max[n][0], @max[n][1]]
+            for m in [0,1]
+                ctx.fillStyle = "rgb(#{@colors[n][m][0]}, #{@colors[n][m][1]}, #{@colors[n][m][2]})"
+                for i in [0...hist.length]
+                    if n == 'cpu'
+                        if m
+                            h = @height * hist[i][1]
+                            l = @height * hist[i][0]
+                            ctx.fillRect @width-hist.length+i, @height-l, 2, h
+                        else
+                            h = @height * (hist[i][0]-hist[i][1])
+                            ctx.fillRect @width-hist.length+i, @height-h, 2, h
+                    else
+                        @max[n][m] = Math.max hist[i][m], @max[n][m]
+                        h = @height/2 * hist[i][m] / max[m]
+                        if m 
+                            ctx.fillRect @width-hist.length+i, @height/2-h, 2, h
+                        else
+                            ctx.fillRect @width-hist.length+i, @height/2, 2, h
+                        
 module.exports = Sysinfo

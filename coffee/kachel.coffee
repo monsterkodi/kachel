@@ -71,7 +71,9 @@ class Kachel extends win
         else
             post.toMain 'snapKachel' @id
     
-    onSaveBounds: => prefs.set "bounds▸#{@kachelId}" @win.getBounds()
+    onSaveBounds: => 
+        prefs.set "bounds▸#{@kachelId}" @win.getBounds()
+        @onBounds()
         
     onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
     onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
@@ -87,13 +89,14 @@ class Kachel extends win
               
         post.toMain 'kachelBounds' @id, @kachelId
     
-    onLoad:  -> # to be overridden in subclasses
-    onMove:  -> # to be overridden in subclasses
-    onClick: -> # to be overridden in subclasses
-    onFocus: -> # to be overridden in subclasses
-    onBlur:  -> # to be overridden in subclasses
-    onMove:  -> # to be overridden in subclasses
-    onClose: -> # to be overridden in subclasses
+    onLoad:   -> # to be overridden in subclasses
+    onMove:   -> # to be overridden in subclasses
+    onClick:  -> # to be overridden in subclasses
+    onFocus:  -> # to be overridden in subclasses
+    onBlur:   -> # to be overridden in subclasses
+    onMove:   -> # to be overridden in subclasses
+    onClose:  -> # to be overridden in subclasses
+    onBounds: -> # to be overridden in subclasses
         
     # 00     00  00000000  000   000  000   000
     # 000   000  000       0000  000  000   000
