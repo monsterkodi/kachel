@@ -17,6 +17,7 @@ kachelSize  = 1
 dragging    = false
 mainWin     = null
 focusKachel = null
+hoverKachel = null
 mouseTimer  = null
 mousePos    = kpos 0,0
 infos       = []
@@ -82,11 +83,14 @@ KachelApp = new app
                 if not Bounds.contains infos.kachelBounds, mousePos
                     return
             if k = Bounds.kachelAtPos infos, mousePos
-                if focusKachel
-                    if focusKachel.id != k.kachel.id
-                        k.kachel.focus()
-                else
-                    k.kachel.focus()
+                if not hoverKachel or hoverKachel != k.kachel.id
+                    post.toWin hoverKachel, 'leave' if hoverKachel
+                    hoverKachel = k.kachel.id
+                    if focusKachel?.isFocused() and hoverKachel != focusKachel.id
+                        focusKachel = winWithId hoverKachel
+                        focusKachel.focus()
+                    else
+                        post.toWin hoverKachel, 'hover'
                 
         mouseTimer = setInterval checkMouse, 50
 

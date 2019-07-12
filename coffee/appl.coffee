@@ -14,9 +14,7 @@ class Appl extends Kachel
         
     @: (@kachelId:'appl') -> super
         
-    onClick: (event) -> 
-        klog 'open' slash.unslash @appPath 
-        open slash.unslash @appPath 
+    onClick: (event) -> open slash.unslash @appPath 
     
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
@@ -31,8 +29,7 @@ class Appl extends Kachel
         prefs.set "kacheln▸#{@kachelId}▸data▸app" @appPath
         prefs.set "kacheln▸#{@kachelId}▸html" 'appl'
     
-        iconDir = slash.join slash.userData(), 'icons'
-        fs.mkdir iconDir, recursive:true
+        iconDir = slash.join slash.userData(), 'icons'        
         appName = slash.base @appPath
         iconPath = "#{iconDir}/#{appName}.png"
         if not slash.isFile iconPath
@@ -54,7 +51,6 @@ class Appl extends Kachel
     setIcon: (iconPath) =>
         
         return if not iconPath
-        # img = elem 'img' class:'applicon' click:@openApp, src:slash.fileUrl iconPath
         img = elem 'img' class:'applicon' src:slash.fileUrl iconPath
         img.ondragstart = -> false
         @main.appendChild img
@@ -67,6 +63,7 @@ class Appl extends Kachel
     
     exeIcon: (exePath, outDir, cb) ->
 
+        fs.mkdir outDir, recursive:true
         pngPath = slash.resolve slash.join outDir, slash.base(exePath) + ".png"
         any2Ico = slash.path __dirname + '/../bin/Quick_Any2Ico.exe'
         
@@ -84,7 +81,6 @@ class Appl extends Kachel
                 extractIcon = require 'win-icon-extractor'
                 extractIcon(exePath).then (result) ->
                     if result
-                        klog 'extractIcon result' result.length
                         data = result.slice 'data:image/png;base64,'.length
                         fs.writeFile pngPath, data, {encoding: 'base64'}, (err) ->
                             if not err?
@@ -107,6 +103,7 @@ class Appl extends Kachel
     
     appIcon: (appPath, outDir) ->
         
+        fs.mkdir outDir, recursive:true
         size = 110
         conPath = slash.join appPath, 'Contents'
         try

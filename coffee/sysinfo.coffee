@@ -96,17 +96,16 @@ class Sysinfo extends Kachel
                         if m
                             h = @height * (hist[i][0]-hist[i][1])
                             l = @height * hist[i][0]
-                            ctx.fillRect @width-hist.length+i, @height-l, 2, h
+                            ctx.fillRect @width-hist.length+i, @height-l, 1, h
                         else
-                            # h = @height * (hist[i][0]-hist[i][1])
                             h = @height * hist[i][1]
-                            ctx.fillRect @width-hist.length+i, @height-h, 2, h
+                            ctx.fillRect @width-hist.length+i, @height-h, 1, h
                     else
                         @max[n][m] = Math.max hist[i][m], @max[n][m]
                         h = @height/2 * hist[i][m] / max[m]
                         if m 
-                            ctx.fillRect @width-hist.length+i, @height/2-h, 2, h
+                            ctx.fillRect @width-hist.length+i, @height/2-h, 1, h
                         else
-                            ctx.fillRect @width-hist.length+i, @height/2, 2, h
+                            ctx.fillRect @width-hist.length+i, @height/2, 1, h
                         
 module.exports = Sysinfo

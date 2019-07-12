@@ -126,6 +126,9 @@ class Default extends Kachel
     appChosen: (file) ->
         
         file = slash.removeDrive slash.path file
-        post.toMain 'newKachel' html:'appl' data:app:file
+        if slash.file(file) == 'konrad.app'
+            post.toMain 'newKachel' html:'konrad' data:app:file
+        else
+            post.toMain 'newKachel' html:'appl' data:app:file
 
 module.exports = Default

@@ -35,6 +35,8 @@ class Kachel extends win
         post.on 'initData'   @onInitData
         post.on 'saveBounds' @onSaveBounds
         post.on 'combo'      @onCombo
+        post.on 'hover'      @onHover
+        post.on 'leave'      @onLeave
         post.on 'toggleScheme' -> scheme.toggle()
         
         if @kachelId != 'main'
@@ -74,6 +76,9 @@ class Kachel extends win
     onSaveBounds: => 
         prefs.set "bounds▸#{@kachelId}" @win.getBounds()
         @onBounds()
+        
+    onHover: (event) => document.body.classList.add 'kachelFocus'
+    onLeave: (event) => document.body.classList.remove 'kachelFocus'
         
     onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
     onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
