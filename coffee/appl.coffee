@@ -104,7 +104,7 @@ class Appl extends Kachel
     appIcon: (appPath, outDir) ->
         
         fs.mkdir outDir, recursive:true
-        size = 110
+        size = 512
         conPath = slash.join appPath, 'Contents'
         try
             infoPath = slash.join conPath, 'Info.plist'
