@@ -94,11 +94,12 @@ class Sysinfo extends Kachel
                 for i in [0...hist.length]
                     if n == 'cpu'
                         if m
-                            h = @height * hist[i][1]
+                            h = @height * (hist[i][0]-hist[i][1])
                             l = @height * hist[i][0]
                             ctx.fillRect @width-hist.length+i, @height-l, 2, h
                         else
-                            h = @height * (hist[i][0]-hist[i][1])
+                            # h = @height * (hist[i][0]-hist[i][1])
+                            h = @height * hist[i][1]
                             ctx.fillRect @width-hist.length+i, @height-h, 2, h
                     else
                         @max[n][m] = Math.max hist[i][m], @max[n][m]

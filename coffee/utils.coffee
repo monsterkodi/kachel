@@ -39,6 +39,10 @@ class utils
         
     @pie: (radius:50, cx:0, cy:0, angle:0, start:0, clss:, svg:) ->
 
+        if (angle-start)%360 == 0
+            @circle radius:radius, cx:cx, cy:cy, svg:svg
+            return
+        
         start = clamp 0, 360, start%360
         angle = clamp 0, 360, (start+angle)%360
         
