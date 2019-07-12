@@ -95,8 +95,7 @@ class Folder extends Kachel
         
         @checkTrash trashFolder
         
-        fs.watch trashFolder, (change, file) =>
-            @checkTrash trashFolder
+        fs.watch trashFolder, (change, file) => @checkTrash trashFolder
         
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  

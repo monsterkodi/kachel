@@ -29,19 +29,32 @@ class Appl extends Kachel
         prefs.set "kacheln▸#{@kachelId}▸data▸app" @appPath
         prefs.set "kacheln▸#{@kachelId}▸html" 'appl'
     
-        iconDir = slash.join slash.userData(), 'icons'        
+        iconDir = slash.join slash.userData(), 'icons'
         appName = slash.base @appPath
         iconPath = "#{iconDir}/#{appName}.png"
         if not slash.isFile iconPath
-            if slash.win()
-                @exeIcon data.app, iconDir, @setIcon
-            else
-                @setIcon @appIcon data.app, iconDir
+            @refreshIcon()
         else
             @setIcon iconPath
-                
+           
+        base = slash.base @appPath
+        if base in ['Calendar' 'Mail']
+            minutes = {Calendar:60*24 Mail:5}[base]
+            klog 'refresh icon!' minutes
+            @refreshIcon()
+            setInterval @refreshIcon, 1000*60*minutes
+            
         super
-                
+           
+    refreshIcon: =>
+        
+        iconDir = slash.join slash.userData(), 'icons'
+        
+        if slash.win()
+            @exeIcon @appPath, iconDir, @setIcon
+        else
+            @setIcon @appIcon @appPath, iconDir
+        
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  
     # 000  000       000   000  000 0 000  
@@ -53,6 +66,7 @@ class Appl extends Kachel
         return if not iconPath
         img = elem 'img' class:'applicon' src:slash.fileUrl iconPath
         img.ondragstart = -> false
+        @main.innerHTML = ''
         @main.appendChild img
                    
     # 00000000  000   000  00000000  

@@ -64,7 +64,7 @@ KachelApp = new app
         winEvents win
         
         for kachelId,kachelData of prefs.get 'kacheln' {}
-            if kachelId not in ['appl' 'folder']
+            if kachelId not in ['appl' 'folder' 'file' 'konrad']
                 post.emit 'newKachel' kachelData
 
         # 00     00   0000000   000   000   0000000  00000000  
