@@ -14,7 +14,9 @@ class Appl extends Kachel
         
     @: (@kachelId:'appl') -> super
         
-    onClick: (event) -> open slash.unslash @appPath 
+    onClick: (event) -> 
+        klog 'open app' slash.unslash @appPath 
+        open slash.unslash @appPath 
     
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
@@ -38,9 +40,8 @@ class Appl extends Kachel
             @setIcon iconPath
            
         base = slash.base @appPath
-        if base in ['Calendar' 'Mail']
-            minutes = {Calendar:60*24 Mail:5}[base]
-            klog 'refresh icon!' minutes
+        if base in ['Calendar']
+            minutes = {Calendar:60}[base]
             @refreshIcon()
             setInterval @refreshIcon, 1000*60*minutes
             
@@ -54,7 +55,15 @@ class Appl extends Kachel
             @exeIcon @appPath, iconDir, @setIcon
         else
             @setIcon @appIcon @appPath, iconDir
-        
+
+        base = slash.base @appPath
+        if base in ['Calendar']
+            time = new Date()
+            day = elem class:'calendarDay' text:time.getDate()
+            @main.appendChild day
+            mth = elem class:'calendarMonth' text:['JAN' 'FEB' 'MAR' 'APR' 'MAY' 'JUN' 'JUL' 'AUG' 'SEP' 'OCT' 'NOV' 'DEC'][time.getMonth()]
+            @main.appendChild mth
+            
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  
     # 000  000       000   000  000 0 000  

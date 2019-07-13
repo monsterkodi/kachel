@@ -8,6 +8,8 @@
 
 { drag, post, scheme, stopEvent, prefs, slash, klog, kstr, elem, win, os, $ } = require 'kxk'
 
+kachelSizes = [72,108,144,216]
+
 class Kachel extends win
 
     @: (@kachelId:'kachel') ->
@@ -47,6 +49,12 @@ class Kachel extends win
                                 
     kachelData: -> html:@kachelId
       
+    kachelSize: ->
+        size = 0        
+        while kachelSizes[size] < @win.getBounds().width
+            size++
+        size
+    
     onContextMenu: (event) => stopEvent event 
     
     # 0000000    00000000    0000000    0000000   
@@ -61,6 +69,7 @@ class Kachel extends win
         post.toMain 'dragStart' @id
         
     onDragMove: (drag, event) => 
+        
         @win.setPosition @startBounds.x + drag.deltaSum.x, @startBounds.y + drag.deltaSum.y
         @win.setSize     @startBounds.width, @startBounds.height
         
@@ -73,7 +82,12 @@ class Kachel extends win
         else
             post.toMain 'snapKachel' @id
     
-    onSaveBounds: => 
+    onSaveBounds: =>
+        
+        for i in [1..4]
+            document.body.classList.remove "kachelSize#{i}"
+        document.body.classList.add    "kachelSize#{@kachelSize()+1}"
+        
         prefs.set "bounds▸#{@kachelId}" @win.getBounds()
         @onBounds()
         
