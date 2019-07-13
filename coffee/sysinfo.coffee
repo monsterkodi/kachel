@@ -6,7 +6,7 @@
 0000000      000     0000000   000  000   000  000        0000000   
 ###
 
-{ elem, post, elem, empty, klog, _ } = require 'kxk'
+{ elem, post, prefs, empty, klog, _ } = require 'kxk'
 
 utils   = require './utils'
 Kachel  = require './kachel'
@@ -22,14 +22,14 @@ class Sysinfo extends Kachel
             dsk: []
             cpu: []
         @max = 
-            net: [0 0]
-            dsk: [0 0]
-            cpu: [0 0]
+            net: [prefs.get('sysinfo▸net0' 100), prefs.get('sysinfo▸net1' 100)]
+            dsk: [prefs.get('sysinfo▸dsk0' 100), prefs.get('sysinfo▸dsk1' 100)]
+            cpu: [1 1]
             
         @colors =
-            net: [[  0 100   0] [  0  70  0]] 
-            dsk: [[100 100 100] [ 70  70 70]] 
-            cpu: [[255 255   0] [255 100  0]] 
+            dsk: [[128 128 255] [ 64  64 255]] 
+            net: [[  0 150   0] [  0 255   0]] 
+            cpu: [[255 255   0] [255 100   0]] 
         @tops = 
             dsk: '0%'
             net: '33%'
@@ -99,13 +99,16 @@ class Sysinfo extends Kachel
                             ctx.fillRect @width-hist.length+i, @height-l, 1, h
                         else
                             h = @height * hist[i][1]
-                            ctx.fillRect @width-hist.length+i, @height-h, 1, h
+                            ctx.fillRect @width-hist.length+i, @height-h, 2, h
                     else
                         @max[n][m] = Math.max hist[i][m], @max[n][m]
                         h = @height/2 * hist[i][m] / max[m]
                         if m 
-                            ctx.fillRect @width-hist.length+i, @height/2-h, 1, h
+                            ctx.fillRect @width-hist.length+i, @height/2-h, 2, h
                         else
-                            ctx.fillRect @width-hist.length+i, @height/2, 1, h
+                            ctx.fillRect @width-hist.length+i, @height/2, 2, h
+                            
+                if @max[n][m] > max[m]
+                    prefs.set "sysinfo▸#{n}#{m}" parseInt @max[n][m]
                         
 module.exports = Sysinfo

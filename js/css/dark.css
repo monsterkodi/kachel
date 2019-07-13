@@ -23,41 +23,41 @@ body:active {
 #main {
   background-color: #202020;
 }
-.sysinfo_mem_bgr {
+.sysdish_mem_bgr {
   fill: #2b2b2b;
 }
-.sysinfo_mem_used {
+.sysdish_mem_used {
   fill: #22f;
 }
-.sysinfo_mem_active {
+.sysdish_mem_active {
   fill: #88f;
 }
-.sysinfo_load_bgr {
+.sysdish_load_bgr {
   fill: #202020;
 }
-.sysinfo_load_sys {
+.sysdish_load_sys {
   fill: #f80;
 }
-.sysinfo_load_usr {
+.sysdish_load_usr {
   fill: #ff0;
 }
-.sysinfo_net_bgr {
+.sysdish_net_bgr {
   fill: #222;
 }
-.sysinfo_net_recv {
+.sysdish_net_recv {
   fill: #080;
 }
-.sysinfo_net_send {
+.sysdish_net_send {
   fill: #0a0;
 }
-.sysinfo_disk_bgr {
+.sysdish_disk_bgr {
   fill: #242424;
 }
-.sysinfo_disk_read {
-  fill: #666;
+.sysdish_disk_read {
+  fill: #88f;
 }
-.sysinfo_disk_write {
-  fill: #444;
+.sysdish_disk_write {
+  fill: #22f;
 }
 .face {
   stroke: #333;
@@ -67,13 +67,13 @@ body:active {
   stroke: #333;
 }
 .hour {
-  stroke: #888;
+  stroke: #f80;
 }
 .minute {
-  stroke: #555;
+  stroke: #f00;
 }
 .second {
-  stroke: #333;
+  stroke: #08f;
 }
 .menuItem {
   color: #666;
