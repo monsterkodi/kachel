@@ -5,6 +5,9 @@ body {
   border-right-color: #181818;
   border-bottom-color: #181818;
 }
+body.mojave {
+  border-top-color: #111;
+}
 body.kachelFocus {
   border-top-color: #555;
   border-left-color: #555;

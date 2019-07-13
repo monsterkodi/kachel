@@ -46,6 +46,10 @@ class Kachel extends win
             prefs.set "kacheln▸#{@kachelId}" @kachelData()
         
         post.toMain 'kachelBounds' @id, @kachelId
+        
+        if os.platform() == 'darwin'
+            if parseInt(os.release().split('.')[0]) >= 18
+                document.body.classList.add 'mojave'
                                 
     kachelData: -> html:@kachelId
       
