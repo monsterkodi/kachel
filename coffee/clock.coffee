@@ -6,15 +6,26 @@
  0000000  0000000   0000000    0000000  000   000  
 ###
 
-{ elem, klog, _ } = require 'kxk'
+{ post, elem, klog, _ } = require 'kxk'
 
 utils   = require './utils'
 Kachel  = require './kachel'
 
 class Clock extends Kachel
         
-    @: (@kachelId:'clock') -> super
+    @: (@kachelId:'clock') -> 
     
+        super
+        
+        post.toMain 'requestData' 'clockdata' @id
+        post.on 'data' @onData
+    
+    onData: (data) => 
+        
+        @hour  .setAttribute 'transform' "rotate(#{30 * data.hour + data.minute / 2})"
+        @minute.setAttribute 'transform' "rotate(#{6 * data.minute + data.second / 10})"
+        @second.setAttribute 'transform' "rotate(#{6 * data.second})"
+        
     # 000       0000000    0000000   0000000    
     # 000      000   000  000   000  000   000  
     # 000      000   000  000000000  000   000  
@@ -35,25 +46,4 @@ class Clock extends Kachel
         @minute = utils.append face, 'line' y1:0 y2:-42 class:'minute'
         @second = utils.append face, 'line' y1:0 y2:-42 class:'second'
                             
-        @onTick()
-        setInterval @onTick, 1000
-        
-    # 000000000  000   0000000  000   000  
-    #    000     000  000       000  000   
-    #    000     000  000       0000000    
-    #    000     000  000       000  000   
-    #    000     000   0000000  000   000  
-    
-    onTick: =>
-        
-        time = new Date()
-        
-        hours   = time.getHours()
-        minutes = time.getMinutes()
-        seconds = time.getSeconds()
-        
-        @hour  .setAttribute 'transform' "rotate(#{30 * hours + minutes / 2})"
-        @minute.setAttribute 'transform' "rotate(#{6 * minutes + seconds / 10})"
-        @second.setAttribute 'transform' "rotate(#{6 * seconds})"
-        
 module.exports = Clock

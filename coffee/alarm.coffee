@@ -6,14 +6,25 @@
 000   000  0000000  000   000  000   000  000   000    
 ###
 
-{ elem, klog, kstr, _ } = require 'kxk'
+{ post, elem, klog, kstr, _ } = require 'kxk'
 
 utils   = require './utils'
 Kachel  = require './kachel'
 
 class Alarm extends Kachel
         
-    @: (@kachelId:'alarm') -> super
+    @: (@kachelId:'alarm') -> 
+    
+        super
+        
+        post.toMain 'requestData' 'clockdata' @id
+        post.on 'data' @onData
+        
+    onData: (data) => 
+        
+        @hour  .innerHTML = data.str.hour
+        @minute.innerHTML = data.str.minute
+        @second.innerHTML = data.str.second
     
     # 000       0000000    0000000   0000000    
     # 000      000   000  000   000  000   000  
@@ -28,26 +39,5 @@ class Alarm extends Kachel
         @second = elem class:'alarm-second'
              
         @main.appendChild elem class:'alarm-digits' children: [@hour, @minute, @second]
-        
-        @onTick()
-        setInterval @onTick, 1000
-        
-    # 000000000  000   0000000  000   000  
-    #    000     000  000       000  000   
-    #    000     000  000       0000000    
-    #    000     000  000       000  000   
-    #    000     000   0000000  000   000  
-    
-    onTick: =>
-        
-        time = new Date()
-        
-        hours   = time.getHours()
-        minutes = time.getMinutes()
-        seconds = time.getSeconds()
-        
-        @hour  .innerHTML = kstr.lpad hours,   2 '0'
-        @minute.innerHTML = kstr.lpad minutes, 2 '0'
-        @second.innerHTML = kstr.lpad seconds, 2 '0'
         
 module.exports = Alarm

@@ -13,9 +13,10 @@ sysinfo = require 'systeminformation'
 class Sysdata
         
     @: ->
+        
+        @receivers = []
         info = => sysinfo.getDynamicData @setData
         setInterval info, 1000
-        @receivers = []
 
     addReceiver: (wid) -> @receivers.push wid
         
