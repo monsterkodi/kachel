@@ -78,9 +78,9 @@ class Kachel extends win
         @win.setSize     @startBounds.width, @startBounds.height
         
     onDragStop: (drag, event) =>
-        
         post.toMain 'dragStop' @id
-        if not drag.deltaSum? or drag.deltaSum.x == 0 == drag.deltaSum.y
+        if drag.deltaSum.x == 0 == drag.deltaSum.y
+            # klog 'onDragStop' drag.deltaSum, event.button
             if event.button == 0
                 @onClick event
         else
@@ -132,6 +132,7 @@ class Kachel extends win
             when 'New'          then post.toMain 'newKachel' {}
             when 'Close'        then @win.close()
             when 'Quit'         then post.toMain 'quit'
+            when 'Hide'         then post.toMain 'hide'
             when 'About'        then post.toMain 'showAbout'
             when 'Scheme'       then post.toWins 'toggleScheme'
             when 'IncreaseSize' then post.toMain 'kachelSize' 'increase'

@@ -1,7 +1,7 @@
 {
   "name": "kachel",
   "productName": "kachel",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "experiment",
   "main": "js/main.js",
   "repository": {
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "empty-trash": "^3.0.0",
-    "kxk": "^0.325.0",
+    "kxk": "^0.328.0",
     "simple-plist": "^1.0.0",
     "systeminformation": "^4.14.3"
   },

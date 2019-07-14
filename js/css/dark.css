@@ -75,6 +75,15 @@ body:active {
 .second {
   stroke: #08f;
 }
+.alarm-hour {
+  color: #f80;
+}
+.alarm-minute {
+  color: #08f;
+}
+.alarm-second {
+  color: #333;
+}
 .menuItem {
   color: #666;
   background-color: #222;

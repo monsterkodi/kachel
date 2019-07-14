@@ -42,10 +42,13 @@ class Konrad extends Kachel
             when 'error'   then @setIcon "#{__dirname}/../img/konrad_error.png"
             when 'exit'    then @setIcon "#{__dirname}/../img/konrad_sleep.png"
             when 'output'
+                klog 'output' msg
                 @setIcon "#{__dirname}/../img/konrad.png"
                 setTimeout @idleIcon, 2000
         
-    idleIcon: => @setIcon "#{__dirname}/../img/konrad_idle.png"
+    idleIcon: => 
+        klog 'idleIcon'
+        @setIcon "#{__dirname}/../img/konrad_idle.png"
                 
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  

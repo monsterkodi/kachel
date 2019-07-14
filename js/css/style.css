@@ -11,7 +11,7 @@ body {
   border-style: solid;
   border-radius: 4.2px;
   border-width: 0.5px;
-  font-family: "Meslo LG S", "Liberation Mono", "Menlo", "Cousine", "Andale Mono", monospace;
+  font-family: "Meslo LG S", "Liberation Mono", "Menlo", "Cousine", "Andale Mono", "monospace";
   font-size: 15px;
   overflow: hidden;
   -webkit-user-select: none;
@@ -36,7 +36,32 @@ svg {
 .histCanvas {
   position: absolute;
 }
-.clock {
+.alarm-digits {
+  padding-top: 5%;
+  position: relative;
+  left: 50%;
+  line-height: 1;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.alarm-hour,
+.alarm-minute {
+  display: inline-block;
+  font-size: 32vh;
+  font-family: "Helvetica", "Arial";
+}
+.alarm-minute:before {
+  content: ':';
+  color: #333;
+}
+.alarm-second {
+  align: center;
+  display: block;
+  font-size: 55vh;
+  font-family: "Helvetica", "Arial";
+}
+.clock,
+.alarm {
   width: 100%;
   height: 100%;
 }
@@ -244,7 +269,7 @@ svg {
   position: absolute;
   border-radius: 3px;
   font-size: titlebarFontSize;
-  font-family: Bahnschrift Light, Ebrima, Varela Round, Arial Rounded MT Bold, Helvetica, Arial;
+  font-family: "Bahnschrift Light", "Ebrima", "Varela Round", "Arial Rounded MT Bold", "Helvetica", "Arial";
 }
 .popup.titlemenu {
   border-top-left-radius: 0;

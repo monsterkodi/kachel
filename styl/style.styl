@@ -5,9 +5,10 @@
 //      000     000        000     000    
 // 0000000      000        000     0000000
 
-frameWidth      = 4%
-fontMono        = "Meslo LG S", "Liberation Mono", "Menlo", "Cousine", "Andale Mono", monospace
-titlebarFont    = Bahnschrift Light, Ebrima, Varela Round, Arial Rounded MT Bold, Helvetica, Arial
+frameWidth   = 4%
+fontMono     = "Meslo LG S", "Liberation Mono", "Menlo", "Cousine", "Andale Mono", "monospace"
+titlebarFont = "Bahnschrift Light", "Ebrima", "Varela Round", "Arial Rounded MT Bold", "Helvetica", "Arial"
+clockFont    = "Helvetica", "Arial"
 
 fill-abs()
     position            absolute
@@ -61,7 +62,33 @@ svg
 // 000       000      000   000  000       000  000   
 //  0000000  0000000   0000000    0000000  000   000  
 
+.alarm-digits
+    padding-top     5%
+    position        relative
+    left            50%
+    line-height     1
+    transform       translateX(-50%)
+    text-align      center
+    
+.alarm-hour
+.alarm-minute
+    display         inline-block
+    font-size       32vh
+    font-family     clockFont
+    
+.alarm-minute
+    &:before
+        content  ':'
+        color    #333
+        
+.alarm-second
+    align           center
+    display         block
+    font-size       55vh
+    font-family     clockFont
+
 .clock
+.alarm
     width               100%
     height              100%
     

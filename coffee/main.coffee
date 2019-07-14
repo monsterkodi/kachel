@@ -52,6 +52,8 @@ KachelApp = new app
     height:             50
     acceptFirstMouse:   true
     prefsSeperator:     '▸'
+    onActivate:         -> klog 'onActivate';    post.emit 'raiseKacheln'
+    onWillShowWin:      -> klog 'onWillShowWin'; post.emit 'raiseKacheln'
     onOtherInstance:    -> post.emit 'raiseKacheln'
     onShortcut:         -> post.emit 'raiseKacheln'
     onQuit:             -> clearInterval mouseTimer
@@ -94,6 +96,9 @@ KachelApp = new app
                 
         mouseTimer = setInterval checkMouse, 50
 
+# KachelApp.app.on 'activate'             -> klog 'KachelApp.app.on activate'
+# KachelApp.app.on 'browser-window-focus' -> klog 'KachelApp.app.on browser-window-focus'
+        
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
 # 0000000    000000000  000       000000000  0000000   000      
@@ -140,11 +145,9 @@ post.on 'newKachel' (html:'default', data:) ->
 #      000  000  0000  000   000  000        
 # 0000000   000   000  000   000  000        
 
-post.on 'dragStart' (wid) -> 
-    dragging = true
+post.on 'dragStart' (wid) -> dragging = true
 
-post.on 'dragStop'  (wid) -> 
-    dragging = false
+post.on 'dragStop'  (wid) -> dragging = false
 
 post.on 'snapKachel' (wid) -> 
 
@@ -236,6 +239,9 @@ raising = false
         
 post.on 'raiseKacheln' ->
     
+    return if not mainWin?
+    klog 'raiseKacheln' 
+    
     for win in kacheln()
         if not win.isVisible()
             raised = false
@@ -263,6 +269,7 @@ raiseWin = (win) ->
     win.focus()
 
 post.on 'quit' KachelApp.quitApp
+post.on 'hide' -> for w in wins() then w.hide()
 
 # 00000000   0000000    0000000  000   000   0000000  
 # 000       000   000  000       000   000  000       
