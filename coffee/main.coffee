@@ -34,13 +34,37 @@ winEvents = (win) ->
     win.on 'blur'   onWinBlur
     win.setHasShadow false
     
+indexData = (jsFile) ->
+    
+    html = """
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'">
+            <link rel="stylesheet" href="./css/style.css" type="text/css">
+            <link rel="stylesheet" href="./css/dark.css" type="text/css" id="style-link">
+          </head>
+          <body>
+            <div id="main" tabindex="0"></div>
+          </body>
+          <script>
+            Kachel = require("./#{jsFile}.js");
+            new Kachel({});
+          </script>
+        </html>
+    """
+    
+    "data:text/html;charset=utf-8," + encodeURI html
+    
 shortcut = slash.win() and 'ctrl+alt+k' or 'command+alt+k'
 
 KachelApp = new app
     dir:                __dirname
     pkg:                require '../package.json'
     shortcut:           shortcut
-    index:              'mainwin.html'
+    index:              indexData 'mainwin'
+    indexURL:           "file://#{__dirname}/../js/index.html"
     icon:               '../img/app.ico'
     tray:               '../img/menu.png'
     about:              '../img/about.png'
@@ -125,10 +149,15 @@ post.on 'newKachel' (html:'default', data:) ->
         backgroundColor:    '#181818'
         width:              kachelSizes[kachelSize]
         height:             kachelSizes[kachelSize]
-        webPreferences:   
+        webPreferences: 
+            webSecurity:     false
             nodeIntegration: true
+        
+    win.loadURL indexData(html), baseURLForDataURL:"file://#{__dirname}/../js/index.html"
     
-    win.loadURL "file://#{__dirname}/../js/#{html}.html"
+    win.on 'ready-to-show' -> 
+        win.show()
+        win.openDevTools()
     
     win.webContents.on 'dom-ready' (event) ->
         post.toWin win.id, 'initData' data if data?

@@ -1,6 +1,6 @@
 name            kachel
 productName     kachel
-version         0.32.0
+version         0.33.0
 description     experiment
 main            js/main.js
 repository
@@ -17,7 +17,7 @@ bugs
                 url  https://github.com/monsterkodi/kachel/issues
 dependencies
                 empty-trash     ^3.0.0
-                kxk             ^0.328.0
+                kxk             ^0.329.0
                 simple-plist    ^1.0.0
                 systeminformation  ^4.14.3
 optionalDependencies
@@ -26,5 +26,5 @@ devDependencies
                 electron        ^5.0.6
                 electron-packager  ^14.0.1
                 electron-rebuild  ^1.8.5
-                konrad          ^0.133.0
+                konrad          ^0.141.0
                 sds             ^3.2.0
