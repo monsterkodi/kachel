@@ -76,8 +76,8 @@ KachelApp = new app
     height:             50
     acceptFirstMouse:   true
     prefsSeperator:     '▸'
-    onActivate:         -> klog 'onActivate';    post.emit 'raiseKacheln'
-    onWillShowWin:      -> klog 'onWillShowWin'; post.emit 'raiseKacheln'
+    onActivate:         -> post.emit 'raiseKacheln'
+    onWillShowWin:      -> post.emit 'raiseKacheln'
     onOtherInstance:    -> post.emit 'raiseKacheln'
     onShortcut:         -> post.emit 'raiseKacheln'
     onQuit:             -> clearInterval mouseTimer
@@ -101,6 +101,7 @@ KachelApp = new app
         
         checkMouse = =>
             
+            # klog focusKachel?.isDestroyed()
             return if dragging
             oldPos = kpos mousePos ? {x:0 y:0}
             mousePos = electron.screen.getCursorScreenPoint()
@@ -333,7 +334,11 @@ onWinFocus = (event) ->
 
 wins      = -> BrowserWindow.getAllWindows().sort (a,b) -> a.id - b.id
 activeWin = -> BrowserWindow.getFocusedWindow()
-kacheln   = -> wins().filter (w) -> w != mainWin
+kacheln   = -> 
+    k = wins().filter (w) -> w != mainWin
+    # klog 'kacheln' k.length
+    k
+    
 winWithId = (id) -> BrowserWindow.fromId id
     
 neighborWin = (winId, direction) ->

@@ -69,6 +69,9 @@ class Kachel extends win
     
     onDragStart: (drag, event) => 
     
+        if @win?.isDestroyed()
+            return
+            
         @startBounds = @win.getBounds()
         post.toMain 'dragStart' @id
         
@@ -78,13 +81,12 @@ class Kachel extends win
         @win.setSize     @startBounds.width, @startBounds.height
         
     onDragStop: (drag, event) =>
-        post.toMain 'dragStop' @id
         if drag.deltaSum.x == 0 == drag.deltaSum.y
-            # klog 'onDragStop' drag.deltaSum, event.button
             if event.button == 0
                 @onClick event
         else
             post.toMain 'snapKachel' @id
+        post.toMain 'dragStop' @id
     
     onSaveBounds: =>
         

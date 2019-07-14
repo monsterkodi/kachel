@@ -22,6 +22,8 @@ class Clock extends Kachel
     
     onData: (data) => 
         
+        return if not @hour
+        
         @hour  .setAttribute 'transform' "rotate(#{30 * data.hour + data.minute / 2})"
         @minute.setAttribute 'transform' "rotate(#{6 * data.minute + data.second / 10})"
         @second.setAttribute 'transform' "rotate(#{6 * data.second})"

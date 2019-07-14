@@ -47,7 +47,6 @@ class Konrad extends Kachel
                 setTimeout @idleIcon, 2000
         
     idleIcon: => 
-        klog 'idleIcon'
         @setIcon "#{__dirname}/../img/konrad_idle.png"
                 
     # 000   0000000   0000000   000   000  
