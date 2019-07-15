@@ -13,7 +13,6 @@ electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
 kachelSizes = [72,108,144,216]
-kachelSize  = 1
 dragging    = false
 mainWin     = null
 focusKachel = null
@@ -132,6 +131,26 @@ KachelApp = new app
 
 post.on 'newKachel' (id) ->
 
+    kachelSize = 1
+
+    html = id
+    if id.endsWith('.app') or id.endsWith('.exe')
+        if slash.base(id) == 'konrad'
+            html = 'konrad'
+            kachelSize = 2
+        else
+            html = 'appl'
+            kachelSize = 0
+    else if id.startsWith('/')
+        html = 'folder'
+        kachelSize = 0
+        
+    switch html
+        when 'saver' then kachelSize = 0
+        when 'sysdish' 'sysinfo' 'clock' 'default' then kachelSize = 2
+        
+    # klog html, id
+    
     win = new electron.BrowserWindow
         
         movable:            true
@@ -152,17 +171,6 @@ post.on 'newKachel' (id) ->
         height:             kachelSizes[kachelSize]
         webPreferences: 
             nodeIntegration: true
-       
-    html = id
-    if id.endsWith('.app') or id.endsWith('.exe')
-        if slash.base(id) == 'konrad'
-            html = 'konrad'
-        else
-            html = 'appl'
-    else if id.startsWith('/')
-        html = 'folder'
-            
-    klog html, id
         
     win.loadURL indexData(html), baseURLForDataURL:"file://#{__dirname}/../js/index.html"
     

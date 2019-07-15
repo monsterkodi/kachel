@@ -19,21 +19,24 @@ class SaverDefault
         document.body.addEventListener 'mousemove' @onMouseMove
         document.body.focus()
     
-        @fade = 0
-        @w = @h = randIntRange 6 32
-        @dirProb = randRange 0.05 0.2
+        @cubeSize  = randIntRange 6 32
+        @cubesPerF = parseInt Math.max 1 (33-@cubeSize) * randRange 0.25 1
+        @dirProb   = randRange 0.02 0.5
         
-        @red   = 0
-        @green = 0
-        @blue  = 0
+        klog "cubeSize #{@cubeSize} cpf #{@cubesPerF} dirprob #{@dirProb}"
         
+        @fade      = 0
+        @red       = 0
+        @green     = 0
+        @blue      = 0
+        @lastDir   = 0
         @cubeCount = 0
-        @lastDir = 0
+        
         @scalef = electron.remote.screen.getPrimaryDisplay().scaleFactor
         @width  = sw()*@scalef
         @height = sh()*@scalef
         
-        @pos = kpos randInt(@width/@w), randInt(@height/@h)
+        @pos = kpos randInt(@width/@cubeSize), randInt(@height/@cubeSize)
                 
         @canvas = elem 'canvas' width:@width, height:@height
         @ctx = @canvas.getContext '2d'
@@ -108,14 +111,52 @@ class SaverDefault
     onFrame: ->
 
         pos = @pos
-        size = kpos parseInt(@width/@w), parseInt(@height/@h)
-                       
-        nextDir = @lastDir
+        size = kpos parseInt(@width/@cubeSize), parseInt(@height/@cubeSize)
+              
+        for c in [0...@cubesPerF]
         
-        if Math.random() < @dirProb
-            while nextDir == @lastDir or (nextDir+3)%6 == @lastDir
-                nextDir = randInt 6
+            nextDir = @lastDir
             
+            if Math.random() < @dirProb
+                while nextDir == @lastDir or (nextDir+3)%6 == @lastDir
+                    nextDir = randInt 6
+                
+            @nextPos nextDir, pos
+                                        
+            if pos.x < 1 or pos.y < 2 or pos.x >= size.x or pos.y >= size.y # if screen border is touched
+    
+                nextDir = randInt 6
+    
+                if      pos.x < 1        then pos.x = size.x-1
+                else if pos.x > size.x-1 then pos.x = 1
+                
+                if      pos.y < 2        then pos.y = size.y-2
+                else if pos.y > size.y-1 then pos.y = 2
+            
+            @nextColor nextDir
+                                            
+            skip = null
+            if @cubeCount
+                switch nextDir
+                    when 3 then skip = 0
+                    when 4 then skip = 1
+                    when 5 then skip = 2
+            
+            @drawCube skip
+            
+            @cubeCount += 1
+            @lastDir = nextDir
+        
+        true
+    
+    # 000   000  00000000  000   000  000000000  00000000    0000000    0000000  
+    # 0000  000  000        000 000      000     000   000  000   000  000       
+    # 000 0 000  0000000     00000       000     00000000   000   000  0000000   
+    # 000  0000  000        000 000      000     000        000   000       000  
+    # 000   000  00000000  000   000     000     000         0000000   0000000   
+    
+    nextPos: (nextDir, pos) ->
+        
         switch nextDir
             
             when 0 # up 
@@ -139,16 +180,14 @@ class SaverDefault
             when 5 # back left
                 if pos.x%2 == 1 then pos.y -= 1 
                 pos.x -= 1
-                
-        if pos.x < 1 or pos.y < 2 or pos.x >= size.x or pos.y >= size.y # if screen border is touched
-
-            nextDir = randInt 6
-
-            if      pos.x < 1        then pos.x = size.x-1
-            else if pos.x > size.x-1 then pos.x = 1
-            
-            if      pos.y < 2        then pos.y = size.y-2
-            else if pos.y > size.y-1 then pos.y = 2
+        
+    # 000   000  00000000  000   000  000000000   0000000   0000000   000       0000000   00000000   
+    # 0000  000  000        000 000      000     000       000   000  000      000   000  000   000  
+    # 000 0 000  0000000     00000       000     000       000   000  000      000   000  0000000    
+    # 000  0000  000        000 000      000     000       000   000  000      000   000  000   000  
+    # 000   000  00000000  000   000     000      0000000   0000000   0000000   0000000   000   000  
+    
+    nextColor: (nextDir) ->
         
         hd = 0.02
         ld = 0.002
@@ -177,21 +216,7 @@ class SaverDefault
                 @red   = clamp 0 1 @red-hd
                 @green = clamp 0 1 @green-hd
                 @blue  = clamp 0 1 @blue+hd
-                        
-        skip = null
-        if @cubeCount
-            switch nextDir
-                when 3 then skip = 0
-                when 4 then skip = 1
-                when 5 then skip = 2
         
-        @drawCube skip
-        
-        @cubeCount += 1
-        @lastDir = nextDir
-        
-        true
-    
     #  0000000  000   000  0000000    00000000  
     # 000       000   000  000   000  000       
     # 000       000   000  0000000    0000000   
@@ -200,17 +225,17 @@ class SaverDefault
     
     drawCube: (skip) -> 
 
-        s = @h/2
-        x = @pos.x*@w
-        y = (@pos.x%2 == 0) and (@pos.y*@h) or (@pos.y*@h - s)
+        s = @cubeSize/2
+        x = @pos.x*@cubeSize
+        y = (@pos.x%2 == 0) and (@pos.y*@cubeSize) or (@pos.y*@cubeSize - s)
         
         if skip != 0
             @ctx.fillStyle = "rgb(#{@red*255}, #{@green*255}, #{@blue*255})"
             @ctx.beginPath()
             @ctx.moveTo x,   y
-            @ctx.lineTo x+@w, y-s
-            @ctx.lineTo x,   y-@h
-            @ctx.lineTo x-@w, y-s
+            @ctx.lineTo x+@cubeSize, y-s
+            @ctx.lineTo x,   y-@cubeSize
+            @ctx.lineTo x-@cubeSize, y-s
             @ctx.closePath()
             @ctx.fill()
         
@@ -218,9 +243,9 @@ class SaverDefault
             @ctx.fillStyle = "rgb(#{@red*255*0.5}, #{@green*255*0.5}, #{@blue*255*0.5})"
             @ctx.beginPath()
             @ctx.moveTo x,   y
-            @ctx.lineTo x-@w, y-s
-            @ctx.lineTo x-@w, y+s
-            @ctx.lineTo x,   y+@h
+            @ctx.lineTo x-@cubeSize, y-s
+            @ctx.lineTo x-@cubeSize, y+s
+            @ctx.lineTo x,   y+@cubeSize
             @ctx.closePath()
             @ctx.fill()
         
@@ -228,10 +253,11 @@ class SaverDefault
             @ctx.fillStyle = "rgb(#{@red*255*0.2}, #{@green*255*0.2}, #{@blue*255*0.2})"
             @ctx.beginPath()
             @ctx.moveTo x,   y
-            @ctx.lineTo x+@w, y-s
-            @ctx.lineTo x+@w, y+s
-            @ctx.lineTo x,   y+@h
+            @ctx.lineTo x+@cubeSize, y-s
+            @ctx.lineTo x+@cubeSize, y+s
+            @ctx.lineTo x,   y+@cubeSize
             @ctx.closePath()
             @ctx.fill()
         
 module.exports = SaverDefault
+rts = SaverDefault

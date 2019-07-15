@@ -34,7 +34,6 @@ class Saver extends Kachel
         newPos = kpos electron.remote.screen.getCursorScreenPoint()
         if @mousePos.equals newPos
             @mouseIdle += 1
-            klog '@mouseIdle' @mouseIdle
             if @mouseIdle >= @minutes
                 @onClick()
         else
@@ -43,7 +42,6 @@ class Saver extends Kachel
         
     onSaverClose: =>
         
-        klog 'saver end'
         @saver = null
         @mouseCheck = setInterval @checkMouse, @interval
             
@@ -53,17 +51,16 @@ class Saver extends Kachel
         @mouseIdle  = 0
         @mouseCheck = null
         
-        klog 'saver start'
-        
         wa = electron.remote.screen.getPrimaryDisplay().workAreaSize
         
         width  = wa.width
         height = wa.height
         
         @saver = new electron.remote.BrowserWindow
-            y:                      -2
-            width:                  width+2
-            height:                 height
+            x:                      0
+            y:                      -4
+            width:                  width
+            height:                 height+4
             backgroundColor:        '#01000000'
             resizable:              false
             maximizable:            false

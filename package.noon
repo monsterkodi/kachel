@@ -1,6 +1,6 @@
 name            kachel
 productName     kachel
-version         0.37.0
+version         0.38.0
 description     experiment
 main            js/main.js
 repository
