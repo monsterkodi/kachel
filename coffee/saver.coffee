@@ -19,7 +19,7 @@ class Saver extends Kachel
     
         @saver      = null
         @mouseIdle  = 0
-        @minutes    = 2
+        @minutes    = 5
         @interval   = 1000 * 60
         
     onLoad: -> 

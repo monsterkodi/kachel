@@ -14,17 +14,25 @@ class SaverDefault
 
     constructor: () ->
 
+        window.onerror = (msg, source, line, col, err) ->
+            electron.remote.getCurrentWindow().openDevTools()
+            klog 'window.onerror' msg, source, line, col
+            error 'window.onerror' msg, source, line, col
+            true
+        
         document.body.addEventListener 'keydown'   @close
         document.body.addEventListener 'mousedown' @close
         document.body.addEventListener 'mousemove' @onMouseMove
         document.body.focus()
     
         @cubeSize  = randIntRange 6 32
-        @cubesPerF = parseInt Math.max 1 (33-@cubeSize) * randRange 0.25 1
-        @dirProb   = randRange 0.02 0.5
+        @cubesPerF = 100 #parseInt Math.max 1 (33-@cubeSize) * randRange 0.25 1
+        @dirCounts = [10 10 10 10 10 10]
+        @dirProb   = randRange 0.01 0.5
         
         klog "cubeSize #{@cubeSize} cpf #{@cubesPerF} dirprob #{@dirProb}"
         
+        @fadeSteps = 16 # 256
         @fade      = 0
         @red       = 0
         @green     = 0
@@ -74,14 +82,12 @@ class SaverDefault
     # 000       000   000  0000000    00000000  
     
     onFade: ->
-        
-        steps = 256
-        
+                
         @fade += 1
-        @ctx.fillStyle = "rgba(0,0,0,#{@fade/steps})"
+        @ctx.fillStyle = "rgba(0,0,0,#{@fade/@fadeSteps})"
         @ctx.fillRect 0, 0, @width, @height
         
-        @fade < steps
+        @fade < @fadeSteps
                
     fadeOut: =>
         
@@ -114,12 +120,11 @@ class SaverDefault
         size = kpos parseInt(@width/@cubeSize), parseInt(@height/@cubeSize)
               
         for c in [0...@cubesPerF]
-        
-            nextDir = @lastDir
-            
+                    
             if Math.random() < @dirProb
-                while nextDir == @lastDir or (nextDir+3)%6 == @lastDir
-                    nextDir = randInt 6
+                nextDir = @changeDirection @lastDir
+            else
+                nextDir = @lastDir
                 
             @nextPos nextDir, pos
                                         
@@ -148,6 +153,41 @@ class SaverDefault
             @lastDir = nextDir
         
         true
+        
+    # 0000000    000  00000000   00000000   0000000  000000000  000   0000000   000   000  
+    # 000   000  000  000   000  000       000          000     000  000   000  0000  000  
+    # 000   000  000  0000000    0000000   000          000     000  000   000  000 0 000  
+    # 000   000  000  000   000  000       000          000     000  000   000  000  0000  
+    # 0000000    000  000   000  00000000   0000000     000     000   0000000   000   000  
+                
+    changeDirection: (lastDir) ->
+
+        choose = (options) =>
+            i = 0
+            s = 0
+            while i < options.length
+                inv = 1.0/@dirCounts[options[i]]
+                s += inv
+                i++
+            r = Math.random() * s
+            i = options.length-1
+            s -= 1.0/@dirCounts[options[i]]
+            while i > 0 and r < s
+                s -= 1.0/@dirCounts[options[--i]]
+            options[i]
+        
+        switch lastDir
+            when 0 then nextDir = choose [1 2 4 5]
+            when 1 then nextDir = choose [0 2 3 5]
+            when 2 then nextDir = choose [0 3 4  ]
+            when 3 then nextDir = choose [1 2    ]
+            when 4 then nextDir = choose [0 1 2  ]
+            when 5 then nextDir = choose [0 1 2 4]
+            
+        @dirCounts[nextDir]++
+        klog "#{@dirCounts[0]} #{@dirCounts[1]} #{@dirCounts[2]} #{@dirCounts[3]} #{@dirCounts[4]} #{@dirCounts[5]}"
+        # klog 'changeDirection' lastDir, nextDir
+        nextDir
     
     # 000   000  00000000  000   000  000000000  00000000    0000000    0000000  
     # 0000  000  000        000 000      000     000   000  000   000  000       
