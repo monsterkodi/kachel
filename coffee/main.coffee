@@ -151,7 +151,6 @@ post.on 'newKachel' (html:'default', data:) ->
         width:              kachelSizes[kachelSize]
         height:             kachelSizes[kachelSize]
         webPreferences: 
-            webSecurity:     false
             nodeIntegration: true
         
     win.loadURL indexData(html), baseURLForDataURL:"file://#{__dirname}/../js/index.html"

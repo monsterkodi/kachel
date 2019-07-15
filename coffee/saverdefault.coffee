@@ -16,7 +16,7 @@ class SaverDefault
 
         document.body.addEventListener 'keydown'   @close
         document.body.addEventListener 'mousedown' @close
-        document.body.addEventListener 'mousemove' @moved
+        document.body.addEventListener 'mousemove' @onMouseMove
         document.body.focus()
     
         @fade = 0
@@ -39,7 +39,9 @@ class SaverDefault
         @ctx = @canvas.getContext '2d'
         
         if @scalef != 1
-            @canvas.style.transform = "translate3d(#{-@width/(2*@scalef)}px, #{-@height/(2*@scalef)}px, 0px) scale3d(0.5, 0.5, 1)"
+            xo = -@width/2+sw()/2
+            yo = -@height/2+sh()/2
+            @canvas.style.transform = "translate3d(#{xo}px, #{yo}px, 0px) scale3d(#{1/@scalef}, #{1/@scalef}, 1)"
         
         document.body.appendChild @canvas
         
@@ -47,6 +49,27 @@ class SaverDefault
             
         @fadeOut()
 
+    onMouseMove: (event) =>
+        
+        @startpos ?= kpos event
+        if kpos(event).dist(@startpos) > 10
+            @close()
+        
+    close: =>
+        
+        document.body.removeEventListener 'keydown'   @close
+        document.body.removeEventListener 'mousedown' @close
+        document.body.removeEventListener 'mousemove' @close
+        
+        w = electron.remote.getCurrentWindow()
+        w.close()
+        
+    # 00000000   0000000   0000000    00000000  
+    # 000       000   000  000   000  000       
+    # 000000    000000000  000   000  0000000   
+    # 000       000   000  000   000  000       
+    # 000       000   000  0000000    00000000  
+    
     onFade: ->
         
         steps = 256
@@ -65,26 +88,17 @@ class SaverDefault
         else
             @animation()
             
+    #  0000000   000   000  000  00     00   0000000   000000000  000   0000000   000   000  
+    # 000   000  0000  000  000  000   000  000   000     000     000  000   000  0000  000  
+    # 000000000  000 0 000  000  000000000  000000000     000     000  000   000  000 0 000  
+    # 000   000  000  0000  000  000 0 000  000   000     000     000  000   000  000  0000  
+    # 000   000  000   000  000  000   000  000   000     000     000   0000000   000   000  
+    
     animation: =>
         
         if @onFrame()
             window.requestAnimationFrame @animation
         
-    moved: (event) =>
-        
-        @startpos ?= kpos event
-        if kpos(event).dist(@startpos) > 10
-            @close()
-        
-    close: =>
-        
-        document.body.removeEventListener 'keydown'   @close
-        document.body.removeEventListener 'mousedown' @close
-        document.body.removeEventListener 'mousemove' @close
-        
-        w = electron.remote.getCurrentWindow()
-        w.close()
-
     # 00000000  00000000    0000000   00     00  00000000  
     # 000       000   000  000   000  000   000  000       
     # 000000    0000000    000000000  000000000  0000000   

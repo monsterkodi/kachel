@@ -130,7 +130,7 @@ class Default extends Kachel
     appChosen: (file) ->
         
         file = slash.removeDrive slash.path file
-        if slash.file(file) == 'konrad.app'
+        if slash.file(file) in ['konrad.app' 'konrad.exe']
             post.toMain 'newKachel' html:'konrad' data:app:file
         else
             post.toMain 'newKachel' html:'appl' data:app:file

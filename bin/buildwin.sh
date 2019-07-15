@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
-cd `dirname $0`/..
+
+DIR=`dirname $0`
+BIN=$DIR/../node_modules/.bin
+cd $DIR/..
 
 npm install
 
 if rm -rf kachel-win32-x64; then
 
-    if node_modules/.bin/konrad; then
+    if $BIN/konrad; then
 
-        node_modules/.bin/electron-rebuild
+        $BIN/electron-rebuild
 
-        node_modules/.bin/electron-packager . --overwrite --icon=img/app.ico
+        $BIN/electron-packager . --overwrite --icon=img/app.ico
 
-        rm -rf kachel-win32-x64/resources/app/inno
+        # rm -rf kachel-win32-x64/resources/app/inno
         
-        kachel-win32-x64/kachel.exe
+        start kachel-win32-x64/kachel.exe
     fi
 fi

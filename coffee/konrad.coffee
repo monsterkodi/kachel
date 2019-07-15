@@ -56,9 +56,8 @@ class Konrad extends Kachel
     # 000   0000000   0000000   000   000  
     
     setIcon: (iconPath) =>
-        
         return if not iconPath
-        img = elem 'img' class:'applicon' src:slash.fileUrl iconPath
+        img = elem 'img' class:'applicon' src:slash.fileUrl slash.path iconPath
         img.ondragstart = -> false
         @main.innerHTML = ''
         @main.appendChild img
