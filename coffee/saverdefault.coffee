@@ -23,7 +23,7 @@ class SaverDefault
         @w = @h = randIntRange 6 32
         @dirProb = randRange 0.05 0.2
         
-        @red   = 1
+        @red   = 0
         @green = 0
         @blue  = 0
         
@@ -50,7 +50,6 @@ class SaverDefault
     onFade: ->
         
         steps = 256
-        # steps = 24
         
         @fade += 1
         @ctx.fillStyle = "rgba(0,0,0,#{@fade/steps})"
@@ -127,27 +126,26 @@ class SaverDefault
                 if pos.x%2 == 1 then pos.y -= 1 
                 pos.x -= 1
                 
-        if pos.x < 1 or pos.y < 2 or pos.x > size.x-1 or pos.y > size.y-1 # if screen border is touched
+        if pos.x < 1 or pos.y < 2 or pos.x >= size.x or pos.y >= size.y # if screen border is touched
 
             nextDir = randInt 6
 
-            if true # wrap
-                if      pos.x < 1        then pos.x = size.x-1
-                else if pos.x > size.x-1 then pos.x = 1
-                
-                if      pos.y < 2        then pos.y = size.y-2
-                else if pos.y > size.y-1 then pos.y = 2
+            if      pos.x < 1        then pos.x = size.x-1
+            else if pos.x > size.x-1 then pos.x = 1
+            
+            if      pos.y < 2        then pos.y = size.y-2
+            else if pos.y > size.y-1 then pos.y = 2
         
-        hd = 0.01
-        ld = 0.005
+        hd = 0.02
+        ld = 0.002
         switch nextDir                
             when 0
                 @red   = clamp 0 1 @red+hd
-                @green = clamp 0 1 @green+ld
+                @green = clamp 0 1 @green-ld
                 @blue  = clamp 0 1 @blue-ld
             when 3
-                @red   = clamp 0 1 @red+ld
-                @green = clamp 0 1 @green-ld
+                @red   = clamp 0 1 @red+hd
+                @green = clamp 0 1 @green-hd
                 @blue  = clamp 0 1 @blue-hd
             when 1
                 @red   = clamp 0 1 @red-ld
@@ -155,22 +153,17 @@ class SaverDefault
                 @blue  = clamp 0 1 @blue-ld
             when 4
                 @red   = clamp 0 1 @red-hd
-                @green = clamp 0 1 @green+ld
-                @blue  = clamp 0 1 @blue-ld
+                @green = clamp 0 1 @green+hd
+                @blue  = clamp 0 1 @blue-hd
             when 2
                 @red   = clamp 0 1 @red-ld
                 @green = clamp 0 1 @green-ld
                 @blue  = clamp 0 1 @blue+hd
             when 5
-                @red   = clamp 0 1 @red-ld
+                @red   = clamp 0 1 @red-hd
                 @green = clamp 0 1 @green-hd
-                @blue  = clamp 0 1 @blue+ld
-        
-        @color = 
-            up:    "rgb(#{@red*255},     #{@green*255},     #{@blue*255})"
-            left:  "rgb(#{@red*255*0.5}, #{@green*255*0.5}, #{@blue*255*0.5})"
-            right: "rgb(#{@red*255*0.2}, #{@green*255*0.2}, #{@blue*255*0.2})"
-                
+                @blue  = clamp 0 1 @blue+hd
+                        
         skip = null
         if @cubeCount
             switch nextDir
@@ -198,7 +191,7 @@ class SaverDefault
         y = (@pos.x%2 == 0) and (@pos.y*@h) or (@pos.y*@h - s)
         
         if skip != 0
-            @ctx.fillStyle = @color.up
+            @ctx.fillStyle = "rgb(#{@red*255}, #{@green*255}, #{@blue*255})"
             @ctx.beginPath()
             @ctx.moveTo x,   y
             @ctx.lineTo x+@w, y-s
@@ -208,7 +201,7 @@ class SaverDefault
             @ctx.fill()
         
         if skip != 1
-            @ctx.fillStyle = @color.left
+            @ctx.fillStyle = "rgb(#{@red*255*0.5}, #{@green*255*0.5}, #{@blue*255*0.5})"
             @ctx.beginPath()
             @ctx.moveTo x,   y
             @ctx.lineTo x-@w, y-s
@@ -218,7 +211,7 @@ class SaverDefault
             @ctx.fill()
         
         if skip != 2
-            @ctx.fillStyle = @color.right
+            @ctx.fillStyle = "rgb(#{@red*255*0.2}, #{@green*255*0.2}, #{@blue*255*0.2})"
             @ctx.beginPath()
             @ctx.moveTo x,   y
             @ctx.lineTo x+@w, y-s
