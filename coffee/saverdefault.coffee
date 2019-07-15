@@ -1,9 +1,9 @@
 ###
- 0000000  000   000  00000000   0000000    00000000  000      000000000
-000       000   000  000   000  000   000  000       000         000   
-0000000    000 000   0000000    000   000  000000    000         000   
-     000     000     000   000  000   000  000       000         000   
-0000000       0      000   000  0000000    000       0000000     000   
+000   000  00000000   000   000  000   000  000      
+000  000   000   000  000  000   000  000   000      
+0000000    0000000    0000000    0000000    000      
+000  000   000   000  000  000   000  000   000      
+000   000  000   000  000   000  000   000  0000000  
 ###
 
 { sw, sh, elem, kpos, clamp, randRange, randInt, randIntRange, klog } = require 'kxk'
@@ -12,7 +12,7 @@ electron = require 'electron'
         
 class SaverDefault
 
-    constructor: () ->
+    @: ->
 
         window.onerror = (msg, source, line, col, err) ->
             electron.remote.getCurrentWindow().openDevTools()
@@ -25,27 +25,22 @@ class SaverDefault
         document.body.addEventListener 'mousemove' @onMouseMove
         document.body.focus()
     
-        @cubeSize  = randIntRange 6 32
-        @cubesPerF = 100 #parseInt Math.max 1 (33-@cubeSize) * randRange 0.25 1
-        @dirCounts = [10 10 10 10 10 10]
-        @dirProb   = randRange 0.01 0.5
+        @chooseOptions = [
+            [1 2 4 5]
+            [0 2 3 5]
+            [0 3 4  ]
+            [1 2    ]
+            [0 1 2  ]
+            [0 1 2 4]
+        ]
         
-        klog "cubeSize #{@cubeSize} cpf #{@cubesPerF} dirprob #{@dirProb}"
-        
-        @fadeSteps = 16 # 256
+        @fadeSteps = 256
         @fade      = 0
-        @red       = 0
-        @green     = 0
-        @blue      = 0
-        @lastDir   = 0
-        @cubeCount = 0
         
         @scalef = electron.remote.screen.getPrimaryDisplay().scaleFactor
         @width  = sw()*@scalef
         @height = sh()*@scalef
-        
-        @pos = kpos randInt(@width/@cubeSize), randInt(@height/@cubeSize)
-                
+                        
         @canvas = elem 'canvas' width:@width, height:@height
         @ctx = @canvas.getContext '2d'
         
@@ -60,6 +55,29 @@ class SaverDefault
             
         @fadeOut()
 
+    nextRun: ->
+        
+        @fill 'rgb(0,0,0)'
+        @cubeSize  = randIntRange 6 32
+        @size      = kpos parseInt(@width/@cubeSize), parseInt(@height/@cubeSize)
+        @cubesPerF = parseInt Math.max 1 (33-@cubeSize) * randRange 0.1 0.3
+        @cubesMax  = parseInt randIntRange(400000, 600000) / @cubeSize
+        @dirCounts = [10 10 10 10 10 10]
+        @dirProb   = randRange 0.001 0.9
+        @colorSpeed = randRange 0.001 0.02
+        
+        @red       = 0
+        @green     = 0
+        @blue      = 0
+        @lastDir   = 0
+        @cubeCount = 0
+                
+        @pos = kpos parseInt((@width/@cubeSize)/2), parseInt (@height/@cubeSize)/2
+                
+        klog "cubeSize #{@cubeSize} cpf #{@cubesPerF} dirprob #{@dirProb} cubesMax #{@cubesMax}"
+        
+        @animation()
+        
     onMouseMove: (event) =>
         
         @startpos ?= kpos event
@@ -81,21 +99,29 @@ class SaverDefault
     # 000       000   000  000   000  000       
     # 000       000   000  0000000    00000000  
     
-    onFade: ->
-                
-        @fade += 1
-        @ctx.fillStyle = "rgba(0,0,0,#{@fade/@fadeSteps})"
-        @ctx.fillRect 0, 0, @width, @height
-        
-        @fade < @fadeSteps
-               
     fadeOut: =>
         
-        @canvas.width = @canvas.width
-        if @onFade()
+        if @fade < @fadeSteps
+            @canvas.width = @canvas.width
+            @fade += 1        
+            @fill "rgba(0,0,0,#{@fade/@fadeSteps})"        
             window.requestAnimationFrame @fadeOut
         else
-            @animation()
+            @nextRun()
+
+    blackOut: =>
+        
+        if @fade < @fadeSteps
+            @fade += 1     
+            @fill "rgba(0,0,0,#{4/@fadeSteps})"        
+            window.requestAnimationFrame @blackOut
+        else
+            @nextRun()
+            
+    fill: (color) ->
+        
+        @ctx.fillStyle = color
+        @ctx.fillRect 0, 0, @width, @height
             
     #  0000000   000   000  000  00     00   0000000   000000000  000   0000000   000   000  
     # 000   000  0000  000  000  000   000  000   000     000     000  000   000  0000  000  
@@ -115,10 +141,7 @@ class SaverDefault
     # 000       000   000  000   000  000   000  00000000  
     
     onFrame: ->
-
-        pos = @pos
-        size = kpos parseInt(@width/@cubeSize), parseInt(@height/@cubeSize)
-              
+        
         for c in [0...@cubesPerF]
                     
             if Math.random() < @dirProb
@@ -126,17 +149,17 @@ class SaverDefault
             else
                 nextDir = @lastDir
                 
-            @nextPos nextDir, pos
+            @nextPos nextDir
                                         
-            if pos.x < 1 or pos.y < 2 or pos.x >= size.x or pos.y >= size.y # if screen border is touched
+            if @pos.x < 1 or @pos.y < 2 or @pos.x >= @size.x or @pos.y >= @size.y # if screen border is touched
     
                 nextDir = randInt 6
     
-                if      pos.x < 1        then pos.x = size.x-1
-                else if pos.x > size.x-1 then pos.x = 1
+                if      @pos.x < 1         then @pos.x = @size.x-1
+                else if @pos.x > @size.x-1 then @pos.x = 1
                 
-                if      pos.y < 2        then pos.y = size.y-2
-                else if pos.y > size.y-1 then pos.y = 2
+                if      @pos.y < 2         then @pos.y = @size.y-2
+                else if @pos.y > @size.y-1 then @pos.y = 2
             
             @nextColor nextDir
                                             
@@ -151,6 +174,12 @@ class SaverDefault
             
             @cubeCount += 1
             @lastDir = nextDir
+            
+        if @cubeCount >= @cubesMax
+            @fadeSteps = 128
+            @fade      = 0        
+            @blackOut()
+            return false
         
         true
         
@@ -162,31 +191,24 @@ class SaverDefault
                 
     changeDirection: (lastDir) ->
 
-        choose = (options) =>
-            i = 0
-            s = 0
-            while i < options.length
-                inv = 1.0/@dirCounts[options[i]]
-                s += inv
-                i++
-            r = Math.random() * s
-            i = options.length-1
-            s -= 1.0/@dirCounts[options[i]]
-            while i > 0 and r < s
-                s -= 1.0/@dirCounts[options[--i]]
-            options[i]
-        
-        switch lastDir
-            when 0 then nextDir = choose [1 2 4 5]
-            when 1 then nextDir = choose [0 2 3 5]
-            when 2 then nextDir = choose [0 3 4  ]
-            when 3 then nextDir = choose [1 2    ]
-            when 4 then nextDir = choose [0 1 2  ]
-            when 5 then nextDir = choose [0 1 2 4]
+        options = @chooseOptions[lastDir]
+
+        i = 0
+        s = 0
+        while i < options.length
+            inv = 1.0/@dirCounts[options[i]]
+            s += inv
+            i++
             
+        r = Math.random() * s
+        
+        i = options.length-1
+        s -= 1.0/@dirCounts[options[i]]
+        while i > 0 and r < s
+            s -= 1.0/@dirCounts[options[--i]]
+            
+        nextDir = options[i]
         @dirCounts[nextDir]++
-        klog "#{@dirCounts[0]} #{@dirCounts[1]} #{@dirCounts[2]} #{@dirCounts[3]} #{@dirCounts[4]} #{@dirCounts[5]}"
-        # klog 'changeDirection' lastDir, nextDir
         nextDir
     
     # 000   000  00000000  000   000  000000000  00000000    0000000    0000000  
@@ -195,31 +217,31 @@ class SaverDefault
     # 000  0000  000        000 000      000     000        000   000       000  
     # 000   000  00000000  000   000     000     000         0000000   0000000   
     
-    nextPos: (nextDir, pos) ->
+    nextPos: (nextDir) ->
         
         switch nextDir
             
             when 0 # up 
-                pos.y -= 1
+                @pos.y -= 1
 
             when 1 # left
-                if pos.x%2 == 0 then pos.y += 1
-                pos.x -= 1
+                if @pos.x%2 == 0 then @pos.y += 1
+                @pos.x -= 1
 
             when 2 # right
-                if pos.x%2 == 0 then pos.y += 1
-                pos.x += 1
+                if @pos.x%2 == 0 then @pos.y += 1
+                @pos.x += 1
                 
             when 3 # down
-                pos.y += 1
+                @pos.y += 1
             
             when 4 # back right
-                if pos.x%2 == 1 then pos.y -= 1 
-                pos.x += 1
+                if @pos.x%2 == 1 then @pos.y -= 1 
+                @pos.x += 1
 
             when 5 # back left
-                if pos.x%2 == 1 then pos.y -= 1 
-                pos.x -= 1
+                if @pos.x%2 == 1 then @pos.y -= 1 
+                @pos.x -= 1
         
     # 000   000  00000000  000   000  000000000   0000000   0000000   000       0000000   00000000   
     # 0000  000  000        000 000      000     000       000   000  000      000   000  000   000  
@@ -229,8 +251,8 @@ class SaverDefault
     
     nextColor: (nextDir) ->
         
-        hd = 0.02
-        ld = 0.002
+        hd = @colorSpeed
+        ld = @colorSpeed * 0.1
         switch nextDir                
             when 0
                 @red   = clamp 0 1 @red+hd
