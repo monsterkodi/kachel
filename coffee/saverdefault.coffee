@@ -34,7 +34,7 @@ class SaverDefault
             [0 1 2 4]
         ]
         
-        @fadeSteps = 256
+        @fadeSteps = 128
         @fade      = 0
         
         @scalef = electron.remote.screen.getPrimaryDisplay().scaleFactor
@@ -64,7 +64,7 @@ class SaverDefault
         @cubesMax  = parseInt randIntRange(400000, 600000) / @cubeSize
         @dirCounts = [10 10 10 10 10 10]
         @dirProb   = randRange 0.001 0.9
-        @colorSpeed = randRange 0.001 0.02
+        @colorSpeed = randRange 0.003 0.1
         
         @red       = 0
         @green     = 0
