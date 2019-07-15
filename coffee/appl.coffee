@@ -15,8 +15,8 @@ class Appl extends Kachel
     @: (@kachelId:'appl') -> super
         
     onClick: (event) -> 
-        klog 'open app' slash.unslash @appPath 
-        open slash.unslash @appPath 
+        klog 'open app' slash.unslash @kachelId 
+        open slash.unslash @kachelId 
     
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
@@ -24,22 +24,17 @@ class Appl extends Kachel
     # 000  000  0000  000     000     
     # 000  000   000  000     000     
     
-    onInitData: (data) =>
-        
-        @appPath = data.app
-        @kachelId = 'appl'+@appPath
-        prefs.set "kacheln▸#{@kachelId}▸data▸app" @appPath
-        prefs.set "kacheln▸#{@kachelId}▸html" 'appl'
-    
+    onInitKachel: (@kachelId) =>
+            
         iconDir = slash.join slash.userData(), 'icons'
-        appName = slash.base @appPath
+        appName = slash.base @kachelId
         iconPath = "#{iconDir}/#{appName}.png"
         if not slash.isFile iconPath
             @refreshIcon()
         else
             @setIcon iconPath
            
-        base = slash.base @appPath
+        base = slash.base @kachelId
         if base in ['Calendar']
             minutes = {Calendar:60}[base]
             @refreshIcon()
@@ -52,11 +47,11 @@ class Appl extends Kachel
         iconDir = slash.join slash.userData(), 'icons'
         
         if slash.win()
-            @exeIcon @appPath, iconDir, @setIcon
+            @exeIcon @kachelId, iconDir, @setIcon
         else
-            @setIcon @appIcon @appPath, iconDir
+            @setIcon @appIcon @kachelId, iconDir
 
-        base = slash.base @appPath
+        base = slash.base @kachelId
         if base in ['Calendar']
             time = new Date()
             day = elem class:'calendarDay' text:time.getDate()

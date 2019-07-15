@@ -14,7 +14,7 @@ class Konrad extends Kachel
         
     @: (@kachelId:'konrad') -> super
         
-    onClick: (event) -> open slash.unslash @appPath 
+    onClick: (event) -> open slash.unslash @kachelId 
     
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
@@ -22,14 +22,10 @@ class Konrad extends Kachel
     # 000  000  0000  000     000     
     # 000  000   000  000     000     
     
-    onInitData: (data) =>
+    onInitKachel: (@kachelId) =>
         
         @udp = new udp onMsg:@onMsg, port:9559
         
-        @appPath = data.app
-        @kachelId = 'konrad'+@appPath
-        prefs.set "kacheln▸#{@kachelId}▸data▸app" @appPath
-        prefs.set "kacheln▸#{@kachelId}▸html" 'konrad'
         @idleIcon()
         super
         

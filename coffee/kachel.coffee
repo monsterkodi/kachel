@@ -34,7 +34,7 @@ class Kachel extends win
         @win.on 'move'  @onWinMove
         @win.on 'close' @onWinClose
         
-        post.on 'initData'   @onInitData
+        post.on 'initKachel' @onInitKachel
         post.on 'saveBounds' @onSaveBounds
         post.on 'combo'      @onCombo
         post.on 'hover'      @onHover
@@ -43,17 +43,16 @@ class Kachel extends win
         
         if @kachelId != 'main'
             @win.setSkipTaskbar true
-            prefs.set "kacheln▸#{@kachelId}" @kachelData()
+            # prefs.set "kacheln▸#{@kachelId}" @kachelData()
         
         post.toMain 'kachelBounds' @id, @kachelId
         
         if os.platform() == 'darwin'
             if parseInt(os.release().split('.')[0]) >= 18
                 document.body.classList.add 'mojave'
-                                
-    kachelData: -> html:@kachelId
-      
+                                      
     kachelSize: ->
+        
         size = 0        
         while kachelSizes[size] < @win.getBounds().width
             size++
@@ -107,11 +106,18 @@ class Kachel extends win
                 
     onWinClose:  (event) => 
         if @kachelId != 'main'
-            prefs.del "kacheln▸#{@kachelId}" 
+            prefs.set 'kacheln' prefs.get('kacheln').filter (k) => k != @kachelId
+            
         @onClose event
         
-    onInitData: =>
-              
+    onInitKachel: =>
+           
+        if @kachelId != 'main'
+            kacheln = prefs.get 'kacheln' []
+            if @kachelId not in kacheln
+                kacheln.push @kachelId 
+                prefs.set 'kacheln' kacheln
+        
         post.toMain 'kachelBounds' @id, @kachelId
     
     onLoad:   -> # to be overridden in subclasses
@@ -130,8 +136,9 @@ class Kachel extends win
     # 000   000  00000000  000   000   0000000 
     
     onMenuAction: (action) =>
+        
         switch action
-            when 'New'          then post.toMain 'newKachel' {}
+            when 'New'          then post.toMain 'newKachel' 'default'
             when 'Close'        then @win.close()
             when 'Quit'         then post.toMain 'quit'
             when 'Hide'         then post.toMain 'hide'

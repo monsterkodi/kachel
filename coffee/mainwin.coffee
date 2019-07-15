@@ -16,9 +16,7 @@ class MainWin extends Kachel
     
     onLoad: -> @main.appendChild elem 'img', class:'kachelImg' src:__dirname + '/../img/about.png'    
         
-    onClick: -> 
-        # klog 'newKachel'
-        post.toMain 'newKachel' {}
+    onClick: -> post.toMain 'newKachel' 'default'
     
     onContextMenu: => post.toMain 'raiseKacheln'
 

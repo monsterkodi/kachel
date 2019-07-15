@@ -41,11 +41,11 @@ class Default extends Kachel
     
         @main.appendChild grid
         
-    openClock: => post.toMain 'newKachel' html:'clock'   
-    openAlarm: => post.toMain 'newKachel' html:'alarm'   
-    openSaver: => post.toMain 'newKachel' html:'saver'   
-    openDish:  => post.toMain 'newKachel' html:'sysdish' winId:@win.id
-    openInfo:  => post.toMain 'newKachel' html:'sysinfo' winId:@win.id
+    openClock: => post.toMain 'newKachel' 'clock'   
+    openAlarm: => post.toMain 'newKachel' 'alarm'   
+    openSaver: => post.toMain 'newKachel' 'saver'   
+    openDish:  => post.toMain 'newKachel' 'sysdish'
+    openInfo:  => post.toMain 'newKachel' 'sysinfo'
     onClick:   => log 'onClick'
     
     # 0000000    000  00000000   
@@ -73,8 +73,7 @@ class Default extends Kachel
             
     dirChosen: (file) ->
         
-        file = slash.path file
-        post.toMain 'newKachel' html:'folder' data:folder:file
+        post.toMain 'newKachel' slash.path file
         
     # 0000000    000  00000000   
     # 000   000  000  000   000  
@@ -101,8 +100,7 @@ class Default extends Kachel
             
     fileChosen: (file) ->
         
-        file = slash.path file
-        post.toMain 'newKachel' html:'file' data:file:file
+        post.toMain 'newKachel' slash.path file
             
     #  0000000   00000000   00000000   
     # 000   000  000   000  000   000  
@@ -129,10 +127,7 @@ class Default extends Kachel
             
     appChosen: (file) ->
         
-        file = slash.removeDrive slash.path file
-        if slash.file(file) in ['konrad.app' 'konrad.exe']
-            post.toMain 'newKachel' html:'konrad' data:app:file
-        else
-            post.toMain 'newKachel' html:'appl' data:app:file
+        # post.toMain 'newKachel' slash.removeDrive slash.path file
+        post.toMain 'newKachel' slash.path file
 
 module.exports = Default

@@ -23,10 +23,10 @@ class Folder extends Kachel
     
     onClick: (event) -> 
         
-        if os.platform() == 'win32' and @folderPath.endsWith '$Recycle.Bin'
+        if os.platform() == 'win32' and @kachelId.endsWith '$Recycle.Bin'
             childp.execSync "start shell:RecycleBinFolder"
         else
-            open slash.unslash @folderPath
+            open slash.unslash @kachelId
         
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
@@ -34,22 +34,17 @@ class Folder extends Kachel
     # 000  000  0000  000     000     
     # 000  000   000  000     000     
     
-    onInitData: (data) =>
+    onInitKachel: (@kachelId) =>
         
-        @folderPath = data.folder
-        @kachelId = 'folder'+@folderPath
-        prefs.set "kacheln▸#{@kachelId}▸data▸folder" @folderPath
-        prefs.set "kacheln▸#{@kachelId}▸html" 'folder'
-    
-        folder = slash.resolve @folderPath
+        folder = slash.resolve @kachelId
                 
         if folder == slash.untilde '~'
             @setIcon slash.join __dirname, '..' 'img' 'home.png'
         else if folder == slash.untilde '~/.Trash'
-            @setIcon slash.join __dirname, '..' 'img' 'recycle5.png'
+            @setIcon slash.join __dirname, '..' 'img' 'recycle.png'
             @addTrash folder
         else if folder.indexOf('$Recycle.Bin') >= 0
-            @setIcon slash.join __dirname, '..' 'img' 'recycle5.png'
+            @setIcon slash.join __dirname, '..' 'img' 'recycle.png'
             @addTrash folder
         else if folder == slash.untilde '~/Desktop'
             @setIcon slash.join __dirname, '..' 'img' 'desktop.png'
@@ -58,7 +53,7 @@ class Folder extends Kachel
         else
             @setIcon slash.join __dirname, '..' 'img' 'folder.png'
     
-            name = elem 'div' class:'foldername' text:slash.base @folderPath
+            name = elem 'div' class:'foldername' text:slash.base folder
             @main.appendChild name
         
         super
@@ -106,7 +101,6 @@ class Folder extends Kachel
     setIcon: (iconPath) =>
         
         return if not iconPath
-        # img = elem 'img' class:'applicon' click:@openApp, src:slash.fileUrl iconPath
         img = elem 'img' class:'applicon' src:slash.fileUrl iconPath
         img.ondragstart = -> false
         @main.appendChild img

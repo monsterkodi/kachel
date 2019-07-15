@@ -23,7 +23,7 @@ class File extends Kachel
     
     onClick: (event) -> 
         
-        open slash.unslash @filePath
+        open slash.unslash @kachelId
         
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
@@ -31,14 +31,9 @@ class File extends Kachel
     # 000  000  0000  000     000     
     # 000  000   000  000     000     
     
-    onInitData: (data) =>
+    onInitKachel: (@kachelId) =>
 
-        @filePath = data.file
-        @kachelId = 'file'+@filePath
-        prefs.set "kacheln▸#{@kachelId}▸data▸file" @filePath
-        prefs.set "kacheln▸#{@kachelId}▸html" 'file'
-    
-        file = slash.resolve @filePath
+        file = slash.resolve @kachelId
                 
         iconDir = slash.join slash.userData(), 'icons'
         fs.mkdir iconDir, recursive:true

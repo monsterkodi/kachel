@@ -89,9 +89,9 @@ KachelApp = new app
         mainWin = win
         winEvents win
         
-        for kachelId,kachelData of prefs.get 'kacheln' {}
-            if kachelId not in ['appl' 'folder' 'file' 'konrad']
-                post.emit 'newKachel' kachelData
+        for kachelId in prefs.get 'kacheln' []
+            if kachelId not in ['appl' 'folder' 'file']
+                post.emit 'newKachel' kachelId
 
         # 00     00   0000000   000   000   0000000  00000000  
         # 000   000  000   000  000   000  000       000       
@@ -130,7 +130,7 @@ KachelApp = new app
 # 000  000   000   000  000       000   000  000       000      
 # 000   000  000   000   0000000  000   000  00000000  0000000  
 
-post.on 'newKachel' (html:'default', data:) ->
+post.on 'newKachel' (id) ->
 
     win = new electron.BrowserWindow
         
@@ -152,6 +152,17 @@ post.on 'newKachel' (html:'default', data:) ->
         height:             kachelSizes[kachelSize]
         webPreferences: 
             nodeIntegration: true
+       
+    html = id
+    if id.endsWith('.app') or id.endsWith('.exe')
+        if slash.base(id) == 'konrad'
+            html = 'konrad'
+        else
+            html = 'appl'
+    else if id.startsWith('/')
+        html = 'folder'
+            
+    klog html, id
         
     win.loadURL indexData(html), baseURLForDataURL:"file://#{__dirname}/../js/index.html"
     
@@ -160,7 +171,7 @@ post.on 'newKachel' (html:'default', data:) ->
         win.openDevTools()
     
     win.webContents.on 'dom-ready' (event) ->
-        post.toWin win.id, 'initData' data if data?
+        post.toWin win.id, 'initKachel' id
         win.show()
           
     win.on 'close' onKachelClose
