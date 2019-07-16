@@ -34,6 +34,7 @@ class Saver extends Kachel
         newPos = kpos electron.remote.screen.getCursorScreenPoint()
         if @mousePos.equals newPos
             @mouseIdle += 1
+            klog '@mouseIdle' @mouseIdle
             if @mouseIdle >= @minutes
                 @onClick()
         else
@@ -43,6 +44,7 @@ class Saver extends Kachel
     onSaverClose: =>
         
         @saver = null
+        @mouseIdle = 0
         @mouseCheck = setInterval @checkMouse, @interval
             
     onClick: -> 
