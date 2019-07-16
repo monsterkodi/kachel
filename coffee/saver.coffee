@@ -6,7 +6,7 @@
 0000000   000   000      0      00000000  000   000
 ###
 
-{ sw, sh, slash, post, kpos, klog, elem, _ } = require 'kxk'
+{ sw, sh, os, slash, post, kpos, klog, elem, _ } = require 'kxk'
 
 Kachel   = require './kachel'
 electron = require 'electron'
@@ -56,11 +56,15 @@ class Saver extends Kachel
         width  = wa.width
         height = wa.height
         
+        offset = 0
+        if os.platform() == 'darwin' and parseInt(os.release().split('.')[0]) >= 18
+            offset = 4 # try to get rid of ugly top frame border
+        
         @saver = new electron.remote.BrowserWindow
             x:                      0
-            y:                      -4
+            y:                      -offset
             width:                  width
-            height:                 height+4
+            height:                 height+offset
             backgroundColor:        '#01000000'
             resizable:              false
             maximizable:            false

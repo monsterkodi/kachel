@@ -131,6 +131,8 @@ KachelApp = new app
 
 post.on 'newKachel' (id) ->
 
+    return if id == 'main'
+    
     kachelSize = 1
 
     html = id
@@ -141,7 +143,7 @@ post.on 'newKachel' (id) ->
         else
             html = 'appl'
             kachelSize = 0
-    else if id.startsWith('/')
+    else if id.startsWith('/') or id[1] == ':'
         html = 'folder'
         kachelSize = 0
         
@@ -149,7 +151,7 @@ post.on 'newKachel' (id) ->
         when 'saver' then kachelSize = 0
         when 'sysdish' 'sysinfo' 'clock' 'default' then kachelSize = 2
         
-    # klog html, id
+    klog '+' html, id
     
     win = new electron.BrowserWindow
         

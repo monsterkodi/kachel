@@ -6,7 +6,7 @@
 000   000  000   000  000   000  000   000  0000000  
 ###
 
-{ sw, sh, elem, kpos, clamp, randRange, randInt, randIntRange, klog } = require 'kxk'
+{ sw, sh, elem, kpos, clamp, keyinfo, randRange, randInt, randIntRange, klog } = require 'kxk'
         
 electron = require 'electron'
         
@@ -20,8 +20,8 @@ class SaverDefault
             error 'window.onerror' msg, source, line, col
             true
         
-        document.body.addEventListener 'keydown'   @close
         document.body.addEventListener 'mousedown' @close
+        document.body.addEventListener 'keydown'   @onKeyDown
         document.body.addEventListener 'mousemove' @onMouseMove
         document.body.focus()
     
@@ -83,7 +83,14 @@ class SaverDefault
         @startpos ?= kpos event
         if kpos(event).dist(@startpos) > 10
             @close()
+    
+    onKeyDown: (event) =>
         
+        info = keyinfo.forEvent event
+        switch info.combo
+            when 'n' then return @cubeCount = @cubesMax
+        @close()
+            
     close: =>
         
         document.body.removeEventListener 'keydown'   @close
@@ -107,15 +114,19 @@ class SaverDefault
             @fill "rgba(0,0,0,#{@fade/@fadeSteps})"        
             window.requestAnimationFrame @fadeOut
         else
+            @fadeSteps = 40
+            @fade      = 0        
             @nextRun()
 
     blackOut: =>
         
         if @fade < @fadeSteps
             @fade += 1     
-            @fill "rgba(0,0,0,#{4/@fadeSteps})"        
-            window.requestAnimationFrame @blackOut
+            @fill "rgba(0,0,0,0.1)"
+            window.setTimeout @blackOut, 40
         else
+            @fadeSteps = 40
+            @fade      = 0        
             @nextRun()
             
     fill: (color) ->
@@ -176,8 +187,6 @@ class SaverDefault
             @lastDir = nextDir
             
         if @cubeCount >= @cubesMax
-            @fadeSteps = 128
-            @fade      = 0        
             @blackOut()
             return false
         
