@@ -37,6 +37,8 @@ class Folder extends Kachel
     onInitKachel: (@kachelId) =>
         
         folder = slash.resolve @kachelId
+        
+        klog 'folder.onInitKachel' folder
                 
         if folder == slash.untilde '~'
             @setIcon slash.join __dirname, '..' 'img' 'home.png'

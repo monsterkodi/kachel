@@ -1,6 +1,6 @@
 name            kachel
 productName     kachel
-version         0.39.0
+version         0.40.0
 description     experiment
 main            js/main.js
 repository
@@ -20,8 +20,6 @@ dependencies
                 kxk             ^0.329.0
                 simple-plist    ^1.0.0
                 systeminformation  ^4.14.3
-optionalDependencies
-                win-icon-extractor  https://github.com/monsterkodi/win-icon-extractor.git
 devDependencies
                 electron        ^5.0.6
                 electron-packager  ^14.0.1

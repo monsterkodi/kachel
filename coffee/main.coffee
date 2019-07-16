@@ -176,13 +176,14 @@ post.on 'newKachel' (id) ->
         
     win.loadURL indexData(html), baseURLForDataURL:"file://#{__dirname}/../js/index.html"
     
-    win.on 'ready-to-show' -> 
-        win.show()
-        win.openDevTools()
+    # win.on 'ready-to-show' -> 
+        # win.show()
+        # win.openDevTools()
     
     win.webContents.on 'dom-ready' (event) ->
-        post.toWin win.id, 'initKachel' id
-        win.show()
+        wid = event.sender.id
+        post.toWin wid, 'initKachel' id
+        winWithId(wid).show()
           
     win.on 'close' onKachelClose
         

@@ -29,6 +29,7 @@ class Appl extends Kachel
         iconDir = slash.join slash.userData(), 'icons'
         appName = slash.base @kachelId
         iconPath = "#{iconDir}/#{appName}.png"
+                
         if not slash.isFile iconPath
             @refreshIcon()
         else
@@ -86,7 +87,7 @@ class Appl extends Kachel
         any2Ico = slash.path __dirname + '/../bin/Quick_Any2Ico.exe'
         
         if slash.isFile any2Ico
-        
+            klog 'appl.exeIcon' any2Ico
             childp.exec "\"#{any2Ico}\" -formats=512 -res=\"#{exePath}\" -icon=\"#{pngPath}\"", {}, (err,stdout,stderr) -> 
                 if not err? 
                     cb pngPath
@@ -95,23 +96,7 @@ class Appl extends Kachel
                         error stdout, stderr, err
                     cb()
         else
-            try
-                extractIcon = require 'win-icon-extractor'
-                extractIcon(exePath).then (result) ->
-                    if result
-                        data = result.slice 'data:image/png;base64,'.length
-                        fs.writeFile pngPath, data, {encoding: 'base64'}, (err) ->
-                            if not err?
-                                cb pngPath
-                            else
-                                error err
-                                cb()
-                    else
-                        error 'no result'
-                        cb()
-            catch err
-                error err
-                cb()
+            error 'no icon extractor!'
             
     #  0000000   00000000   00000000   
     # 000   000  000   000  000   000  
