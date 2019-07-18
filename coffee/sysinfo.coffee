@@ -21,10 +21,18 @@ class Sysinfo extends Kachel
             net: []
             dsk: []
             cpu: []
+            
+        # @max = 
+            # net: [prefs.get('sysinfo▸net0' 100), prefs.get('sysinfo▸net1' 100)]
+            # dsk: [prefs.get('sysinfo▸dsk0' 100), prefs.get('sysinfo▸dsk1' 100)]
+            # cpu: [1 1]
+
         @max = 
-            net: [prefs.get('sysinfo▸net0' 100), prefs.get('sysinfo▸net1' 100)]
-            dsk: [prefs.get('sysinfo▸dsk0' 100), prefs.get('sysinfo▸dsk1' 100)]
+            net: [100, 100]
+            dsk: [100, 100]
             cpu: [1 1]
+            
+        # klog @max
             
         @colors =
             dsk: [[128 128 255] [ 64  64 255]] 
@@ -78,8 +86,12 @@ class Sysinfo extends Kachel
             switch n
                 when 'dsk' then if data.disksIO? 
                                 hist.push [data.disksIO.rIO_sec, data.disksIO.wIO_sec]
-                when 'net' then hist.push [data.networkStats[0].rx_sec, data.networkStats[0].tx_sec]
                 when 'cpu' then hist.push [data.currentLoad.currentload/100, data.currentLoad.currentload_user/100]
+                when 'net' 
+                    rx_sec = parseInt data.networkStats[0].rx_sec
+                    tx_sec = parseInt data.networkStats[0].tx_sec
+                    hist.push [rx_sec, tx_sec]
+                    # klog rx_sec, tx_sec, rx_sec/@max.net[0], tx_sec/@max.net[0]
                 
             continue if empty hist
             
@@ -102,13 +114,13 @@ class Sysinfo extends Kachel
                             ctx.fillRect @width-hist.length+i, @height-h, 2, h
                     else
                         @max[n][m] = Math.max hist[i][m], @max[n][m]
-                        h = @height/2 * hist[i][m] / max[m]
+                        h = (hist[i][m] / max[m]) * @height/2
                         if m 
                             ctx.fillRect @width-hist.length+i, @height/2-h, 2, h
                         else
                             ctx.fillRect @width-hist.length+i, @height/2, 2, h
                             
-                if @max[n][m] > max[m]
-                    prefs.set "sysinfo▸#{n}#{m}" parseInt @max[n][m]
+                # if @max[n][m] > max[m]
+                    # prefs.set "sysinfo▸#{n}#{m}" parseInt @max[n][m]
                         
 module.exports = Sysinfo
