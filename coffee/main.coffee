@@ -27,11 +27,6 @@ updateInfos = -> infos = Bounds.getInfos kacheln()
 setKachelBounds = (kachel, b) ->
     Bounds.setBounds kachel, b
     updateInfos()
-
-winEvents = (win) ->
-    win.on 'focus'  onWinFocus
-    win.on 'blur'   onWinBlur
-    win.setHasShadow false
     
 indexData = (jsFile) ->
     
@@ -86,7 +81,7 @@ KachelApp = new app
     onWinReady: (win) =>
         
         mainWin = win
-        winEvents win
+        win.setHasShadow false
         
         for kachelId in prefs.get 'kacheln' []
             if kachelId not in ['appl' 'folder' 'file']
@@ -100,11 +95,11 @@ KachelApp = new app
         
         checkMouse = =>
             
-            # klog focusKachel?.isDestroyed()
             return if dragging
             oldPos = kpos mousePos ? {x:0 y:0}
             mousePos = electron.screen.getCursorScreenPoint()
-            if oldPos.distSquare(mousePos) < 10 then return
+            if oldPos.distSquare(mousePos) < 10 
+                return
             if infos?.kachelBounds? 
                 if not Bounds.contains infos.kachelBounds, mousePos
                     return
@@ -117,12 +112,11 @@ KachelApp = new app
                         focusKachel.focus()
                     else
                         post.toWin hoverKachel, 'hover'
+                if mousePos.x == 0 or mousePos.x >= Bounds.sw()-1
+                    post.emit 'raiseKacheln'
                 
         mouseTimer = setInterval checkMouse, 50
 
-# KachelApp.app.on 'activate'             -> klog 'KachelApp.app.on activate'
-# KachelApp.app.on 'browser-window-focus' -> klog 'KachelApp.app.on browser-window-focus'
-        
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
 # 0000000    000000000  000       000000000  0000000   000      
@@ -186,8 +180,8 @@ post.on 'newKachel' (id) ->
         winWithId(wid).show()
           
     win.on 'close' onKachelClose
+    win.setHasShadow false
         
-    winEvents win
     win
         
 #  0000000  000   000   0000000   00000000   
@@ -285,37 +279,22 @@ post.on 'kachelSize' (action, wid) ->
 # 000   000  000   000  000       000  000     
 # 000   000  000   000  000  0000000   00000000
 
-raised  = false
-raising = false
-        
 post.on 'raiseKacheln' ->
     
     return if not mainWin?
-    klog 'raiseKacheln' 
     
+    fk = focusKachel
+
+    mainWin.show()
     for win in kacheln()
-        if not win.isVisible()
-            raised = false
-            break
+        # win.show()
+        win.showInactive()
             
-    raising = true
-    if raised
-        for win in kacheln()
-            win.hide()
-        raised  = false
-        raising = false
-        return
-        
-    for win in kacheln().concat [mainWin]
-        if os.platform() == 'win32'
-            raiseWin win
-        else
-            win.showInactive()
-    raised = true
-    raiseWin focusKachel ? mainWin
-    raising = false
+    # fk?.focus()
+    raiseWin fk ? mainWin
     
 raiseWin = (win) ->
+    
     win.showInactive()
     win.focus()
 
@@ -331,22 +310,14 @@ post.on 'hide' -> for w in wins() then w.hide()
 post.on 'focusKachel' (winId, direction) -> raiseWin neighborWin winId, direction
    
 post.on 'kachelFocus' (winId) -> 
-    if winId != mainWin.id and not raising
+    if winId != mainWin.id
         focusKachel = winWithId winId
         
 onKachelClose = (event) ->
     if focusKachel == event.sender
         focusKachel = null 
     setTimeout updateInfos, 200
-        
-onWinBlur = (event) -> 
-    if not raising and event.sender == focusKachel
-        raised = false
-
-onWinFocus = (event) -> 
-    if not raising
-        raised = true
-            
+                    
 # 000   000  000  000   000   0000000  
 # 000 0 000  000  0000  000  000       
 # 000000000  000  000 0 000  0000000   
@@ -357,7 +328,6 @@ wins      = -> BrowserWindow.getAllWindows().sort (a,b) -> a.id - b.id
 activeWin = -> BrowserWindow.getFocusedWindow()
 kacheln   = -> 
     k = wins().filter (w) -> w != mainWin
-    # klog 'kacheln' k.length
     k
     
 winWithId = (id) -> BrowserWindow.fromId id
