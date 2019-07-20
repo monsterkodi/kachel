@@ -11,6 +11,9 @@
 Kachel = require './kachel'
 utils  = require './utils'
 
+if os.platform() == 'win32'
+    wxw = require 'wxw'
+
 class Folder extends Kachel
         
     @: (@kachelId:'folder') -> super
@@ -38,8 +41,6 @@ class Folder extends Kachel
         
         folder = slash.resolve @kachelId
         
-        klog 'folder.onInitKachel' folder
-                
         if folder == slash.untilde '~'
             @setIcon slash.join __dirname, '..' 'img' 'home.png'
         else if folder == slash.untilde '~/.Trash'
@@ -66,33 +67,47 @@ class Folder extends Kachel
     #    000     000   000  000   000       000  000   000  
     #    000     000   000  000   000  0000000   000   000  
     
-    checkTrash: (trashFolder) ->
+    showTrashCount: (count) ->
         
-        fs.readdir trashFolder, (err, files) =>
-            return if valid err
-            if files.length
-                @dot = utils.svg clss:'overlay'
-                utils.circle radius:12 clss:'trashDot' svg:@dot
-                @main.appendChild @dot
-            else if @dot
-                @main.removeChild @dot
-                delete @dot
+        if count
+            @dot = utils.svg clss:'overlay'
+            utils.circle radius:12 clss:'trashDot' svg:@dot
+            @main.appendChild @dot
+            @dot.appendChild elem class:'trashCount' text:count
+        else if @dot
+            @main.removeChild @dot
+            delete @dot
+    
+    checkTrash: (trashFolder) =>
+        
+        if os.platform() == 'win32'
+            
+            @showTrashCount wxw 'trash' 'count'
+                
+        else
+            fs.readdir trashFolder, (err, files) =>
+                return if valid err
+                @showTrashCount files.length
         
     onContextMenu: => 
         
         if @isTrash
-            emptyTrash = require 'empty-trash'
-            emptyTrash()
+            if os.platform() == 'win32'
+                wxw 'trash' 'empty'
+            else
+                emptyTrash = require 'empty-trash'
+                emptyTrash()
                 
     addTrash: (trashFolder) ->
             
         @isTrash = true
-        # if os.platform() == 'win32'
-            # trashFolder = 'shell:RecycleBinFolder'
         
         @checkTrash trashFolder
         
-        fs.watch trashFolder, (change, file) => @checkTrash trashFolder
+        if os.platform() == 'win32'
+            setInterval @checkTrash, 5000
+        else
+            fs.watch trashFolder, (change, file) => @checkTrash trashFolder
         
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  
