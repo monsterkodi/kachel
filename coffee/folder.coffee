@@ -67,15 +67,17 @@ class Folder extends Kachel
     #    000     000   000  000   000       000  000   000  
     #    000     000   000  000   000  0000000   000   000  
     
-    showTrashCount: (count) ->
+    showTrashCount: (count) =>
         
-        if count
-            @dot = utils.svg clss:'overlay'
-            utils.circle radius:12 clss:'trashDot' svg:@dot
-            @main.appendChild @dot
-            @dot.appendChild elem class:'trashCount' text:count
+        if parseInt count
+            if not @dot
+                @dot = utils.svg clss:'overlay'
+                utils.circle radius:12 clss:'trashDot' svg:@dot
+                @main.appendChild @dot
+                @dot.appendChild elem class:'trashCount' text:count
         else if @dot
-            @main.removeChild @dot
+            @dot.parentElement.removeChild @dot
+            @dot.remove()
             delete @dot
     
     checkTrash: (trashFolder) =>
@@ -92,6 +94,7 @@ class Folder extends Kachel
     onContextMenu: => 
         
         if @isTrash
+            @showTrashCount 0
             if os.platform() == 'win32'
                 wxw 'trash' 'empty'
             else
@@ -105,7 +108,7 @@ class Folder extends Kachel
         @checkTrash trashFolder
         
         if os.platform() == 'win32'
-            setInterval @checkTrash, 5000
+            setInterval @checkTrash, 2000
         else
             fs.watch trashFolder, (change, file) => @checkTrash trashFolder
         
