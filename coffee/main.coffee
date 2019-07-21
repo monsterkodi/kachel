@@ -98,8 +98,14 @@ KachelApp = new app
             return if dragging
             oldPos = kpos mousePos ? {x:0 y:0}
             mousePos = electron.screen.getCursorScreenPoint()
+            
+            if mousePos.x == 0 or mousePos.x >= Bounds.sw()-1
+                if Bounds.kachelAtPos infos, mousePos
+                    post.emit 'raiseKacheln'
+            
             if oldPos.distSquare(mousePos) < 10 
                 return
+                
             if infos?.kachelBounds? 
                 if not Bounds.contains infos.kachelBounds, mousePos
                     return
@@ -112,8 +118,6 @@ KachelApp = new app
                         focusKachel.focus()
                     else
                         post.toWin hoverKachel, 'hover'
-                if mousePos.x == 0 or mousePos.x >= Bounds.sw()-1
-                    post.emit 'raiseKacheln'
                 
         mouseTimer = setInterval checkMouse, 50
 
@@ -145,7 +149,7 @@ post.on 'newKachel' (id) ->
         when 'saver' then kachelSize = 0
         when 'sysdish' 'sysinfo' 'clock' 'default' then kachelSize = 2
         
-    klog '+' html, id
+    # klog '+' html, id
     
     win = new electron.BrowserWindow
         
@@ -283,10 +287,8 @@ post.on 'raiseKacheln' ->
 
     mainWin.show()
     for win in kacheln()
-        # win.show()
-        win.showInactive()
+        win.show()
             
-    # fk?.focus()
     raiseWin fk ? mainWin
     
 raiseWin = (win) ->

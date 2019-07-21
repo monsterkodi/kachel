@@ -73,7 +73,7 @@ class File extends Kachel
         pngPath = slash.resolve slash.join outDir, slash.base(exePath) + ".png"
         any2Ico = slash.path __dirname + '/../bin/Quick_Any2Ico.exe'
         
-        if slash.isFile any2Ico
+        if false #slash.isFile any2Ico
         
             childp.exec "\"#{any2Ico}\" -formats=512 -res=\"#{exePath}\" -icon=\"#{pngPath}\"", {}, (err,stdout,stderr) -> 
                 if not err? 
@@ -83,23 +83,8 @@ class File extends Kachel
                         error stdout, stderr, err
                     cb()
         else
-            try
-                extractIcon = require 'win-icon-extractor'
-                extractIcon(exePath).then (result) ->
-                    if result
-                        klog 'extractIcon result' result.length
-                        data = result.slice 'data:image/png;base64,'.length
-                        fs.writeFile pngPath, data, {encoding: 'base64'}, (err) ->
-                            if not err?
-                                cb pngPath
-                            else
-                                error err
-                                cb()
-                    else
-                        error 'no result'
-                        cb()
-            catch err
-                error err
-                cb()
+            wxw = require 'wxw'
+            wxw 'icon' exePath, pngPath
+            cb pngPath
         
 module.exports = File

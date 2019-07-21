@@ -6,7 +6,7 @@
 000   000  000        000        0000000  
 ###
 
-{ post, childp, prefs, slash, osascript, open, klog, elem, os, fs, _ } = require 'kxk'
+{ childp, slash, open, klog, elem, os, fs, _ } = require 'kxk'
 
 Kachel = require './kachel'
 
@@ -15,8 +15,18 @@ class Appl extends Kachel
     @: (@kachelId:'appl') -> super
         
     onClick: (event) -> 
-        klog 'open app' slash.unslash @kachelId 
-        open slash.unslash @kachelId 
+        
+        # klog 'open app' slash.file @kachelId
+        
+        if os.platform() == 'win32'
+            wxw = require 'wxw'
+            infos = wxw 'info' slash.file @kachelId
+            if infos.length
+                wxw 'raise' slash.file @kachelId
+            else
+                open slash.unslash @kachelId 
+        else
+            open @kachelId 
     
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
@@ -86,7 +96,7 @@ class Appl extends Kachel
         pngPath = slash.resolve slash.join outDir, slash.base(exePath) + ".png"
         any2Ico = slash.path __dirname + '/../bin/Quick_Any2Ico.exe'
         
-        if slash.isFile any2Ico
+        if false # slash.isFile any2Ico
             klog 'appl.exeIcon' any2Ico
             childp.exec "\"#{any2Ico}\" -formats=512 -res=\"#{exePath}\" -icon=\"#{pngPath}\"", {}, (err,stdout,stderr) -> 
                 if not err? 
@@ -96,7 +106,10 @@ class Appl extends Kachel
                         error stdout, stderr, err
                     cb()
         else
-            error 'no icon extractor!'
+            wxw = require 'wxw'
+            klog 'exeIcon' exePath, pngPath
+            wxw 'icon' exePath, pngPath
+            cb pngPath
             
     #  0000000   00000000   00000000   
     # 000   000  000   000  000   000  
