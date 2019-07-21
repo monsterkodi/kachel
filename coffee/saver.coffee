@@ -9,6 +9,7 @@
 { sw, sh, os, slash, post, kpos, klog, elem, _ } = require 'kxk'
 
 Kachel   = require './kachel'
+wxw      = require 'wxw'
 electron = require 'electron'
 
 class Saver extends Kachel
@@ -17,6 +18,7 @@ class Saver extends Kachel
     
         super
     
+        @taskbar    = false
         @saver      = null
         @mouseIdle  = 0
         @minutes    = 5
@@ -46,14 +48,24 @@ class Saver extends Kachel
         @saver = null
         @mouseIdle = 0
         @mouseCheck = setInterval @checkMouse, @interval
+        if @taskbar
+            wxw 'taskbar' 'show'
+            @taskbar = false
             
     onClick: -> 
     
+        info = wxw('info' 'taskbar')[0]
+        if info.status != 'hidden'
+            wxw 'taskbar' 'hide'
+            @taskbar = true
+        else
+            @taskbar = false
+        
         clearInterval @mouseCheck
         @mouseIdle  = 0
         @mouseCheck = null
         
-        wa = electron.remote.screen.getPrimaryDisplay().workAreaSize
+        wa = wxw 'screen' 'size'
         
         width  = wa.width
         height = wa.height
@@ -66,6 +78,8 @@ class Saver extends Kachel
             x:                      0
             y:                      -offset
             width:                  width
+            minWidth:               width
+            minHeight:              height+offset
             height:                 height+offset
             backgroundColor:        '#01000000'
             resizable:              false
