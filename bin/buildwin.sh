@@ -14,8 +14,6 @@ if rm -rf kachel-win32-x64; then
 
         $BIN/electron-packager . --overwrite --icon=img/app.ico
 
-        # rm -rf kachel-win32-x64/resources/app/inno
-        
         start kachel-win32-x64/kachel.exe
     fi
 fi

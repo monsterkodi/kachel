@@ -80,7 +80,8 @@ class Kachel extends win
         @win.setSize     @startBounds.width, @startBounds.height
         
     onDragStop: (drag, event) =>
-        if drag.deltaSum.x == 0 == drag.deltaSum.y
+        if drag.deltaSum.x < 10 and drag.deltaSum.y < 10
+            @win.setBounds @startBounds
             if event.button == 0
                 @onClick event
         else

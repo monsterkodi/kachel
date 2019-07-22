@@ -72,7 +72,7 @@ class Folder extends Kachel
         if parseInt count
             if not @dot
                 @dot = utils.svg clss:'overlay'
-                utils.circle radius:12 clss:'trashDot' svg:@dot
+                utils.circle radius:6 clss:'trashDot' svg:@dot
                 @main.appendChild @dot
                 @dot.appendChild elem class:'trashCount' text:count
         else if @dot
