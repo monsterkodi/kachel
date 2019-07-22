@@ -6,19 +6,38 @@
 0000000     0000000    0000000   000   000  0000000    0000000 
 ###
 
-{ post, clamp, klog } = require 'kxk'
+{ post, clamp, klog, os } = require 'kxk'
 
+if os.platform()=='win32' then wxw = require 'wxw'
 electron = require 'electron'
 
 class Bounds
 
+    @screenWidth:  0
+    @screenHeight: 0
+    @screenTop:    0
+    
     @setBounds: (kachel, b) ->
+        
         kachel.setBounds b
         post.toWin kachel.id, 'saveBounds'
+        
+    @updateScreenSize: ->
+        
+        if os.platform() == 'win32'
+            @screenWidth  = wxw('screen' 'user').width
+            @screenHeight = wxw('screen' 'user').height
+            @screenTop    = 0
+        else
+            @screenWidth  = electron.screen.getPrimaryDisplay().workAreaSize.width
+            @screenHeight = electron.screen.getPrimaryDisplay().workAreaSize.height
+            @screenTop    = electron.screen.getPrimaryDisplay().workArea.y
     
-    @sw: -> electron.screen.getPrimaryDisplay().workAreaSize.width
-    @sh: -> electron.screen.getPrimaryDisplay().workAreaSize.height
-    @sy: -> electron.screen.getPrimaryDisplay().workArea.y
+    # @sw: -> if os.platform() == 'win32' then wxw('screen' 'user').width  else electron.screen.getPrimaryDisplay().workAreaSize.width
+    # @sh: -> if os.platform() == 'win32' then wxw('screen' 'user').height else electron.screen.getPrimaryDisplay().workAreaSize.height
+    @sw: -> @screenWidth
+    @sh: -> @screenHeight
+    @sy: -> @screenTop
 
     # 000  000   000  00000000   0000000    0000000  
     # 000  0000  000  000       000   000  000       

@@ -22,6 +22,8 @@ mousePos    = kpos 0,0
 infos       = []
 providers   = {}
 
+Bounds.updateScreenSize()
+
 updateInfos = -> infos = Bounds.getInfos kacheln()
 
 setKachelBounds = (kachel, b) ->
@@ -70,9 +72,9 @@ KachelApp = new app
     height:             50
     acceptFirstMouse:   true
     prefsSeperator:     '▸'
-    onActivate:         -> post.emit 'raiseKacheln'
-    onWillShowWin:      -> post.emit 'raiseKacheln'
-    onOtherInstance:    -> post.emit 'raiseKacheln'
+    onActivate:         -> klog 'onActivate'; post.emit 'raiseKacheln'
+    onWillShowWin:      -> klog 'onWinWillShow'; post.emit 'raiseKacheln'
+    onOtherInstance:    -> klog 'onOtherInstance'; post.emit 'raiseKacheln'
     onShortcut:         -> post.emit 'raiseKacheln'
     onQuit:             -> clearInterval mouseTimer
     resizable:          false
@@ -82,6 +84,7 @@ KachelApp = new app
         
         mainWin = win
         win.setHasShadow false
+        win.on 'focus' -> klog 'onWinFocus should savely raise kacheln'; # post.emit 'raiseKacheln'
         
         for kachelId in prefs.get 'kacheln' []
             if kachelId not in ['appl' 'folder' 'file']
@@ -98,8 +101,9 @@ KachelApp = new app
             return if dragging
             oldPos = kpos mousePos ? {x:0 y:0}
             mousePos = electron.screen.getCursorScreenPoint()
-            
-            if mousePos.x == 0 or mousePos.x >= Bounds.sw()-1
+            screenPos = mousePos
+            screenPos = electron.screen.dipToScreenPoint mousePos if os.platform() == 'win32'
+            if screenPos.x == 0 or screenPos.x >= Bounds.sw()-2 or screenPos.y == 0 or screenPos.y >= Bounds.sh()-2
                 if Bounds.kachelAtPos infos, mousePos
                     post.emit 'raiseKacheln'
             
@@ -109,6 +113,7 @@ KachelApp = new app
             if infos?.kachelBounds? 
                 if not Bounds.contains infos.kachelBounds, mousePos
                     return
+                    
             if k = Bounds.kachelAtPos infos, mousePos
                 if not hoverKachel or hoverKachel != k.kachel.id
                     post.toWin hoverKachel, 'leave' if hoverKachel
@@ -119,7 +124,7 @@ KachelApp = new app
                     else
                         post.toWin hoverKachel, 'hover'
                 
-        mouseTimer = setInterval checkMouse, 50
+        mouseTimer = setInterval checkMouse, 100
 
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
