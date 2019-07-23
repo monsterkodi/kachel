@@ -5,15 +5,15 @@
 # 000 0 000  000       000  0000  000   000
 # 000   000  00000000  000   000   0000000
 
-New             cmdctrl+n n
-Close           cmdctrl+w w delete
-Quit            cmdctrl+q q
-Scheme          cmdctrl+i i
+New             cmdctrl+n
+Close           cmdctrl+w delete
+Quit            cmdctrl+q
+Scheme          cmdctrl+i
 IncreaseSize    cmdctrl+= 
 DecreaseSize    cmdctrl+- 
 ResetSize       cmdctrl+0 
 About           cmdctrl+alt+/
-Hide            cmdctrl+h h
+Hide            cmdctrl+h
 Screenshot      cmdctrl+alt+s
 Reload          alt+cmdctrl+l
 DevTools        alt+cmdctrl+i
