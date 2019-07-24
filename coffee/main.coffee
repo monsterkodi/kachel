@@ -125,6 +125,7 @@ onMouse = (data) ->
             raisePos = screenPos
             if Bounds.kachelAtPos infos, mousePos
                 post.emit 'raiseKacheln'
+                return
     
     if infos?.kachelBounds? 
         if not Bounds.contains infos.kachelBounds, mousePos
