@@ -47,7 +47,7 @@ class Folder extends Kachel
             @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycle.png'
             @addTrash folder
         else if folder.indexOf('$Recycle.Bin') >= 0
-            @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycledot.png'
+            @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycle.png'
             @addTrash folder
         else if folder == slash.untilde '~/Desktop'
             @setIcon slash.join __dirname, '..' 'img' 'desktop.png'
@@ -73,16 +73,9 @@ class Folder extends Kachel
             if not @dot
                 @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycledot.png'
                 @dot = true
-                # @dot = utils.svg clss:'overlay'
-                # utils.circle radius:6 clss:'trashDot' svg:@dot
-                # @main.appendChild @dot
-                # @dot.appendChild elem class:'trashCount' text:count
         else if @dot
             @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycle.png'
             @dot = false
-            # @dot.parentElement.removeChild @dot
-            # @dot.remove()
-            # delete @dot
     
     checkTrash: (trashFolder) =>
         

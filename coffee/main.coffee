@@ -86,7 +86,7 @@ KachelApp = new app
         
         mainWin = win
         win.setHasShadow false
-        win.on 'focus' -> klog 'onWinFocus should safely raise kacheln'; # post.emit 'raiseKacheln'
+        win.on 'focus' -> # klog 'onWinFocus should safely raise kacheln'; # post.emit 'raiseKacheln'
         
         data = new Data
         
@@ -97,49 +97,49 @@ KachelApp = new app
         post.on 'mouse'    onMouse
         post.on 'keyboard' onKeyboard
                 
-        # 00     00   0000000   000   000   0000000  00000000  
-        # 000   000  000   000  000   000  000       000       
-        # 000000000  000   000  000   000  0000000   0000000   
-        # 000 0 000  000   000  000   000       000  000       
-        # 000   000   0000000    0000000   0000000   00000000  
+# 00     00   0000000   000   000   0000000  00000000  
+# 000   000  000   000  000   000  000       000       
+# 000000000  000   000  000   000  0000000   0000000   
+# 000 0 000  000   000  000   000       000  000       
+# 000   000   0000000    0000000   0000000   00000000  
                 
-        checkMouse = =>
-            
-            return if dragging
-            oldPos = kpos mousePos ? {x:0 y:0}
-            mousePos = electron.screen.getCursorScreenPoint()
-            screenPos = mousePos
-            screenPos = electron.screen.dipToScreenPoint mousePos if os.platform() == 'win32'
-            if screenPos.x == 0 or screenPos.x >= Bounds.sw()-2 or screenPos.y == 0 or screenPos.y >= Bounds.sh()-2
-                if Bounds.kachelAtPos infos, mousePos
-                    post.emit 'raiseKacheln'
-            
-            if oldPos.distSquare(mousePos) < 10 
-                return
-                
-            if infos?.kachelBounds? 
-                if not Bounds.contains infos.kachelBounds, mousePos
-                    return
-                    
-            if k = Bounds.kachelAtPos infos, mousePos
-                if not hoverKachel or hoverKachel != k.kachel.id
-                    post.toWin hoverKachel, 'leave' if hoverKachel
-                    hoverKachel = k.kachel.id
-                    if focusKachel?.isFocused() and hoverKachel != focusKachel.id
-                        focusKachel = winWithId hoverKachel
-                        focusKachel.focus()
-                    else
-                        post.toWin hoverKachel, 'hover'
-                
-        mouseTimer = setInterval checkMouse, 100
-
-onMouse = (data) -> # klog '.'
+onMouse = (data) -> 
     
-    # klog data
+    return if dragging
+    
+    oldPos    = kpos mousePos ? {x:0 y:0}
+    screenPos = kpos data
+    
+    if os.platform() == 'win32'
+        mousePos = electron.screen.screenToDipPoint screenPos 
+    else
+        mousePos = screenPos
+        
+    if screenPos.x == 0 or screenPos.x >= Bounds.sw()-2 or screenPos.y == 0 or screenPos.y >= Bounds.sh()-2
+        if Bounds.kachelAtPos infos, mousePos
+            post.emit 'raiseKacheln'
+    
+    if infos?.kachelBounds? 
+        if not Bounds.contains infos.kachelBounds, mousePos
+            return
+            
+    if k = Bounds.kachelAtPos infos, mousePos
+        if not hoverKachel or hoverKachel != k.kachel.id
+            post.toWin hoverKachel, 'leave' if hoverKachel
+            hoverKachel = k.kachel.id
+            if focusKachel?.isFocused() and hoverKachel != focusKachel.id
+                focusKachel = winWithId hoverKachel
+                focusKachel.focus()
+            else
+                post.toWin hoverKachel, 'hover'
+
+# 000   000  00000000  000   000  0000000     0000000    0000000   00000000   0000000    
+# 000  000   000        000 000   000   000  000   000  000   000  000   000  000   000  
+# 0000000    0000000     00000    0000000    000   000  000000000  0000000    000   000  
+# 000  000   000          000     000   000  000   000  000   000  000   000  000   000  
+# 000   000  00000000     000     0000000     0000000   000   000  000   000  0000000    
 
 onKeyboard = (data) ->
-    
-    # klog data
     
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
