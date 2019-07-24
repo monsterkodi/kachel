@@ -8,8 +8,8 @@
 
 { post, prefs, slash, clamp, empty, klog, kpos, app, os } = require 'kxk'
 
+Data     = require './data'
 Bounds   = require './bounds'
-ioHook   = require 'iohook'
 electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
@@ -19,9 +19,9 @@ mainWin     = null
 focusKachel = null
 hoverKachel = null
 mouseTimer  = null
+data        = null
 mousePos    = kpos 0,0
 infos       = []
-providers   = {}
 
 Bounds.updateScreenSize()
 
@@ -57,6 +57,7 @@ indexData = (jsFile) ->
 shortcut = slash.win() and 'ctrl+alt+k' or 'command+alt+k'
 
 KachelApp = new app
+    
     dir:                __dirname
     pkg:                require '../package.json'
     shortcut:           shortcut
@@ -74,8 +75,8 @@ KachelApp = new app
     acceptFirstMouse:   true
     prefsSeperator:     '▸'
     onActivate:         -> klog 'onActivate'; post.emit 'raiseKacheln'
-    onWillShowWin:      -> klog 'onWinWillShow'; post.emit 'raiseKacheln'
-    onOtherInstance:    -> klog 'onOtherInstance'; post.emit 'raiseKacheln'
+    onWillShowWin:      -> post.emit 'raiseKacheln'
+    onOtherInstance:    -> post.emit 'raiseKacheln'
     onShortcut:         -> post.emit 'raiseKacheln'
     onQuit:             -> clearInterval mouseTimer
     resizable:          false
@@ -85,26 +86,23 @@ KachelApp = new app
         
         mainWin = win
         win.setHasShadow false
-        win.on 'focus' -> klog 'onWinFocus should savely raise kacheln'; # post.emit 'raiseKacheln'
-                
+        win.on 'focus' -> klog 'onWinFocus should safely raise kacheln'; # post.emit 'raiseKacheln'
+               
+        data = new Data
+        
         for kachelId in prefs.get 'kacheln' []
             if kachelId not in ['appl' 'folder' 'file']
                 post.emit 'newKachel' kachelId
 
+        post.on 'mouse'    onMouse
+        post.on 'keyboard' onKeyboard
+                
         # 00     00   0000000   000   000   0000000  00000000  
         # 000   000  000   000  000   000  000       000       
         # 000000000  000   000  000   000  0000000   0000000   
         # 000 0 000  000   000  000   000       000  000       
         # 000   000   0000000    0000000   0000000   00000000  
-        
-        # ioHook.on 'mousewheel' (event) -> klog event
-        # ioHook.on 'mousemove' (event) -> klog event
-        # ioHook.on 'mousedown' (event) -> klog event
-        # ioHook.on 'mouseup' (event) -> klog event
-        # ioHook.on 'keydown' (event) -> klog event
-        # ioHook.on 'keyup' (event) -> klog event
-        # ioHook.start()
-        
+                
         checkMouse = =>
             
             return if dragging
@@ -135,6 +133,14 @@ KachelApp = new app
                 
         mouseTimer = setInterval checkMouse, 100
 
+onMouse = (data) ->
+    
+    # klog data
+
+onKeyboard = (data) ->
+    
+    # klog data
+    
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
 # 0000000    000000000  000       000000000  0000000   000      
@@ -378,10 +384,4 @@ neighborWin = (winId, direction) ->
         a-b
     ks[0]
     
-post.on 'requestData' (provider, wid) ->
-    
-    if not providers[provider]
-        providers[provider] = new (require "./#{provider}")
-        
-    providers[provider].addReceiver wid
         

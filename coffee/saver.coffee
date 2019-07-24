@@ -20,34 +20,32 @@ class Saver extends Kachel
     
         @taskbar    = false
         @saver      = null
-        @mouseIdle  = 0
         @minutes    = 10
-        @interval   = 1000 * 60
+        @interval   = 1000 * 60 * @minutes
         
     onLoad: ->
         
         @main.appendChild elem 'img' class:'kachelImg' src:__dirname + '/../img/saver.png'
         
-        @mousePos   = kpos electron.remote.screen.getCursorScreenPoint()
-        @mouseCheck = setInterval @checkMouse, @interval
+        @startCheck()
         
-    checkMouse: =>
+        post.toMain 'requestData' 'mouse'    @id
+        post.toMain 'requestData' 'keyboard' @id
+    
+    startCheck: ->
         
-        newPos = kpos electron.remote.screen.getCursorScreenPoint()
-        if @mousePos.equals newPos
-            @mouseIdle += 1
-            # klog '@mouseIdle' @mouseIdle
-            if @mouseIdle >= @minutes
-                @onClick()
-        else
-            @mouseIdle = 0
-            @mousePos = newPos
+        @checkTimer = setTimeout @check, @interval
+        
+    check: =>
+        
+        klog 'check'
+        
+        @startCheck()
         
     onSaverClose: =>
         
         @saver = null
-        @mouseIdle = 0
-        @mouseCheck = setInterval @checkMouse, @interval
+        @startCheck()
         if @taskbar
             wxw 'taskbar' 'show'
             @taskbar = false
@@ -61,9 +59,8 @@ class Saver extends Kachel
         else
             @taskbar = false
         
-        clearInterval @mouseCheck
-        @mouseIdle  = 0
-        @mouseCheck = null
+        clearInterval @check
+        @check = null
         
         wa = wxw 'screen' 'size'
         

@@ -17,7 +17,7 @@ class Clock extends Kachel
     
         super
         
-        post.toMain 'requestData' 'clockdata' @id
+        post.toMain 'requestData' 'clock' @id
         post.on 'data' @onData
     
     onData: (data) => 

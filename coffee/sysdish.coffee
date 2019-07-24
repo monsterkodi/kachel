@@ -23,7 +23,7 @@ class Sysdish extends Kachel
         
         super
         
-        post.toMain 'requestData' 'sysdata' @id
+        post.toMain 'requestData' 'sysinfo' @id
         post.on 'data' @onData
     
     onData: (data) =>

@@ -43,7 +43,7 @@ class Sysinfo extends Kachel
             net: '33%'
             cpu: '66%'
         
-        post.toMain 'requestData' 'sysdata' @id
+        post.toMain 'requestData' 'sysinfo' @id
         post.on 'data' @onData
         
     # 0000000     0000000   000   000  000   000  0000000     0000000  
