@@ -111,16 +111,23 @@ class Mouse
         
         @last = Date.now()
         @interval = parseInt 1000/60
+        @lastEvent = null
+        @sendTimer = null
         
     onEvent: (event) =>
         
+        @lastEvent = event
         now = Date.now()
         if now - @last > @interval
+            clearTimeout @sendTimer
+            @sendTimer = null
             @last = now
             post.toMain @name, event
             for receiver in @receivers
                 # log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
                 post.toWin receiver, 'data', event
+        else
+            @sendTimer = setTimeout (=> @onEvent @lastEvent), @interval
         
 # 000   000  00000000  000   000  0000000     0000000    0000000   00000000   0000000    
 # 000  000   000        000 000   000   000  000   000  000   000  000   000  000   000  

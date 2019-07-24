@@ -13,14 +13,15 @@ Bounds   = require './bounds'
 electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
-kachelSizes = [72,108,144,216]
+kachelSizes = [72 108 144 216]
 dragging    = false
 mainWin     = null
 focusKachel = null
 hoverKachel = null
 mouseTimer  = null
 data        = null
-mousePos    = kpos 0,0
+mousePos    = kpos 0 0
+raisePos    = kpos 0 0
 infos       = []
 
 Bounds.updateScreenSize()
@@ -84,6 +85,8 @@ KachelApp = new app
     saveBounds:         false
     onWinReady: (win) =>
         
+        electron.powerSaveBlocker.start 'prevent-app-suspension'
+        
         mainWin = win
         win.setHasShadow false
         win.on 'focus' -> # klog 'onWinFocus should safely raise kacheln'; # post.emit 'raiseKacheln'
@@ -105,19 +108,23 @@ KachelApp = new app
                 
 onMouse = (data) -> 
     
+    return if data.type != 'mousemove'
     return if dragging
     
-    oldPos    = kpos mousePos ? {x:0 y:0}
-    screenPos = kpos data
+    screenSize = kpos Bounds.sw(), Bounds.sh()
+    screenPos  = kpos(data).clamp kpos(0,0), screenSize
     
+    oldPos = kpos mousePos ? {x:0 y:0}
     if os.platform() == 'win32'
-        mousePos = electron.screen.screenToDipPoint screenPos 
+        mousePos = kpos(electron.screen.screenToDipPoint screenPos).rounded() 
     else
         mousePos = screenPos
         
     if screenPos.x == 0 or screenPos.x >= Bounds.sw()-2 or screenPos.y == 0 or screenPos.y >= Bounds.sh()-2
-        if Bounds.kachelAtPos infos, mousePos
-            post.emit 'raiseKacheln'
+        if 10 < screenPos.distSquare raisePos
+            raisePos = screenPos
+            if Bounds.kachelAtPos infos, mousePos
+                post.emit 'raiseKacheln'
     
     if infos?.kachelBounds? 
         if not Bounds.contains infos.kachelBounds, mousePos
