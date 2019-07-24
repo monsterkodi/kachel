@@ -17,8 +17,7 @@ class Alarm extends Kachel
     
         super
         
-        post.toMain 'requestData' 'clock' @id
-        post.on 'data' @onData
+        @requestData 'clock'
         
     onData: (data) => 
         

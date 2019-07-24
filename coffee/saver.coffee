@@ -18,10 +18,11 @@ class Saver extends Kachel
     
         super
     
-        @taskbar    = false
-        @saver      = null
-        @minutes    = 10
-        @interval   = 1000 * 60 * @minutes
+        @last     = Date.now()
+        @taskbar  = false
+        @saver    = null
+        @minutes  = 5
+        @interval = parseInt 1000 * 60 * @minutes
         
     onLoad: ->
         
@@ -29,28 +30,52 @@ class Saver extends Kachel
         
         @startCheck()
         
-        post.toMain 'requestData' 'mouse'    @id
-        post.toMain 'requestData' 'keyboard' @id
+        @requestData 'mouse'   
+        @requestData 'keyboard'
     
-    startCheck: ->
+    onData: (data) => @last = Date.now()
         
-        @checkTimer = setTimeout @check, @interval
+    #  0000000  000   000  00000000   0000000  000   000  
+    # 000       000   000  000       000       000  000   
+    # 000       000000000  0000000   000       0000000    
+    # 000       000   000  000       000       000  000   
+    #  0000000  000   000  00000000   0000000  000   000  
+    
+    startCheck: (ms=@interval) -> @checkTimer = setTimeout @check, ms
         
     check: =>
         
-        klog 'check'
+        now = Date.now()
         
-        @startCheck()
+        elapsed = now - @last
         
+        if elapsed > @interval
+            @onClick()
+        else
+            @startCheck Math.max 100, @interval - elapsed
+        
+    #  0000000  000       0000000    0000000  00000000  
+    # 000       000      000   000  000       000       
+    # 000       000      000   000  0000000   0000000   
+    # 000       000      000   000       000  000       
+    #  0000000  0000000   0000000   0000000   00000000  
+    
     onSaverClose: =>
         
         @saver = null
+        @last = Date.now()
         @startCheck()
         if @taskbar
             wxw 'taskbar' 'show'
             @taskbar = false
             
-    onClick: -> 
+    #  0000000  000      000   0000000  000   000  
+    # 000       000      000  000       000  000   
+    # 000       000      000  000       0000000    
+    # 000       000      000  000       000  000   
+    #  0000000  0000000  000   0000000  000   000  
+    
+    onClick: => 
     
         info = wxw('info' 'taskbar')[0]
         if info.status != 'hidden'
@@ -59,8 +84,8 @@ class Saver extends Kachel
         else
             @taskbar = false
         
-        clearInterval @check
-        @check = null
+        clearTimeout @checkTimer
+        @checkTimer = null
         
         wa = wxw 'screen' 'size'
         
@@ -95,7 +120,7 @@ class Saver extends Kachel
             webPreferences: 
                 nodeIntegration: true
                
-        code = 'saverdefault'
+        code = 'krkkl'
                 
         html = """
             <!DOCTYPE html>

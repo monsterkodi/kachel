@@ -10,7 +10,7 @@
         
 electron = require 'electron'
         
-class SaverDefault
+class Krkkl
 
     @: ->
 
@@ -330,5 +330,5 @@ class SaverDefault
             @ctx.closePath()
             @ctx.fill()
         
-module.exports = SaverDefault
+module.exports = Krkkl
 

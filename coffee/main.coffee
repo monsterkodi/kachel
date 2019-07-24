@@ -87,7 +87,7 @@ KachelApp = new app
         mainWin = win
         win.setHasShadow false
         win.on 'focus' -> klog 'onWinFocus should safely raise kacheln'; # post.emit 'raiseKacheln'
-               
+        
         data = new Data
         
         for kachelId in prefs.get 'kacheln' []
@@ -133,7 +133,7 @@ KachelApp = new app
                 
         mouseTimer = setInterval checkMouse, 100
 
-onMouse = (data) ->
+onMouse = (data) -> # klog '.'
     
     # klog data
 

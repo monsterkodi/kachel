@@ -22,17 +22,10 @@ class Sysinfo extends Kachel
             dsk: []
             cpu: []
             
-        # @max = 
-            # net: [prefs.get('sysinfo▸net0' 100), prefs.get('sysinfo▸net1' 100)]
-            # dsk: [prefs.get('sysinfo▸dsk0' 100), prefs.get('sysinfo▸dsk1' 100)]
-            # cpu: [1 1]
-
         @max = 
             net: [100, 100]
             dsk: [100, 100]
             cpu: [1 1]
-            
-        # klog @max
             
         @colors =
             dsk: [[128 128 255] [ 64  64 255]] 
@@ -43,36 +36,8 @@ class Sysinfo extends Kachel
             net: '33%'
             cpu: '66%'
         
-        post.toMain 'requestData' 'sysinfo' @id
-        post.on 'data' @onData
-        
-    # 0000000     0000000   000   000  000   000  0000000     0000000  
-    # 000   000  000   000  000   000  0000  000  000   000  000       
-    # 0000000    000   000  000   000  000 0 000  000   000  0000000   
-    # 000   000  000   000  000   000  000  0000  000   000       000  
-    # 0000000     0000000    0000000   000   000  0000000    0000000   
-    
-    onBounds: ->
-        
-        @main.innerHTML = ''
-        
-        br = @main.getBoundingClientRect()
-        w = parseInt br.width
-        h = parseInt br.height/3
-        
-        @width  = w*2
-        @height = h*2
-        
-        @canvas = {}            
-        for n in ['dsk' 'net' 'cpu']
-            canvas = elem 'canvas' class:"histCanvas" width:@width-1 height:@height
-            x = parseInt -@width/4
-            y = parseInt  -@height/4
-            canvas.style.transform = "translate3d(#{x}px, #{y}px, 0px) scale3d(0.5, 0.5, 1)"
-            canvas.style.top = @tops[n]
-            @main.appendChild canvas
-            @canvas[n] = canvas
-            
+        @requestData 'sysinfo'
+                    
     # 0000000     0000000   000000000   0000000   
     # 000   000  000   000     000     000   000  
     # 000   000  000000000     000     000000000  
@@ -91,7 +56,6 @@ class Sysinfo extends Kachel
                     rx_sec = parseInt data.networkStats[0].rx_sec
                     tx_sec = parseInt data.networkStats[0].tx_sec
                     hist.push [rx_sec, tx_sec]
-                    # klog rx_sec, tx_sec, rx_sec/@max.net[0], tx_sec/@max.net[0]
                 
             continue if empty hist
             
@@ -120,7 +84,31 @@ class Sysinfo extends Kachel
                         else
                             ctx.fillRect @width-hist.length+i, @height/2, 2, h
                             
-                # if @max[n][m] > max[m]
-                    # prefs.set "sysinfo▸#{n}#{m}" parseInt @max[n][m]
-                        
+    # 0000000     0000000   000   000  000   000  0000000     0000000  
+    # 000   000  000   000  000   000  0000  000  000   000  000       
+    # 0000000    000   000  000   000  000 0 000  000   000  0000000   
+    # 000   000  000   000  000   000  000  0000  000   000       000  
+    # 0000000     0000000    0000000   000   000  0000000    0000000   
+    
+    onBounds: ->
+        
+        @main.innerHTML = ''
+        
+        br = @main.getBoundingClientRect()
+        w = parseInt br.width
+        h = parseInt br.height/3
+        
+        @width  = w*2
+        @height = h*2
+        
+        @canvas = {}            
+        for n in ['dsk' 'net' 'cpu']
+            canvas = elem 'canvas' class:"histCanvas" width:@width-1 height:@height
+            x = parseInt -@width/4
+            y = parseInt  -@height/4
+            canvas.style.transform = "translate3d(#{x}px, #{y}px, 0px) scale3d(0.5, 0.5, 1)"
+            canvas.style.top = @tops[n]
+            @main.appendChild canvas
+            @canvas[n] = canvas
+                    
 module.exports = Sysinfo

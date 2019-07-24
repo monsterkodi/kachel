@@ -26,6 +26,8 @@ class Data
         setInterval @slowTick, 1000
                         
     onRequestData: (provider, wid) =>
+        
+        # klog "Data.onRequestData provider:#{kstr provider} wid:#{kstr wid}"
             
         if not @providers[provider]
             @providers[provider] = new {clock:Clock, sysinfo:Sysinfo}[provider]
@@ -107,11 +109,18 @@ class Mouse
         ioHook.on 'mousedown'  @onEvent
         ioHook.on 'mouseup'    @onEvent
         
+        @last = Date.now()
+        @interval = parseInt 1000/60
+        
     onEvent: (event) =>
         
-        post.toMain @name, event
-        for receiver in @receivers
-            post.toWin receiver, @name, event
+        now = Date.now()
+        if now - @last > @interval
+            @last = now
+            post.toMain @name, event
+            for receiver in @receivers
+                # log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
+                post.toWin receiver, 'data', event
         
 # 000   000  00000000  000   000  0000000     0000000    0000000   00000000   0000000    
 # 000  000   000        000 000   000   000  000   000  000   000  000   000  000   000  
@@ -133,3 +142,4 @@ class Keyboard
             post.toWin receiver, @name, event
         
 module.exports = Data
+
