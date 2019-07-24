@@ -44,10 +44,10 @@ class Folder extends Kachel
         if folder == slash.untilde '~'
             @setIcon slash.join __dirname, '..' 'img' 'home.png'
         else if folder == slash.untilde '~/.Trash'
-            @setIcon slash.join __dirname, '..' 'img' 'recycle.png'
+            @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycle.png'
             @addTrash folder
         else if folder.indexOf('$Recycle.Bin') >= 0
-            @setIcon slash.join __dirname, '..' 'img' 'recycle.png'
+            @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycledot.png'
             @addTrash folder
         else if folder == slash.untilde '~/Desktop'
             @setIcon slash.join __dirname, '..' 'img' 'desktop.png'
@@ -71,14 +71,18 @@ class Folder extends Kachel
         
         if parseInt count
             if not @dot
-                @dot = utils.svg clss:'overlay'
-                utils.circle radius:6 clss:'trashDot' svg:@dot
-                @main.appendChild @dot
-                @dot.appendChild elem class:'trashCount' text:count
+                @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycledot.png'
+                @dot = true
+                # @dot = utils.svg clss:'overlay'
+                # utils.circle radius:6 clss:'trashDot' svg:@dot
+                # @main.appendChild @dot
+                # @dot.appendChild elem class:'trashCount' text:count
         else if @dot
-            @dot.parentElement.removeChild @dot
-            @dot.remove()
-            delete @dot
+            @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycle.png'
+            @dot = false
+            # @dot.parentElement.removeChild @dot
+            # @dot.remove()
+            # delete @dot
     
     checkTrash: (trashFolder) =>
         
@@ -123,6 +127,7 @@ class Folder extends Kachel
         return if not iconPath
         img = elem 'img' class:'applicon' src:slash.fileUrl iconPath
         img.ondragstart = -> false
+        @main.innerHTML = ''
         @main.appendChild img
         
 module.exports = Folder

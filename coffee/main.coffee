@@ -9,6 +9,7 @@
 { post, prefs, slash, clamp, empty, klog, kpos, app, os } = require 'kxk'
 
 Bounds   = require './bounds'
+ioHook   = require 'iohook'
 electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
@@ -85,7 +86,7 @@ KachelApp = new app
         mainWin = win
         win.setHasShadow false
         win.on 'focus' -> klog 'onWinFocus should savely raise kacheln'; # post.emit 'raiseKacheln'
-        
+                
         for kachelId in prefs.get 'kacheln' []
             if kachelId not in ['appl' 'folder' 'file']
                 post.emit 'newKachel' kachelId
@@ -95,6 +96,14 @@ KachelApp = new app
         # 000000000  000   000  000   000  0000000   0000000   
         # 000 0 000  000   000  000   000       000  000       
         # 000   000   0000000    0000000   0000000   00000000  
+        
+        # ioHook.on 'mousewheel' (event) -> klog event
+        # ioHook.on 'mousemove' (event) -> klog event
+        # ioHook.on 'mousedown' (event) -> klog event
+        # ioHook.on 'mouseup' (event) -> klog event
+        # ioHook.on 'keydown' (event) -> klog event
+        # ioHook.on 'keyup' (event) -> klog event
+        # ioHook.start()
         
         checkMouse = =>
             
@@ -375,8 +384,4 @@ post.on 'requestData' (provider, wid) ->
         providers[provider] = new (require "./#{provider}")
         
     providers[provider].addReceiver wid
-    
-post.onGet 'getData' (provider) ->
-    
-    providers[provider]?.getData()
-    
+        
