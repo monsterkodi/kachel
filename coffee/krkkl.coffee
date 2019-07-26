@@ -6,7 +6,7 @@
 000   000  000   000  000   000  000   000  0000000  
 ###
 
-{ sw, sh, elem, kpos, clamp, keyinfo, randRange, randInt, randIntRange, klog } = require 'kxk'
+{ elem, slash, kpos, clamp, keyinfo, randRange, randInt, randIntRange, klog, fs } = require 'kxk'
         
 electron = require 'electron'
         
@@ -37,16 +37,23 @@ class Krkkl
         @fadeSteps = 128
         @fade      = 0
         
-        @scalef = electron.remote.screen.getPrimaryDisplay().scaleFactor
-        @width  = sw()*@scalef
-        @height = sh()*@scalef
-                        
+        display = electron.remote.screen.getPrimaryDisplay()
+        
+        sw = display.size.width
+        sh = display.size.height
+        
+        @scalef = display.scaleFactor
+        @width  = sw * @scalef
+        @height = sh * @scalef
+            
+        klog @scalef, @width, @height
+        
         @canvas = elem 'canvas' width:@width, height:@height
         @ctx = @canvas.getContext '2d'
         
         if @scalef != 1
-            xo = -@width/2+sw()/2
-            yo = -@height/2+sh()/2
+            xo = -@width/2+sw/2
+            yo = -@height/2+sh/2
             @canvas.style.transform = "translate3d(#{xo}px, #{yo}px, 0px) scale3d(#{1/@scalef}, #{1/@scalef}, 1)"
         
         document.body.appendChild @canvas
@@ -84,11 +91,26 @@ class Krkkl
         if kpos(event).dist(@startpos) > 10
             @close()
     
+    # 000   000  00000000  000   000  
+    # 000  000   000        000 000   
+    # 0000000    0000000     00000    
+    # 000  000   000          000     
+    # 000   000  00000000     000     
+    
     onKeyDown: (event) =>
         
         info = keyinfo.forEvent event
         switch info.combo
             when 'n' then return @cubeCount = @cubesMax
+            # when 'F3' 'f3'
+            when 'f3'
+                win = electron.remote.getCurrentWindow()
+                win.capturePage (img) =>
+                    file = slash.resolve "~/Desktop/krkkl-screenshot.png"
+                    fs.writeFile file, img.toPNG(), (err) ->
+                return
+            else
+                klog 'combo' combo
         @close()
             
     close: =>

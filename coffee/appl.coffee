@@ -22,7 +22,8 @@ class Appl extends Kachel
             wxw = require 'wxw'
             infos = wxw 'info' slash.file @kachelId
             if infos.length
-                wxw 'raise' slash.file @kachelId
+                # wxw 'raise' slash.file @kachelId
+                wxw 'focus' slash.file @kachelId
             else
                 open slash.unslash @kachelId 
         else
