@@ -130,6 +130,8 @@ class Kachel extends win
                 kacheln.push @kachelId 
                 prefs.set 'kacheln' kacheln
         
+        @win.setTitle "kachel #{@kachelId}"
+                
         post.toMain 'kachelBounds' @id, @kachelId
     
     onLoad:   -> # to be overridden in subclasses

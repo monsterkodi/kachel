@@ -6,7 +6,7 @@
 0000000      000     0000000   000  000   000  000        0000000   
 ###
 
-{ elem, post, prefs, empty, klog, _ } = require 'kxk'
+{ elem, post, empty, klog, _ } = require 'kxk'
 
 utils   = require './utils'
 Kachel  = require './kachel'
@@ -31,6 +31,7 @@ class Sysinfo extends Kachel
             dsk: [[128 128 255] [ 64  64 255]] 
             net: [[  0 150   0] [  0 255   0]] 
             cpu: [[255 255   0] [255 100   0]] 
+            
         @tops = 
             dsk: '0%'
             net: '33%'
@@ -49,13 +50,10 @@ class Sysinfo extends Kachel
         for n in ['dsk' 'net' 'cpu']
             hist = @history[n]
             switch n
-                when 'dsk' then if data.disksIO? 
-                                hist.push [data.disksIO.rIO_sec, data.disksIO.wIO_sec]
-                when 'cpu' then hist.push [data.currentLoad.currentload/100, data.currentLoad.currentload_user/100]
-                when 'net' 
-                    rx_sec = parseInt data.networkStats[0].rx_sec
-                    tx_sec = parseInt data.networkStats[0].tx_sec
-                    hist.push [rx_sec, tx_sec]
+                when 'dsk' then if data.dsk? 
+                                hist.push [data.dsk.r_sec,  data.dsk.w_sec]
+                when 'cpu' then hist.push [data.cpu.sys,    data.cpu.usr]
+                when 'net' then hist.push [data.net.rx_sec, data.net.tx_sec]
                 
             continue if empty hist
             
@@ -105,7 +103,7 @@ class Sysinfo extends Kachel
         for n in ['dsk' 'net' 'cpu']
             canvas = elem 'canvas' class:"histCanvas" width:@width-1 height:@height
             x = parseInt -@width/4
-            y = parseInt  -@height/4
+            y = parseInt -@height/4
             canvas.style.transform = "translate3d(#{x}px, #{y}px, 0px) scale3d(0.5, 0.5, 1)"
             canvas.style.top = @tops[n]
             @main.appendChild canvas
