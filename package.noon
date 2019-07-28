@@ -1,5 +1,5 @@
 name            kachel
-version         0.72.0
+version         0.73.0
 description     dock
 author          monsterkodi
 license         Unlicense
@@ -13,7 +13,7 @@ scripts
 dependencies
                 empty-trash     ^3.0.0
                 iohook          ^0.5.1
-                kxk             ^0.332.0
+                kxk             ^0.333.0
                 simple-plist    ^1.0.0
                 systeminformation  ^4.14.4
                 wxw             ^1.44.0
@@ -21,7 +21,7 @@ devDependencies
                 electron        ^5.0.8
                 electron-packager  ^14.0.3
                 electron-rebuild  ^1.8.5
-                konrad          ^0.152.0
+                konrad          ^0.154.0
                 sds             ^3.2.0
 iohook
                 targets

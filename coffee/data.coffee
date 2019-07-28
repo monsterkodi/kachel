@@ -8,8 +8,9 @@
 
 { post, klog, kstr, _ } = require 'kxk'
 
-ioHook  = require 'iohook'
-sysinfo = require 'systeminformation'
+ioHook   = require 'iohook'
+sysinfo  = require 'systeminformation'
+electron = require 'electron'
 
 class Data
 
@@ -20,6 +21,7 @@ class Data
         @providers = 
             mouse:    new Mouse
             keyboard: new Keyboard
+            bounds:   new Bounds
         
         post.on 'requestData' @onRequestData
         
@@ -187,5 +189,34 @@ class Keyboard
         for receiver in @receivers
             post.toWin receiver, @name, event
         
+# 000   000  000  000   000  0000000     0000000   000   000   0000000  
+# 000 0 000  000  0000  000  000   000  000   000  000 0 000  000       
+# 000000000  000  000 0 000  000   000  000   000  000000000  0000000   
+# 000   000  000  000  0000  000   000  000   000  000   000       000  
+# 00     00  000  000   000  0000000     0000000   00     00  0000000   
+
+class Bounds
+    
+    @: (@name='bounds' @receivers=[]) ->
+        
+        post.on 'bounds' @onBounds
+        
+        @interval = parseInt 500
+        @lastInfos = null
+        @checkTimer = null
+        @onBounds()
+       
+    onBounds: (msg, arg) =>
+        
+        bounds = require './bounds'
+        infos = bounds.getInfos()
+        if not _.isEqual infos, @lastInfos
+            # klog 'infos'
+            @lastInfos = infos
+            post.toMain @name, infos
+            for receiver in @receivers
+                log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
+                post.toWin receiver, 'data', infos
+            
 module.exports = Data
 

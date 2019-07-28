@@ -21,16 +21,8 @@ hoverKachel = null
 mouseTimer  = null
 data        = null
 mousePos    = kpos 0 0
-raisePos    = kpos 0 0
-infos       = []
 
-Bounds.updateScreenSize()
-
-updateInfos = -> infos = Bounds.getInfos kacheln()
-
-setKachelBounds = (kachel, b) ->
-    Bounds.setBounds kachel, b
-    updateInfos()
+setKachelBounds = (kachel, b) -> Bounds.setBounds kachel, b
     
 indexData = (jsFile) ->
     
@@ -85,6 +77,8 @@ KachelApp = new app
     saveBounds:         false
     onWinReady: (win) =>
         
+        Bounds.updateScreenSize()
+        
         electron.powerSaveBlocker.start 'prevent-app-suspension'
         
         mainWin = win
@@ -105,41 +99,37 @@ KachelApp = new app
 # 000000000  000   000  000   000  0000000   0000000   
 # 000 0 000  000   000  000   000       000  000       
 # 000   000   0000000    0000000   0000000   00000000  
-                
-onMouse = (data) -> 
+      
+lockRaise = false
+
+onMouse = (mouseData) -> 
     
-    return if data.type != 'mousemove'
+    return if mouseData.type != 'mousemove'
     return if dragging
     
-    screenSize = kpos Bounds.sw(), Bounds.sh()
-    screenPos  = kpos(data).clamp kpos(0,0), screenSize
-    
-    oldPos = kpos mousePos ? {x:0 y:0}
+    mousePos  = kpos mouseData
     if os.platform() == 'win32'
-        mousePos = kpos(electron.screen.screenToDipPoint screenPos).rounded() 
-    else
-        mousePos = screenPos
-        
-    if screenPos.x == 0 or screenPos.x >= Bounds.sw()-2 or screenPos.y == 0 or screenPos.y >= Bounds.sh()-2
-        if 10 < screenPos.distSquare raisePos
-            raisePos = screenPos
-            if Bounds.kachelAtPos infos, mousePos
-                post.emit 'raiseKacheln'
-                return
+        mousePos = kpos(electron.screen.screenToDipPoint mousePos).rounded()
     
-    if infos?.kachelBounds? 
-        if not Bounds.contains infos.kachelBounds, mousePos
-            return
-            
-    if k = Bounds.kachelAtPos infos, mousePos
-        if not hoverKachel or hoverKachel != k.kachel.id
-            post.toWin hoverKachel, 'leave' if hoverKachel
-            hoverKachel = k.kachel.id
-            if focusKachel?.isFocused() and hoverKachel != focusKachel.id
-                focusKachel = winWithId hoverKachel
-                focusKachel.focus()
-            else
-                post.toWin hoverKachel, 'hover'
+    screenSize = kpos Bounds.screenWidth, Bounds.screenHeight
+    mousePos   = mousePos.clamp kpos(0,0), screenSize
+
+    if Bounds.posInBounds mousePos, Bounds.infos.kachelBounds
+        if k = Bounds.kachelAtPos mousePos
+            if not hoverKachel or hoverKachel != k.kachel.id
+
+                post.toWin hoverKachel, 'leave' if hoverKachel
+                hoverKachel = k.kachel.id
+                if focusKachel?.isFocused() and hoverKachel != focusKachel.id
+                    focusKachel = winWithId hoverKachel
+                    focusKachel.focus()
+                else
+                    post.toWin hoverKachel, 'hover'
+                    
+            else if mousePos.x == 0 or mousePos.x >= Bounds.screenWidth-2 or mousePos.y == 0 or mousePos.y >= Bounds.screenHeight-2
+                post.emit 'raiseKacheln'
+        else
+            lockRaise = false
 
 # 000   000  00000000  000   000  0000000     0000000    0000000   00000000   0000000    
 # 000  000   000        000 000   000   000  000   000  000   000  000   000  000   000  
@@ -224,9 +214,8 @@ post.on 'dragStop'  (wid) -> dragging = false
 
 post.on 'snapKachel' (wid) -> 
 
-    updateInfos()
     kachel = winWithId wid
-    setKachelBounds kachel, Bounds.snap infos, kachel
+    setKachelBounds kachel, Bounds.snap kachel
 
 # 00     00   0000000   000   000  00000000  
 # 000   000  000   000  000   000  000       
@@ -246,7 +235,7 @@ post.on 'kachelMove' (dir, wid) ->
         when 'right'    then nb.x = b.x + b.width 
         when 'left'     then nb.x = b.x - b.width 
         
-    if info = Bounds.overlapInfo infos, nb
+    if info = Bounds.overlapInfo nb
         
         gap = (s, d, f, b, o) ->
             g = f b, o
@@ -262,11 +251,10 @@ post.on 'kachelMove' (dir, wid) ->
             when 'left'  then gap -1 'x' Bounds.gapLeft,  b, info.bounds
         return if r
         
-    if neighbor = Bounds.nextNeighbor infos, kachel, dir
+    if neighbor = Bounds.nextNeighbor kachel, dir
         if neighbor.bounds.width == b.width
             Bounds.setBounds kachel, neighbor.bounds
             Bounds.setBounds neighbor.kachel, b
-            updateInfos()
             return
         
     setKachelBounds kachel, Bounds.isOnScreen(nb) and nb or b
@@ -299,7 +287,7 @@ post.on 'kachelSize' (action, wid) ->
     b = w.getBounds()
     b.width  = kachelSizes[size]
     b.height = kachelSizes[size]
-    setKachelBounds w, Bounds.snap infos, w, b
+    setKachelBounds w, Bounds.snap w, b
         
 # 00000000    0000000   000   0000000  00000000
 # 000   000  000   000  000  000       000     
@@ -310,11 +298,13 @@ post.on 'kachelSize' (action, wid) ->
 post.on 'raiseKacheln' ->
     
     return if not mainWin?
+    return if lockRaise
+    
+    lockRaise = true
     
     fk = focusKachel
 
-    mainWin.show()
-    for win in kacheln()
+    for win in wins()
         win.show()
             
     raiseWin fk ? mainWin
@@ -342,7 +332,7 @@ post.on 'kachelFocus' (winId) ->
 onKachelClose = (event) ->
     if focusKachel == event.sender
         focusKachel = null 
-    setTimeout updateInfos, 200
+    setTimeout (-> post.emit 'bounds' 'dirty'), 200
                     
 # 000   000  000  000   000   0000000  
 # 000 0 000  000  0000  000  000       
@@ -350,24 +340,20 @@ onKachelClose = (event) ->
 # 000   000  000  000  0000       000  
 # 00     00  000  000   000  0000000   
 
-wins      = -> BrowserWindow.getAllWindows().sort (a,b) -> a.id - b.id
+wins      = -> BrowserWindow.getAllWindows()
 activeWin = -> BrowserWindow.getFocusedWindow()
-kacheln   = -> 
-    k = wins().filter (w) -> w != mainWin
-    k
-    
 winWithId = (id) -> BrowserWindow.fromId id
     
 neighborWin = (winId, direction) ->
     
     kachel = winWithId winId
     kb = kachel.getBounds()
-    ks = kacheln().filter (k) -> k != kachel
-    ks = ks.filter (k) ->
+    ks = wins().filter (k) ->
+        return false if k == kachel
         b = k.getBounds()
         switch direction
-            when 'right' then b.x >= kb.x+kb.width
-            when 'down'  then b.y >= kb.y+kb.height
+            when 'right' then b.x  >= kb.x+kb.width
+            when 'down'  then b.y  >= kb.y+kb.height
             when 'left'  then kb.x >= b.x+b.width 
             when 'up'    then kb.y >= b.y+b.height
 
