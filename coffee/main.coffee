@@ -156,13 +156,11 @@ onApps = (apps) ->
             active[slash.path app] = wid
             
     if not _.isEqual activeApps, active
-        # klog active
         for kid,wid of kachelWids
-            # klog kid,wid
             if active[kid] and not activeApps[kid]
-                klog 'activated' kid
+                post.toWin wid, 'app' 'activated' kid
             else if not active[kid] and activeApps[kid]
-                klog 'deactivated' kid
+                post.toWin wid, 'app' 'terminated' kid
         activeApps = active
     
 post.on 'apps' onApps

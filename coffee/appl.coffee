@@ -6,14 +6,30 @@
 000   000  000        000        0000000  
 ###
 
-{ childp, slash, open, klog, elem, os, fs, _ } = require 'kxk'
+{ childp, slash, open, klog, elem, post, os, fs, $, _ } = require 'kxk'
 
 Kachel = require './kachel'
 
 class Appl extends Kachel
         
-    @: (@kachelId:'appl') -> super
+    @: (@kachelId:'appl') -> 
+    
+        post.on 'app' @onApp
+        @activated = false
+        super
         
+    updateDot: ->
+        
+        if @activated
+            @main.appendChild elem class:'appldot'
+        else
+            $('.appldot')?.remove()
+        
+    onApp: (action, app) =>
+        
+        @activated = action == 'activated'
+        @updateDot()
+                
     onClick: (event) -> 
         
         klog 'appl.onClick' slash.file @kachelId
@@ -84,6 +100,7 @@ class Appl extends Kachel
         img.ondragstart = -> false
         @main.innerHTML = ''
         @main.appendChild img
+        @updateDot()
                    
     # 00000000  000   000  00000000  
     # 000        000 000   000       
