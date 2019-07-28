@@ -8,7 +8,7 @@
 
 { drag, post, scheme, stopEvent, prefs, slash, klog, kstr, elem, win, os, $ } = require 'kxk'
 
-kachelSizes = [72,108,144,216]
+kachelSizes = [72 108 144 216]
 
 class Kachel extends win
 
@@ -22,7 +22,7 @@ class Kachel extends win
             onLoad: @onWinLoad
     
         @main =$ '#main'
-        @drag  = new drag
+        @drag = new drag
             target:   document.body
             onStart:  @onDragStart
             onMove:   @onDragMove
@@ -43,7 +43,6 @@ class Kachel extends win
         
         if @kachelId != 'main'
             @win.setSkipTaskbar true
-            # prefs.set "kacheln▸#{@kachelId}" @kachelData()
         
         post.toMain 'kachelBounds' @id, @kachelId
         
@@ -77,7 +76,7 @@ class Kachel extends win
     # 000   000  000   000  000   000  000   000  
     # 0000000    000   000  000   000   0000000   
     
-    onDragStart: (drag, event) => 
+    onDragStart: (drag, event) =>
     
         if @win?.isDestroyed()
             return
@@ -85,13 +84,14 @@ class Kachel extends win
         @startBounds = @win.getBounds()
         post.toMain 'dragStart' @id
         
-    onDragMove: (drag, event) => 
+    onDragMove: (drag, event) =>
         
         @win.setPosition @startBounds.x + drag.deltaSum.x, @startBounds.y + drag.deltaSum.y
         @win.setSize     @startBounds.width, @startBounds.height
         
     onDragStop: (drag, event) =>
-        if drag.deltaSum.x < 10 and drag.deltaSum.y < 10
+
+        if Math.abs(drag.deltaSum.x) < 10 and Math.abs(drag.deltaSum.y) < 10
             @win.setBounds @startBounds
             if event.button == 0
                 @onClick event
@@ -111,12 +111,12 @@ class Kachel extends win
     onHover: (event) => document.body.classList.add 'kachelFocus'
     onLeave: (event) => document.body.classList.remove 'kachelFocus'
         
-    onWinFocus:  (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
-    onWinBlur:   (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
-    onWinLoad:   (event) => @onLoad event
-    onWinMove:   (event) => @onMove event
+    onWinFocus: (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
+    onWinBlur:  (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
+    onWinLoad:  (event) => @onLoad event
+    onWinMove:  (event) => @onMove event
                 
-    onWinClose:  (event) => 
+    onWinClose: (event) => 
         if @kachelId != 'main'
             prefs.set 'kacheln' prefs.get('kacheln').filter (k) => k != @kachelId
             

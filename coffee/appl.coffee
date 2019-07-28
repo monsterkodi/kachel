@@ -16,13 +16,13 @@ class Appl extends Kachel
         
     onClick: (event) -> 
         
-        # klog 'open app' slash.file @kachelId
+        klog 'appl.onClick' slash.file @kachelId
         
         if os.platform() == 'win32'
             wxw = require 'wxw'
             infos = wxw 'info' slash.file @kachelId
             if infos.length
-                # wxw 'raise' slash.file @kachelId
+                klog "wxw 'focus' #{slash.file @kachelId}"
                 wxw 'focus' slash.file @kachelId
             else
                 open slash.unslash @kachelId 

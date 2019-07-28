@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, prefs, slash, clamp, empty, klog, kpos, app, os } = require 'kxk'
+{ post, prefs, slash, clamp, empty, klog, kpos, app, os, _ } = require 'kxk'
 
 Data     = require './data'
 Bounds   = require './bounds'
@@ -14,6 +14,8 @@ electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
 kachelSizes = [72 108 144 216]
+kachelDict  = {}
+kachelWids  = {}
 dragging    = false
 mainWin     = null
 focusKachel = null
@@ -77,7 +79,7 @@ KachelApp = new app
     saveBounds:         false
     onWinReady: (win) =>
         
-        Bounds.updateScreenSize()
+        Bounds.init()
         
         electron.powerSaveBlocker.start 'prevent-app-suspension'
         
@@ -139,6 +141,32 @@ onMouse = (mouseData) ->
 
 onKeyboard = (data) ->
     
+#  0000000   00000000   00000000    0000000  
+# 000   000  000   000  000   000  000       
+# 000000000  00000000   00000000   0000000   
+# 000   000  000        000             000  
+# 000   000  000        000        0000000   
+
+activeApps = {}
+onApps = (apps) ->
+
+    active = {}
+    for app in apps
+        if wid = kachelWids[slash.path app]
+            active[slash.path app] = wid
+            
+    if not _.isEqual activeApps, active
+        # klog active
+        for kid,wid of kachelWids
+            # klog kid,wid
+            if active[kid] and not activeApps[kid]
+                klog 'activated' kid
+            else if not active[kid] and activeApps[kid]
+                klog 'deactivated' kid
+        activeApps = active
+    
+post.on 'apps' onApps
+    
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
 # 0000000    000000000  000       000000000  0000000   000      
@@ -196,10 +224,11 @@ post.on 'newKachel' (id) ->
         wid = event.sender.id
         post.toWin wid, 'initKachel' id
         winWithId(wid).show()
+        Bounds.getInfos()
           
     win.on 'close' onKachelClose
-    win.setHasShadow false
-        
+    win.setHasShadow false    
+            
     win
         
 #  0000000  000   000   0000000   00000000   
@@ -264,6 +293,9 @@ post.on 'kachelBounds' (wid, kachelId) ->
     bounds = prefs.get "bounds▸#{kachelId}"
     if bounds?
         setKachelBounds winWithId(wid), bounds
+        
+    kachelDict[wid] = kachelId
+    kachelWids[kachelId] = wid
         
 #  0000000  000  0000000  00000000  
 # 000       000     000   000       

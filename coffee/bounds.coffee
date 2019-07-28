@@ -24,6 +24,11 @@ class Bounds
         kachel.setBounds b
         post.toWin kachel.id, 'saveBounds'
         post.emit 'bounds' kachel, b
+
+    @init: ->
+        
+        Bounds.updateScreenSize()
+        Bounds.getInfos()
         
     @updateScreenSize: ->
         
@@ -166,12 +171,14 @@ class Bounds
         
         kb = kachel.getBounds()
         
-        @infos.sort (a,b) -> # this might break change detection!
+        infos = Array.from @infos # to prevent change detection from failing
+        
+        infos.sort (a,b) -> 
             switch dir
                 when 'left''right' then Math.abs(a.bounds.y - kb.y) - Math.abs(b.bounds.y - kb.y)
                 when 'up''down'    then Math.abs(a.bounds.x - kb.x) - Math.abs(b.bounds.x - kb.x)
         
-        for info in @infos
+        for info in infos
             continue if info.kachel == kachel
             if @isCloseNeighbor kb, info, dir
                 return info 
@@ -191,7 +198,9 @@ class Bounds
     # 0000000   000   000  000   000  000        
     
     @snap: (kachel, b) ->
-                
+           
+        klog 'snap' kachel.id, b
+        
         b ?= kachel.getBounds()
         
         horz = false
