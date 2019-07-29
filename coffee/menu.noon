@@ -12,7 +12,7 @@ Scheme          cmdctrl+i
 IncreaseSize    cmdctrl+= 
 DecreaseSize    cmdctrl+- 
 ResetSize       cmdctrl+0 
-About           cmdctrl+alt+/
+About           alt+cmdctrl+/
 Hide            cmdctrl+h
 Screenshot      cmdctrl+alt+s
 Reload          alt+cmdctrl+l
