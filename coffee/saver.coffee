@@ -77,12 +77,13 @@ class Saver extends Kachel
     
     onClick: => 
     
-        info = wxw('info' 'taskbar')[0]
-        if info.status != 'hidden'
-            wxw 'taskbar' 'hide'
-            @taskbar = true
-        else
-            @taskbar = false
+        if os.platform() == 'win32'
+            info = wxw('info' 'taskbar')[0]
+            if info.status != 'hidden'
+                wxw 'taskbar' 'hide'
+                @taskbar = true
+            else
+                @taskbar = false
         
         clearTimeout @checkTimer
         @checkTimer = null
