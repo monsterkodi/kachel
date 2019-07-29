@@ -9,7 +9,7 @@
 { post, slash, klog, elem, os, _ } = require 'kxk'
 
 electron = require 'electron'
-Kachel = require './kachel'
+Kachel   = require './kachel'
 
 class Default extends Kachel
         
@@ -32,6 +32,7 @@ class Default extends Kachel
             elem 'img' class:'grid3x3_23' click:@openSaver,  src:__dirname + '/../img/saver.png' 
             elem 'img' class:'grid3x3_31' click:@openClock,  src:__dirname + '/../img/clock.png'     
             elem 'img' class:'grid3x3_32' click:@openAlarm,  src:__dirname + '/../img/alarm.png'     
+            elem 'img' class:'grid3x3_33' click:@openTools,  src:__dirname + '/../img/tools.png'     
         ]
         
         for child in children
@@ -43,6 +44,7 @@ class Default extends Kachel
         
     openClock: => post.toMain 'newKachel' 'clock'   
     openAlarm: => post.toMain 'newKachel' 'alarm'   
+    openTools: => post.toMain 'newKachel' 'tools'
     openSaver: => post.toMain 'newKachel' 'saver'   
     openDish:  => post.toMain 'newKachel' 'sysdish'
     openInfo:  => post.toMain 'newKachel' 'sysinfo'
@@ -127,7 +129,6 @@ class Default extends Kachel
             
     appChosen: (file) ->
         
-        # post.toMain 'newKachel' slash.removeDrive slash.path file
         post.toMain 'newKachel' slash.path file
 
 module.exports = Default

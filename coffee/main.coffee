@@ -61,12 +61,12 @@ KachelApp = new app
     icon:               '../img/app.ico'
     tray:               '../img/menu.png'
     about:              '../img/about.png'
-    minWidth:           50
-    minHeight:          50
-    maxWidth:           50
-    maxHeight:          50
-    width:              50
-    height:             50
+    minWidth:           kachelSizes[0]
+    minHeight:          kachelSizes[0]
+    maxWidth:           kachelSizes[0]
+    maxHeight:          kachelSizes[0]
+    width:              kachelSizes[0]
+    height:             kachelSizes[0]
     acceptFirstMouse:   true
     prefsSeperator:     '▸'
     onActivate:         -> klog 'onActivate'; post.emit 'raiseKacheln'
@@ -111,7 +111,7 @@ lockRaise = false
 onMouse = (mouseData) -> 
     
     return if mouseData.type != 'mousemove'
-    return if dragging
+    return if global.dragging
     
     mousePos  = kpos mouseData
     if os.platform() == 'win32'
@@ -122,6 +122,12 @@ onMouse = (mouseData) ->
 
     if Bounds.posInBounds mousePos, Bounds.infos.kachelBounds
         if k = Bounds.kachelAtPos mousePos
+            
+            if k.kachel?.isDestroyed?()
+                klog 'kachel destroyed!'
+                lockRaise = false
+                return
+                
             if not hoverKachel or hoverKachel != k.kachel.id
 
                 post.toWin hoverKachel, 'leave' if hoverKachel
@@ -207,6 +213,10 @@ post.on 'newKachel' (id) ->
 
     return if id == 'main'
     
+    if kachelWids[id]
+        klog "kachel exists already #{id}?"
+        return
+    
     kachelSize = 1
 
     html = id
@@ -269,15 +279,15 @@ post.on 'newKachel' (id) ->
 #      000  000  0000  000   000  000        
 # 0000000   000   000  000   000  000        
 
-post.on 'dragStart' (wid) -> dragging = true
+post.on 'dragStart' (wid) -> global.dragging = true
 
-post.on 'dragStop'  (wid) -> dragging = false
+post.on 'dragStop'  (wid) -> global.dragging = false
 
 post.on 'snapKachel' (wid) -> 
 
     kachel = winWithId wid
     setKachelBounds kachel, Bounds.snap kachel
-
+    
 # 00     00   0000000   000   000  00000000  
 # 000   000  000   000  000   000  000       
 # 000000000  000   000   000 000   0000000   
@@ -366,8 +376,12 @@ post.on 'raiseKacheln' ->
     
     fk = focusKachel
 
-    for win in wins()
-        win.show()
+    if os.platform() == 'win32'
+        wxw = require 'wxw'
+        wxw 'raise' 'kachel.exe'
+    else
+        for win in wins()
+            win.show()
             
     raiseWin fk ? mainWin
     
@@ -392,8 +406,20 @@ post.on 'kachelFocus' (winId) ->
         focusKachel = winWithId winId
         
 onKachelClose = (event) ->
-    if focusKachel == event.sender
-        focusKachel = null 
+    
+    kachel = event.sender
+    if focusKachel == kachel
+        focusKachel = null
+        
+    if hoverKachel == kachel.id
+        hoverKachel = null
+        
+    Bounds.remove kachel
+        
+    if kachelId = kachelDict[kachel.id]
+        delete kachelWids[kachelId]
+        delete kachelDict[kachel.id]
+        
     setTimeout (-> post.emit 'bounds' 'dirty'), 200
                     
 # 000   000  000  000   000   0000000  

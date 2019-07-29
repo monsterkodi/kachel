@@ -29,6 +29,10 @@ class Bounds
         
         Bounds.updateScreenSize()
         Bounds.getInfos()
+        post.on 'cleanTiles' @cleanTiles
+            
+    @cleanTiles: =>
+        klog 'Bounds.cleanTiles'
         
     @updateScreenSize: ->
         
@@ -78,6 +82,15 @@ class Bounds
             
         @infos = infos
         @infos
+        
+    @remove: (kachel) ->
+        
+        for index in [0...@infos.length]
+            info = @infos[index]
+            if info.kachel == kachel
+                @infos.splice index, 1
+                klog "removing kachel #{index}" kachel.id
+                return
     
     #  0000000   0000000  00000000   00000000  00000000  000   000  
     # 000       000       000   000  000       000       0000  000  

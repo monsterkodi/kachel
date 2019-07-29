@@ -41,6 +41,8 @@ class Data
 
     slowTick: =>
         
+        return if global.dragging
+        
         for name,provider of @providers
             if provider.tick == 'slow'
                 provider.onTick @
