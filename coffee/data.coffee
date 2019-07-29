@@ -22,6 +22,7 @@ class Data
             mouse:    new Mouse
             keyboard: new Keyboard
             apps:     new Apps
+            wins:     new Wins
         
         post.on 'requestData' @onRequestData
         
@@ -226,9 +227,10 @@ class Apps
         @interval = parseInt 1000/60
         @lastApps = null
         @timer    = null
-        @update()
         
-    update: =>
+    start: => @update force:true
+        
+    update: (force=false) =>
         
         return if os.platform() != 'win32'
 
@@ -246,7 +248,7 @@ class Apps
                 
         apps.sort()
         
-        if not _.isEqual apps, @lastApps
+        if force or not _.isEqual apps, @lastApps
             post.toMain 'apps', apps
             for receiver in @receivers
                 log "receiver:#{kstr receiver} name:#{@name} apps:#{apps.length}"
@@ -256,5 +258,41 @@ class Apps
             
         @timer = setTimeout @update, @interval
                 
+# 000   000  000  000   000   0000000  
+# 000 0 000  000  0000  000  000       
+# 000000000  000  000 0 000  0000000   
+# 000   000  000  000  0000       000  
+# 00     00  000  000   000  0000000   
+
+class Wins
+    
+    @: (@name='wins' @receivers=[]) ->
+        
+        @last     = Date.now()
+        @interval = parseInt 1000/60
+        @lastWins = null
+        @timer    = null
+        
+    start: => @update force:true
+        
+    update: (force=false) =>
+        
+        return if os.platform() != 'win32'
+
+        clearTimeout @timer
+        
+        wxw = require 'wxw'
+        wins = wxw 'info'
+        
+        if force or not _.isEqual wins, @lastWins
+            post.toMain 'wins', wins
+            for receiver in @receivers
+                log "receiver:#{kstr receiver} name:#{@name} apps:#{apps.length}"
+                post.toWin receiver, 'data', apps
+            
+            @lastWins = wins
+            
+        @timer = setTimeout @update, @interval
+        
 module.exports = Data
 

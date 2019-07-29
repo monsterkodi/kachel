@@ -190,15 +190,24 @@ svg
     position            absolute
     border              0.5px solid
     border-radius       6px
+    background-color    #222222
     border-bottom-color #333
-    border-top-color    #080808
-    border-right-color  #282828
+    border-top-color    #111
+    border-right-color  #333
     border-left-color   #111
-    background-color    #181818
-    left                1%
-    bottom              1%
-    width               8%
-    height              8%
+    &.normal
+    &.maximized
+        background-color    #333333
+        border-top-color    #444
+        border-left-color   #444
+        border-right-color  #111
+        border-bottom-color #111
+    &.minimized
+        background-color    #181818
+    left                0
+    bottom              0
+    width               6px
+    height              6px
         
 .foldername
     position            absolute

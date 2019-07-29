@@ -21,7 +21,6 @@ class Bounds
     
     @setBounds: (kachel, b) ->
         
-        klog 'setBounds' b
         kachel.setBounds b
         post.toWin kachel.id, 'saveBounds'
         post.emit 'bounds' kachel, b

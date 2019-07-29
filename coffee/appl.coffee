@@ -6,7 +6,7 @@
 000   000  000        000        0000000  
 ###
 
-{ childp, slash, open, klog, elem, post, os, fs, $, _ } = require 'kxk'
+{ post, childp, slash, empty, valid, randint, klog, elem, open, os, fs, $, _ } = require 'kxk'
 
 Kachel = require './kachel'
 
@@ -15,21 +15,57 @@ class Appl extends Kachel
     @: (@kachelId:'appl') -> 
     
         post.on 'app' @onApp
+        post.on 'win' @onWin
+        
         @activated = false
+        @status    = ''
+        
         super
-        
-    updateDot: ->
-        
-        if @activated
-            @main.appendChild elem class:'appldot'
-        else
-            $('.appldot')?.remove()
-        
+                
     onApp: (action, app) =>
         
         @activated = action == 'activated'
         @updateDot()
+
+    onWin: (wins) =>
+        
+        @status = ''
+        for w in wins
+            if w.status in ['maximized' 'normal']
+                @status = 'normal'
+                break
                 
+        if empty @status
+            for w in wins
+                if w.status == 'minimized'
+                    @status = 'minimized'
+                    break
+        
+        @updateDot()
+        
+    updateDot: ->
+        
+        dot =$ '.appldot'
+        
+        if @activated and not dot
+            dot = elem class:'appldot'
+            @main.appendChild dot
+        else if not @activated and dot
+            dot?.remove()
+            dot = null
+            
+        if dot
+            dot.classList.remove 'normal'
+            dot.classList.remove 'minimized'
+            dot.classList.remove 'maximized'
+            dot.classList.add @status if valid @status
+        
+    #  0000000  000      000   0000000  000   000  
+    # 000       000      000  000       000  000   
+    # 000       000      000  000       0000000    
+    # 000       000      000  000       000  000   
+    #  0000000  0000000  000   0000000  000   000  
+    
     onClick: (event) -> 
         
         klog 'appl.onClick' slash.file @kachelId
