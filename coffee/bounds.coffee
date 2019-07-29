@@ -21,6 +21,7 @@ class Bounds
     
     @setBounds: (kachel, b) ->
         
+        klog 'setBounds' b
         kachel.setBounds b
         post.toWin kachel.id, 'saveBounds'
         post.emit 'bounds' kachel, b
@@ -33,7 +34,7 @@ class Bounds
     @updateScreenSize: ->
         
         if os.platform() == 'win32'            
-            ss = wxw('screen' 'user')
+            ss = wxw 'screen' 'user'
             sp = x:ss.width, y:ss.height
             vs = kpos(electron.screen.screenToDipPoint sp).rounded() 
             @screenWidth  = vs.x
@@ -199,9 +200,9 @@ class Bounds
     
     @snap: (kachel, b) ->
            
-        klog 'snap' kachel.id, b
-        
         b ?= kachel.getBounds()
+        
+        klog 'snap' kachel.id, b
         
         horz = false
         vert = false
@@ -238,6 +239,8 @@ class Bounds
                 b.x = n.bounds.x - b.width
             else if n = @closeNeighbor kachel, 'left'
                 b.x = n.bounds.x + n.bounds.width
+                
+        klog 'snap' kachel.id, b
         b
                 
 module.exports = Bounds

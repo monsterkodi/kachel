@@ -213,6 +213,8 @@ post.on 'newKachel' (id) ->
         backgroundColor:    '#181818'
         width:              kachelSizes[kachelSize]
         height:             kachelSizes[kachelSize]
+        maxWidth:           kachelSizes[kachelSize]
+        maxHeight:          kachelSizes[kachelSize]
         webPreferences: 
             nodeIntegration: true
         
@@ -253,8 +255,13 @@ post.on 'snapKachel' (wid) ->
 post.on 'kachelMove' (dir, wid) ->
     
     kachel = winWithId wid
+    
+    klog 'kachelMove1' kachel.getBounds()
+    
     b = Bounds.validBounds kachel
-          
+    
+    klog 'kachelMove2' b
+    
     nb = x:b.x, y:b.y, width:b.width, height:b.height
     switch dir 
         when 'up'       then nb.y = b.y - b.height
@@ -278,18 +285,20 @@ post.on 'kachelMove' (dir, wid) ->
             when 'left'  then gap -1 'x' Bounds.gapLeft,  b, info.bounds
         return if r
         
-    if neighbor = Bounds.nextNeighbor kachel, dir
-        if neighbor.bounds.width == b.width
-            Bounds.setBounds kachel, neighbor.bounds
-            Bounds.setBounds neighbor.kachel, b
-            return
-        
+    # if neighbor = Bounds.nextNeighbor kachel, dir
+        # if neighbor.bounds.width == b.width
+            # Bounds.setBounds kachel, neighbor.bounds
+            # Bounds.setBounds neighbor.kachel, b
+            # return
+       
+    klog "move bounds" nb, b
     setKachelBounds kachel, Bounds.isOnScreen(nb) and nb or b
 
 post.on 'kachelBounds' (wid, kachelId) ->
     
     bounds = prefs.get "bounds▸#{kachelId}"
     if bounds?
+        klog "set prefs bounds #{wid}" bounds
         setKachelBounds winWithId(wid), bounds
         
     kachelDict[wid] = kachelId
