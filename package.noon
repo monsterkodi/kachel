@@ -16,7 +16,7 @@ dependencies
                 kxk             ^0.333.0
                 simple-plist    ^1.0.0
                 systeminformation  ^4.14.4
-                wxw             ^1.52.0
+                wxw             ^1.53.0
 devDependencies
                 electron        ^5.0.8
                 electron-packager  ^14.0.3
@@ -26,6 +26,7 @@ devDependencies
 iohook
                 targets
                   electron-70
+                  electron-73
                 platforms
                   win32
                   darwin

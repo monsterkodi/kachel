@@ -12,6 +12,9 @@ ioHook   = require 'iohook'
 sysinfo  = require 'systeminformation'
 electron = require 'electron'
 
+if os.platform() == 'win32'
+    wxw = require 'wxw'
+
 class Data
 
     @: ->
@@ -26,7 +29,7 @@ class Data
         
         post.on 'requestData' @onRequestData
         
-        setInterval @slowTick, 1000
+        setTimeout @slowTick, 1000
                         
     onRequestData: (provider, wid) =>
         
@@ -41,11 +44,13 @@ class Data
 
     slowTick: =>
         
-        return if global.dragging
+        if not global.dragging
         
-        for name,provider of @providers
-            if provider.tick == 'slow'
-                provider.onTick @
+            for name,provider of @providers
+                if provider.tick == 'slow'
+                    provider.onTick @
+                
+        setTimeout @slowTick, 1000 - (new Date).getMilliseconds()
         
     send: (provider, data) =>
         
@@ -226,7 +231,7 @@ class Apps
     @: (@name='apps' @receivers=[]) ->
         
         @last     = Date.now()
-        @interval = parseInt 1000/60
+        @interval = parseInt 1000
         @lastApps = null
         @timer    = null
         
@@ -238,25 +243,27 @@ class Apps
 
         clearTimeout @timer
         
-        wxw = require 'wxw'
-        proclist = wxw 'proc'
-        apps = Array.from new Set proclist.map (p) -> p.path
-        
-        apps = apps.filter (p) -> 
-            s = slash.path slash.removeDrive p 
-            if s.startsWith '/Windows/System32'
-                return slash.base(s) in ['cmd' 'powershell']
-            true
-                
-        apps.sort()
-        
-        if force or not _.isEqual apps, @lastApps
-            post.toMain 'apps', apps
-            for receiver in @receivers
-                log "receiver:#{kstr receiver} name:#{@name} apps:#{apps.length}"
-                post.toWin receiver, 'data', apps
+        if not global.dragging
             
-            @lastApps = apps
+            proclist = wxw 'proc'
+                
+            apps = Array.from new Set proclist.map (p) -> p.path
+            
+            apps = apps.filter (p) -> 
+                s = slash.path slash.removeDrive p 
+                if s.startsWith '/Windows/System32'
+                    return slash.base(s) in ['cmd' 'powershell']
+                true
+                    
+            apps.sort()
+            
+            if force or not _.isEqual apps, @lastApps
+                post.toMain 'apps', apps
+                for receiver in @receivers
+                    log "receiver:#{kstr receiver} name:#{@name} apps:#{apps.length}"
+                    post.toWin receiver, 'data', apps
+                
+                @lastApps = apps
             
         @timer = setTimeout @update, @interval
                 
@@ -271,7 +278,7 @@ class Wins
     @: (@name='wins' @receivers=[]) ->
         
         @last     = Date.now()
-        @interval = parseInt 1000/60
+        @interval = parseInt 1000
         @lastWins = null
         @timer    = null
         
@@ -280,19 +287,20 @@ class Wins
     update: (force=false) =>
         
         return if os.platform() != 'win32'
-
+        
         clearTimeout @timer
         
-        wxw = require 'wxw'
-        wins = wxw 'info'
+        if not global.dragging
         
-        if force or not _.isEqual wins, @lastWins
-            post.toMain 'wins', wins
-            for receiver in @receivers
-                log "receiver:#{kstr receiver} name:#{@name} apps:#{apps.length}"
-                post.toWin receiver, 'data', apps
+            wins = wxw 'info'
             
-            @lastWins = wins
+            if force or not _.isEqual wins, @lastWins
+                post.toMain 'wins', wins
+                for receiver in @receivers
+                    log "receiver:#{kstr receiver} name:#{@name} apps:#{apps.length}"
+                    post.toWin receiver, 'data', apps
+                
+                @lastWins = wins
             
         @timer = setTimeout @update, @interval
         
