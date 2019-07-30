@@ -77,6 +77,7 @@ KachelApp = new app
     resizable:          false
     maximizable:        false
     saveBounds:         false
+    onQuit: -> klog 'onQuit'; data.detach()
     onWinReady: (win) =>
         
         Bounds.init()
@@ -99,7 +100,8 @@ KachelApp = new app
                 
         post.on 'mouse'    onMouse
         post.on 'keyboard' onKeyboard
-                
+                  
+        
 # 00     00   0000000   000   000   0000000  00000000  
 # 000   000  000   000  000   000  000       000       
 # 000000000  000   000  000   000  0000000   0000000   
@@ -294,37 +296,11 @@ post.on 'snapKachel' (wid) ->
 # 000 0 000  000   000     000     000       
 # 000   000   0000000       0      00000000  
 
-post.on 'kachelMove' (dir, wid) ->
-    
-    kachel = winWithId wid
-    
-    b = Bounds.validBounds kachel
-    
-    nb = x:b.x, y:b.y, width:b.width, height:b.height
-    switch dir 
-        when 'up'       then nb.y = b.y - b.height
-        when 'down'     then nb.y = b.y + b.height
-        when 'right'    then nb.x = b.x + b.width 
-        when 'left'     then nb.x = b.x - b.width 
-        
-    if info = Bounds.overlapInfo nb
-        
-        gap = (s, d, f, b, o) ->
-            g = f b, o
-            if g > 0
-                nb[d] = b[d] + s * g
-                setKachelBounds kachel, nb
-                true
-                
-        r = switch dir 
-            when 'up'    then gap -1 'y' Bounds.gapUp,    b, info.bounds
-            when 'down'  then gap +1 'y' Bounds.gapDown,  b, info.bounds
-            when 'right' then gap +1 'x' Bounds.gapRight, b, info.bounds
-            when 'left'  then gap -1 'x' Bounds.gapLeft,  b, info.bounds
-        return if r
-               
-    setKachelBounds kachel, Bounds.isOnScreen(nb) and nb or b
+post.on 'kachelMove' (dir, wid) -> 
 
+    kachel = winWithId wid
+    Bounds.moveKachel kachel, dir
+    
 post.on 'kachelBounds' (wid, kachelId) ->
     
     bounds = prefs.get "bounds▸#{kachelId}"

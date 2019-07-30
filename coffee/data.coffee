@@ -6,20 +6,21 @@
 0000000    000   000     000     000   000
 ###
 
-{ post, klog, slash, kstr, os, _ } = require 'kxk'
+{ post, klog, slash, kstr, udp, os, _ } = require 'kxk'
 
-ioHook   = require 'iohook'
 sysinfo  = require 'systeminformation'
 electron = require 'electron'
 
-if os.platform() == 'win32'
-    wxw = require 'wxw'
+if os.platform() == 'win32' then wxw = require 'wxw'
 
 class Data
 
     @: ->
-
-        ioHook.start()
+        
+        if os.platform() == 'win32'
+            
+            @udp  = udp port:66666 onMsg:@onUDP
+            @hook = wxw 'hook'
         
         @providers = 
             mouse:    new Mouse
@@ -30,7 +31,13 @@ class Data
         post.on 'requestData' @onRequestData
         
         setTimeout @slowTick, 1000
-                        
+        
+    detach: ->
+        
+        klog 'Data.detach' @hook?, @hook?.kill('SIGKILL')
+            
+    onUDP: (msg) => log "udp" msg
+        
     onRequestData: (provider, wid) =>
         
         # klog "Data.onRequestData provider:#{kstr provider} wid:#{kstr wid}"
@@ -44,11 +51,9 @@ class Data
 
     slowTick: =>
         
-        if not global.dragging
-        
-            for name,provider of @providers
-                if provider.tick == 'slow'
-                    provider.onTick @
+        for name,provider of @providers
+            if provider.tick == 'slow'
+                provider.onTick @
                 
         setTimeout @slowTick, 1000 - (new Date).getMilliseconds()
         
@@ -106,6 +111,8 @@ class Sysinfo
         
     onTick: (data) =>
         
+        return if global.dragging
+        
         sysinfo.getDynamicData (d) => 
             
             rx_sec = parseInt d.networkStats[0].rx_sec
@@ -151,10 +158,10 @@ class Mouse
     
     @: (@name='mouse' @receivers=[]) ->
         
-        ioHook.on 'mousewheel' @onEvent
-        ioHook.on 'mousemove'  @onEvent
-        ioHook.on 'mousedown'  @onEvent
-        ioHook.on 'mouseup'    @onEvent
+        # ioHook.on 'mousewheel' @onEvent
+        # ioHook.on 'mousemove'  @onEvent
+        # ioHook.on 'mousedown'  @onEvent
+        # ioHook.on 'mouseup'    @onEvent
         
         @last = Date.now()
         @interval = parseInt 1000/60
@@ -171,7 +178,7 @@ class Mouse
             @last = now
             post.toMain @name, event
             for receiver in @receivers
-                #log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
+                log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
                 post.toWin receiver, 'data', event
         else
             @sendTimer = setTimeout (=> @onEvent @lastEvent), @interval
@@ -186,8 +193,8 @@ class Keyboard
     
     @: (@name='keyboard' @receivers=[]) ->
         
-        ioHook.on 'keydown' @onEvent
-        ioHook.on 'keyup'   @onEvent
+        # ioHook.on 'keydown' @onEvent
+        # ioHook.on 'keyup'   @onEvent
 
     onEvent: (event) =>
         
