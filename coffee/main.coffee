@@ -100,7 +100,6 @@ KachelApp = new app
                 
         post.on 'mouse'    onMouse
         post.on 'keyboard' onKeyboard
-                  
         
 # 00     00   0000000   000   000   0000000  00000000  
 # 000   000  000   000  000   000  000       000       
@@ -112,15 +111,10 @@ lockRaise = false
 
 onMouse = (mouseData) -> 
     
-    return if mouseData.type != 'mousemove'
+    return if mouseData.event != 'mousemove'
     return if global.dragging
     
-    mousePos  = kpos mouseData
-    if os.platform() == 'win32'
-        mousePos = kpos(electron.screen.screenToDipPoint mousePos).rounded()
-    
-    screenSize = kpos Bounds.screenWidth, Bounds.screenHeight
-    mousePos   = mousePos.clamp kpos(0,0), screenSize
+    mousePos = kpos mouseData
 
     if Bounds.posInBounds mousePos, Bounds.infos.kachelBounds
         if k = Bounds.kachelAtPos mousePos

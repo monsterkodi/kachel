@@ -6,7 +6,7 @@
 0000000    000   000     000     000   000
 ###
 
-{ post, klog, slash, kstr, udp, os, _ } = require 'kxk'
+{ post, klog, slash, kstr, kpos, udp, os, _ } = require 'kxk'
 
 sysinfo  = require 'systeminformation'
 electron = require 'electron'
@@ -35,8 +35,15 @@ class Data
     detach: ->
         
         klog 'Data.detach' @hook?, @hook?.kill('SIGKILL')
+        klog 'Data.detach' @hook?, @hook?.pid
+        klog wxw 'terminate' @hook.pid
             
-    onUDP: (msg) => log "udp" msg
+    onUDP: (msg) => 
+
+        switch msg.event 
+            when 'mousedown' 'mousemove' 'mouseup' 'mousewheel' then @providers.mouse.onEvent msg
+            when 'keydown' 'keyup' then @providers.keyboard.onEvent msg
+            else log msg
         
     onRequestData: (provider, wid) =>
         
@@ -157,12 +164,7 @@ class Sysinfo
 class Mouse
     
     @: (@name='mouse' @receivers=[]) ->
-        
-        # ioHook.on 'mousewheel' @onEvent
-        # ioHook.on 'mousemove'  @onEvent
-        # ioHook.on 'mousedown'  @onEvent
-        # ioHook.on 'mouseup'    @onEvent
-        
+                
         @last = Date.now()
         @interval = parseInt 1000/60
         @lastEvent = null
@@ -176,9 +178,20 @@ class Mouse
         @sendTimer = null
         if now - @last > @interval
             @last = now
+            
+            pos = kpos event
+            if os.platform() == 'win32'
+                pos = kpos(electron.screen.screenToDipPoint pos).rounded()
+            
+            bounds = require './bounds'
+            pos = pos.clamp kpos(0,0), kpos bounds.screenWidth, bounds.screenHeight
+            
+            event.x = pos.x
+            event.y = pos.y
+            
             post.toMain @name, event
             for receiver in @receivers
-                log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
+                # log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
                 post.toWin receiver, 'data', event
         else
             @sendTimer = setTimeout (=> @onEvent @lastEvent), @interval
@@ -193,13 +206,11 @@ class Keyboard
     
     @: (@name='keyboard' @receivers=[]) ->
         
-        # ioHook.on 'keydown' @onEvent
-        # ioHook.on 'keyup'   @onEvent
-
     onEvent: (event) =>
         
         post.toMain @name, event
         for receiver in @receivers
+            log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
             post.toWin receiver, @name, event
         
 # 0000000     0000000   000   000  000   000  0000000     0000000  
