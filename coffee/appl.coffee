@@ -31,8 +31,11 @@ class Appl extends Kachel
         
         @status = ''
         for w in wins
-            if w.status in ['maximized' 'normal']
-                @status = 'normal'
+            for c in ['maximized' 'normal']
+                if w.status.startsWith c
+                    @status = w.status
+                    break
+            if valid @status
                 break
                 
         if empty @status
@@ -43,6 +46,12 @@ class Appl extends Kachel
         
         @updateDot()
         
+    # 0000000     0000000   000000000  
+    # 000   000  000   000     000     
+    # 000   000  000   000     000     
+    # 000   000  000   000     000     
+    # 0000000     0000000      000     
+    
     updateDot: ->
         
         dot =$ '.appldot'
@@ -55,10 +64,13 @@ class Appl extends Kachel
             dot = null
             
         if dot
+            dot.classList.remove 'top'
             dot.classList.remove 'normal'
             dot.classList.remove 'minimized'
             dot.classList.remove 'maximized'
-            dot.classList.add @status if valid @status
+            if valid @status
+                for s in @status.split ' '
+                    dot.classList.add s
         
     #  0000000  000      000   0000000  000   000  
     # 000       000      000  000       000  000   
@@ -81,6 +93,28 @@ class Appl extends Kachel
         else
             open @kachelId 
     
+    onContextMenu: (event) => 
+        
+        if os.platform() == 'win32'
+            wxw = require 'wxw'
+            wxw 'minimize' slash.file @kachelId
+
+    onMiddleClick: (event) => 
+        
+        if os.platform() == 'win32'
+            wxw = require 'wxw'
+            infos = wxw 'info' slash.file @kachelId
+            if infos.length
+                maximized = false
+                for info in infos
+                    if info.status == 'maximized'
+                        maximized = true
+                        break
+                if maximized
+                    wxw 'restore' slash.file @kachelId
+                else
+                    wxw 'maximize' slash.file @kachelId
+            
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
     # 000  000 0 000  000     000     

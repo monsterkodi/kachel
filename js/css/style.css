@@ -156,25 +156,38 @@ svg {
   border: 0.5px solid;
   border-radius: 6px;
   background-color: #222;
-  border-bottom-color: #333;
   border-top-color: #111;
-  border-right-color: #333;
   border-left-color: #111;
+  border-right-color: #333;
+  border-bottom-color: #333;
   left: 0;
   bottom: 0;
   width: 6px;
   height: 6px;
 }
-.appldot.normal,
-.appldot.maximized {
+.appldot.normal {
   background-color: #333;
   border-top-color: #444;
   border-left-color: #444;
-  border-right-color: #111;
-  border-bottom-color: #111;
+  border-right-color: #181818;
+  border-bottom-color: #181818;
+}
+.appldot.maximized {
+  background-color: #555;
+  border-top-color: #666;
+  border-left-color: #666;
+  border-right-color: #444;
+  border-bottom-color: #444;
 }
 .appldot.minimized {
   background-color: #181818;
+}
+.appldot.top {
+  background-color: #f80;
+  border-top-color: #ff0;
+  border-left-color: #ff0;
+  border-right-color: #fc0;
+  border-bottom-color: #fc0;
 }
 .foldername {
   position: absolute;

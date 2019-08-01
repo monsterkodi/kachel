@@ -95,6 +95,8 @@ class Kachel extends win
             @win.setBounds @startBounds
             if event.button == 0
                 @onClick event
+            else if event.button == 1
+                @onMiddleClick event
         else
             post.toMain 'snapKachel' @id
         post.toMain 'dragStop' @id
@@ -137,6 +139,7 @@ class Kachel extends win
     onLoad:   -> # to be overridden in subclasses
     onMove:   -> # to be overridden in subclasses
     onClick:  -> # to be overridden in subclasses
+    onMiddleClick:  -> # to be overridden in subclasses
     onFocus:  -> # to be overridden in subclasses
     onBlur:   -> # to be overridden in subclasses
     onMove:   -> # to be overridden in subclasses

@@ -34,15 +34,15 @@ class Data
         
     detach: ->
         
-        klog 'Data.detach' @hook?, @hook?.kill('SIGKILL')
-        klog 'Data.detach' @hook?, @hook?.pid
-        klog wxw 'terminate' @hook.pid
+        klog wxw 'kill' 'wc.exe'
             
     onUDP: (msg) => 
 
         switch msg.event 
             when 'mousedown' 'mousemove' 'mouseup' 'mousewheel' then @providers.mouse.onEvent msg
             when 'keydown' 'keyup' then @providers.keyboard.onEvent msg
+            when 'proc' then @providers.apps.onEvent msg
+            when 'info' then @providers.wins.onEvent msg
             else log msg
         
     onRequestData: (provider, wid) =>
@@ -191,7 +191,6 @@ class Mouse
             
             post.toMain @name, event
             for receiver in @receivers
-                # log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
                 post.toWin receiver, 'data', event
         else
             @sendTimer = setTimeout (=> @onEvent @lastEvent), @interval
@@ -210,7 +209,6 @@ class Keyboard
         
         post.toMain @name, event
         for receiver in @receivers
-            log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
             post.toWin receiver, @name, event
         
 # 0000000     0000000   000   000  000   000  0000000     0000000  
@@ -235,7 +233,6 @@ class Bounds
         if not _.isEqual infos, @lastInfos
             @lastInfos = infos
             for receiver in @receivers
-                log "receiver:#{kstr receiver} name:#{@name} event:#{kstr event}"
                 post.toWin receiver, 'data', infos
             
 #  0000000   00000000   00000000    0000000  
@@ -248,43 +245,30 @@ class Apps
     
     @: (@name='apps' @receivers=[]) ->
         
-        @last     = Date.now()
-        @interval = parseInt 1000
-        @lastApps = null
-        @timer    = null
+        @lastApps = null        
         
-    start: => @update force:true
+    start: => @force = true
         
-    update: (force=false) =>
+    onEvent: (event) =>
         
-        return if os.platform() != 'win32'
-
-        clearTimeout @timer
+        apps = Array.from new Set event.proc.map (p) -> p.path
+         
+        apps = apps.filter (p) -> 
+            s = slash.path slash.removeDrive p 
+            if s.startsWith '/Windows/System32'
+                return slash.base(s) in ['cmd' 'powershell']
+            true
+                 
+        apps.sort()
+         
+        if @force or not _.isEqual apps, @lastApps
+            delete @force
+            post.toMain 'apps' apps
+            for receiver in @receivers
+                post.toWin receiver, 'data', apps
+             
+            @lastApps = apps
         
-        if not global.dragging
-            
-            proclist = wxw 'proc'
-                
-            apps = Array.from new Set proclist.map (p) -> p.path
-            
-            apps = apps.filter (p) -> 
-                s = slash.path slash.removeDrive p 
-                if s.startsWith '/Windows/System32'
-                    return slash.base(s) in ['cmd' 'powershell']
-                true
-                    
-            apps.sort()
-            
-            if force or not _.isEqual apps, @lastApps
-                post.toMain 'apps', apps
-                for receiver in @receivers
-                    log "receiver:#{kstr receiver} name:#{@name} apps:#{apps.length}"
-                    post.toWin receiver, 'data', apps
-                
-                @lastApps = apps
-            
-        @timer = setTimeout @update, @interval
-                
 # 000   000  000  000   000   0000000  
 # 000 0 000  000  0000  000  000       
 # 000000000  000  000 0 000  0000000   
@@ -295,32 +279,22 @@ class Wins
     
     @: (@name='wins' @receivers=[]) ->
         
-        @last     = Date.now()
-        @interval = parseInt 1000
         @lastWins = null
-        @timer    = null
+
+    start: => @force = true
+    
+    onEvent: (event) =>
         
-    start: => @update force:true
+        return if os.platform() != 'win32' 
         
-    update: (force=false) =>
-        
-        return if os.platform() != 'win32'
-        
-        clearTimeout @timer
-        
-        if not global.dragging
-        
-            wins = wxw 'info'
+        wins = event.info
+        if @force or not _.isEqual wins, @lastWins
+            delete @force
+            post.toMain 'wins' wins
+            for receiver in @receivers
+                post.toWin receiver, 'data', apps
             
-            if force or not _.isEqual wins, @lastWins
-                post.toMain 'wins', wins
-                for receiver in @receivers
-                    log "receiver:#{kstr receiver} name:#{@name} apps:#{apps.length}"
-                    post.toWin receiver, 'data', apps
-                
-                @lastWins = wins
-            
-        @timer = setTimeout @update, @interval
-        
+            @lastWins = wins
+    
 module.exports = Data
 

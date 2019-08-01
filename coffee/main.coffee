@@ -181,6 +181,11 @@ activeWins = {}
 onWins = (wins) ->
 
     pl = {}
+    
+    wins[0].status += ' top'
+    
+    post.toWin mainWin.id, 'showDot' wins[0].path.endsWith('electron.exe')
+    
     for win in wins
         wp = slash.path win.path
         if wid = kachelWids[wp]
@@ -371,7 +376,8 @@ post.on 'hide' -> for w in wins() then w.hide()
 
 post.on 'focusKachel' (winId, direction) -> raiseWin neighborWin winId, direction
    
-post.on 'kachelFocus' (winId) -> 
+post.on 'kachelFocus' (winId) ->
+    
     if winId != mainWin.id
         focusKachel = winWithId winId
         
