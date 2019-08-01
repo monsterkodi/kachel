@@ -15,7 +15,7 @@ class Krkkl
     @: ->
 
         window.onerror = (msg, source, line, col, err) ->
-            electron.remote.getCurrentWindow().openDevTools()
+            electron.remote.getCurrentWindow().openDevTools mode:'detach'
             klog 'window.onerror' msg, source, line, col
             error 'window.onerror' msg, source, line, col
             true
@@ -58,7 +58,7 @@ class Krkkl
         
         document.body.appendChild @canvas
         
-        # electron.remote.getCurrentWindow().openDevTools()
+        # electron.remote.getCurrentWindow().openDevTools mode:'detach'
             
         @fadeOut()
 
