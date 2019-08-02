@@ -184,7 +184,7 @@ onWins = (wins) ->
     
     wins[0].status += ' top'
     
-    post.toWin mainWin.id, 'showDot' wins[0].path.endsWith('electron.exe')
+    post.toWin mainWin.id, 'showDot' wins[0].path.endsWith('electron.exe') or wins[0].path.endsWith('kachel.exe')
     
     for win in wins
         wp = slash.path win.path

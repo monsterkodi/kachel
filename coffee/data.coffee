@@ -43,7 +43,7 @@ class Data
             when 'keydown' 'keyup' then @providers.keyboard.onEvent msg
             when 'proc' then @providers.apps.onEvent msg
             when 'info' then @providers.wins.onEvent msg
-            else log msg
+            # else log msg
         
     onRequestData: (provider, wid) =>
         
