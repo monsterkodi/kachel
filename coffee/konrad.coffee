@@ -16,6 +16,12 @@ class Konrad extends Kachel
         
     onClick: (event) -> open slash.unslash @kachelId 
     
+    onContextMenu: (event) => 
+        
+        if os.platform() == 'win32'
+            wxw = require 'wxw'
+            wxw 'minimize' slash.file @kachelId
+    
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
     # 000  000 0 000  000     000     

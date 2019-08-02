@@ -19,10 +19,12 @@ kachelWids  = {}
 dragging    = false
 mainWin     = null
 focusKachel = null
-hoverKachel = null
+# hoverKachel = null
 mouseTimer  = null
 data        = null
 mousePos    = kpos 0 0
+if os.platform() == 'win32'
+    wxw = require 'wxw'
 
 setKachelBounds = (kachel, b) -> Bounds.setBounds kachel, b
     
@@ -108,8 +110,9 @@ KachelApp = new app
 # 000   000   0000000    0000000   0000000   00000000  
       
 lockRaise = false
+tmpTop = false
 
-onMouse = (mouseData) -> 
+onMouse = (mouseData) ->
     
     return if mouseData.event != 'mousemove'
     return if global.dragging
@@ -124,20 +127,26 @@ onMouse = (mouseData) ->
                 lockRaise = false
                 return
                 
-            if not hoverKachel or hoverKachel != k.kachel.id
+            # if not hoverKachel or hoverKachel != k.kachel.id
 
-                post.toWin hoverKachel, 'leave' if hoverKachel
-                hoverKachel = k.kachel.id
-                if focusKachel?.isFocused() and hoverKachel != focusKachel.id
-                    focusKachel = winWithId hoverKachel
-                    focusKachel.focus()
-                else
-                    post.toWin hoverKachel, 'hover'
+                # post.toWin hoverKachel, 'leave' if hoverKachel
+                # hoverKachel = k.kachel.id
+                # if focusKachel?.isFocused() and hoverKachel != focusKachel.id
+                    # focusKachel = winWithId hoverKachel
+                    # focusKachel.focus()
+                # else
+                    # post.toWin hoverKachel, 'hover'
                     
             else if mousePos.x == 0 or mousePos.x >= Bounds.screenWidth-2 or mousePos.y == 0 or mousePos.y >= Bounds.screenHeight-2
-                post.emit 'raiseKacheln'
+                if not lockRaise
+                    tmpTop = true
+                    post.emit 'raiseKacheln'
         else
             lockRaise = false
+            if tmpTop
+                tmpTop = false
+                if os.platform() == 'win32'
+                    wxw 'raise' 'top'
 
 # 000   000  00000000  000   000  0000000     0000000    0000000   00000000   0000000    
 # 000  000   000        000 000   000   000  000   000  000   000  000   000  000   000  
@@ -181,8 +190,16 @@ activeWins = {}
 onWins = (wins) ->
 
     pl = {}
+
+    top = wxw('info' 'top')[0]
     
-    wins[0].status += ' top'
+    for w in wins
+        if w.hwnd == top.hwnd
+            w.status += ' top'
+            break
+    
+    if top.hwnd == wins[0].hwnd
+        tmpTop = false
     
     post.toWin mainWin.id, 'showDot' wins[0].path.endsWith('electron.exe') or wins[0].path.endsWith('kachel.exe')
     
@@ -352,7 +369,6 @@ post.on 'raiseKacheln' ->
     fk = focusKachel
 
     if os.platform() == 'win32'
-        wxw = require 'wxw'
         wxw 'raise' 'kachel.exe'
     else
         for win in wins()
@@ -387,8 +403,8 @@ onKachelClose = (event) ->
     if focusKachel == kachel
         focusKachel = null
         
-    if hoverKachel == kachel.id
-        hoverKachel = null
+    # if hoverKachel == kachel.id
+        # hoverKachel = null
         
     Bounds.remove kachel
         

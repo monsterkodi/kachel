@@ -1,6 +1,6 @@
 {
   "name": "kachel",
-  "version": "0.77.0",
+  "version": "0.78.0",
   "description": "dock",
   "author": "monsterkodi",
   "license": "Unlicense",
@@ -18,13 +18,13 @@
     "kxk": "^0.333.0",
     "simple-plist": "^1.0.0",
     "systeminformation": "^4.14.4",
-    "wxw": "^1.54.0"
+    "wxw": "^1.64.0"
   },
   "devDependencies": {
     "electron": "^6.0.0",
     "electron-packager": "^14.0.4",
     "electron-rebuild": "^1.8.5",
-    "konrad": "^0.154.0",
+    "konrad": "^0.157.0",
     "sds": "^3.2.0"
   },
   "iohook": {

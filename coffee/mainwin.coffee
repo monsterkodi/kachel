@@ -32,8 +32,6 @@ class MainWin extends Kachel
             
     onShowDot: (show) =>
         
-        klog 'onShowDot' show
-        
         dot =$ '.appldot'
         
         if show and not dot
