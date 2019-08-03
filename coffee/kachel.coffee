@@ -110,8 +110,8 @@ class Kachel extends win
         prefs.set "bounds▸#{@kachelId}" @win.getBounds()
         @onBounds()
         
-    onHover: (event) => document.body.classList.add 'kachelFocus'
-    onLeave: (event) => document.body.classList.remove 'kachelFocus'
+    onHover: (event) => document.body.classList.add 'kachelHover'
+    onLeave: (event) => document.body.classList.remove 'kachelHover'
         
     onWinFocus: (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
     onWinBlur:  (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event

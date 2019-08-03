@@ -8,6 +8,13 @@ body {
 body.mojave {
   border-top-color: #111;
 }
+body.kachelHover {
+  border-top-color: #333;
+  background-color: #222;
+  border-left-color: #333;
+  border-right-color: #111;
+  border-bottom-color: #111;
+}
 body.kachelFocus {
   border-top-color: #555;
   border-left-color: #555;
@@ -22,6 +29,9 @@ body:active {
 }
 #main {
   background-color: #202020;
+}
+body.kachelHover #main {
+  background-color: #222;
 }
 .sysdish_mem_bgr {
   fill: #2b2b2b;

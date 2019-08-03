@@ -19,7 +19,7 @@ kachelWids  = {}
 dragging    = false
 mainWin     = null
 focusKachel = null
-# hoverKachel = null
+hoverKachel = null
 mouseTimer  = null
 data        = null
 mousePos    = kpos 0 0
@@ -127,21 +127,22 @@ onMouse = (mouseData) ->
                 # klog 'kachel destroyed!'
                 lockRaise = false
                 return
-                
-            # if not hoverKachel or hoverKachel != k.kachel.id
-
-                # post.toWin hoverKachel, 'leave' if hoverKachel
-                # hoverKachel = k.kachel.id
-                # if focusKachel?.isFocused() and hoverKachel != focusKachel.id
-                    # focusKachel = winWithId hoverKachel
-                    # focusKachel.focus()
-                # else
-                    # post.toWin hoverKachel, 'hover'
-                    
-            else if mousePos.x == 0 or mousePos.x >= Bounds.screenWidth-2 or mousePos.y == 0 or mousePos.y >= Bounds.screenHeight-2
+                                    
+            if mousePos.x == 0 or mousePos.x >= Bounds.screenWidth-2 or mousePos.y == 0 or mousePos.y >= Bounds.screenHeight-2
                 if not lockRaise
                     tmpTop = true
                     post.emit 'raiseKacheln'
+                    
+            if not hoverKachel or hoverKachel != k.kachel.id
+
+                post.toWin hoverKachel, 'leave' if hoverKachel
+                hoverKachel = k.kachel.id
+                if false # focusKachel?.isFocused() and hoverKachel != focusKachel.id
+                    focusKachel = winWithId hoverKachel
+                    focusKachel.focus()
+                else
+                    post.toWin hoverKachel, 'hover'
+                    
             return
            
     lockRaise = false
@@ -410,8 +411,8 @@ onKachelClose = (event) ->
     if focusKachel == kachel
         focusKachel = null
         
-    # if hoverKachel == kachel.id
-        # hoverKachel = null
+    if hoverKachel == kachel.id
+        hoverKachel = null
         
     Bounds.remove kachel
         

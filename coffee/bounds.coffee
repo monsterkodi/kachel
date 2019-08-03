@@ -266,7 +266,7 @@ class Bounds
             
         if info = @overlapInfo nb
             
-            gap = (s, d, f, b, o) ->
+            gap = (s, d, f, b, o) =>
                 g = f b, o
                 if g > 0
                     nb[d] = b[d] + s * g

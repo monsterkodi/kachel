@@ -6,6 +6,7 @@
 // 0000000    000   000  000   000  000   000  
 
 bgColor             = #202020
+bgHover             = #222
 frameColor          = #222
 scrollHoverColor    = #b00
 titleRedColor       = #f00
@@ -24,6 +25,13 @@ body
     border-left-color       #282828
     border-right-color      #181818
     border-bottom-color     #181818
+
+    &.kachelHover
+        border-top-color    #333
+        background-color    bgHover
+        border-left-color   #333
+        border-right-color  #111
+        border-bottom-color #111
     
     &.kachelFocus
         border-top-color    #555
@@ -39,6 +47,9 @@ body
         
 #main
     background-color     bgColor
+    
+body.kachelHover #main
+    background-color     bgHover
     
 //  0000000  000   000   0000000  0000000    000   0000000  000   000  
 // 000        000 000   000       000   000  000  000       000   000  
