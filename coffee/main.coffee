@@ -108,7 +108,8 @@ KachelApp = new app
 # 000000000  000   000  000   000  0000000   0000000   
 # 000 0 000  000   000  000   000       000  000       
 # 000   000   0000000    0000000   0000000   00000000  
-      
+    
+tmpTopTimer = null
 lockRaise = false
 tmpTop = false
 
@@ -123,7 +124,7 @@ onMouse = (mouseData) ->
         if k = Bounds.kachelAtPos mousePos
             
             if k.kachel?.isDestroyed?()
-                klog 'kachel destroyed!'
+                # klog 'kachel destroyed!'
                 lockRaise = false
                 return
                 
@@ -141,12 +142,18 @@ onMouse = (mouseData) ->
                 if not lockRaise
                     tmpTop = true
                     post.emit 'raiseKacheln'
-        else
-            lockRaise = false
-            if tmpTop
-                tmpTop = false
-                if os.platform() == 'win32'
-                    wxw 'raise' 'top'
+            return
+           
+    lockRaise = false
+    if os.platform() == 'win32'
+        if tmpTop
+            for win in wxw 'info'
+                if slash.file(win.path) != 'kachel.exe'
+                    tmpTop = false
+                    wxw 'raise' win.hwnd
+                    clearTimeout tmpTopTimer
+                    tmpTopTimer = setTimeout (-> wxw 'raise' win.hwnd), 500
+                    return
 
 # 000   000  00000000  000   000  0000000     0000000    0000000   00000000   0000000    
 # 000  000   000        000 000   000   000  000   000  000   000  000   000  000   000  
@@ -373,11 +380,11 @@ post.on 'raiseKacheln' ->
     else
         for win in wins()
             win.show()
-            
-    raiseWin fk ? mainWin
+    
+    if not tmpTop
+        raiseWin fk ? mainWin
     
 raiseWin = (win) ->
-    
     win.showInactive()
     win.focus()
 
@@ -390,7 +397,7 @@ post.on 'hide' -> for w in wins() then w.hide()
 # 000       000   000  000       000   000       000  
 # 000        0000000    0000000   0000000   0000000   
 
-post.on 'focusKachel' (winId, direction) -> raiseWin neighborWin winId, direction
+post.on 'focusNeighbor' (winId, direction) -> raiseWin Bounds.neighborKachel winWithId(winId), direction
    
 post.on 'kachelFocus' (winId) ->
     
@@ -423,39 +430,4 @@ onKachelClose = (event) ->
 wins      = -> BrowserWindow.getAllWindows()
 activeWin = -> BrowserWindow.getFocusedWindow()
 winWithId = (id) -> BrowserWindow.fromId id
-    
-neighborWin = (winId, direction) ->
-    
-    kachel = winWithId winId
-    kb = kachel.getBounds()
-    ks = wins().filter (k) ->
-        return false if k == kachel
-        b = k.getBounds()
-        switch direction
-            when 'right' then b.x  >= kb.x+kb.width
-            when 'down'  then b.y  >= kb.y+kb.height
-            when 'left'  then kb.x >= b.x+b.width 
-            when 'up'    then kb.y >= b.y+b.height
-
-    return kachel if empty ks
             
-    ks.sort (a,b) ->
-        ab = a.getBounds()
-        bb = b.getBounds()
-        switch direction
-            when 'right' 
-                a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (ab.x - kb.x)
-                b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (bb.x - kb.x)
-            when 'left'  
-                a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (kb.x - ab.x)
-                b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (kb.x - bb.x)
-            when 'down'  
-                a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (ab.y - kb.y)
-                b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (bb.y - kb.y)
-            when 'up'    
-                a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (kb.y - ab.y)
-                b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
-        a-b
-    ks[0]
-    
-        

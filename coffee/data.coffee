@@ -20,7 +20,9 @@ class Data
         if os.platform() == 'win32'
             
             @udp  = udp port:66666 onMsg:@onUDP
-            @hook = wxw 'hook'
+            @hookInput = wxw 'hook' 'input'
+            @hookProc  = wxw 'hook' 'proc'
+            @hookInfo  = wxw 'hook' 'info'
         
         @providers = 
             mouse:    new Mouse
@@ -38,7 +40,7 @@ class Data
             
     onUDP: (msg) => 
 
-        switch msg.event 
+        switch msg.event
             when 'mousedown' 'mousemove' 'mouseup' 'mousewheel' then @providers.mouse.onEvent msg
             when 'keydown' 'keyup' then @providers.keyboard.onEvent msg
             when 'proc' then @providers.apps.onEvent msg

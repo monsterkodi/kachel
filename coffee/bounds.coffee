@@ -6,7 +6,7 @@
 0000000     0000000    0000000   000   000  0000000    0000000 
 ###
 
-{ post, clamp, klog, kpos, os } = require 'kxk'
+{ post, clamp, empty, klog, kpos, os } = require 'kxk'
 
 if os.platform()=='win32' then wxw = require 'wxw'
 electron = require 'electron'
@@ -203,6 +203,49 @@ class Bounds
             switch dir
                 when 'left''right' then return neighbor if neighbor.bounds.y == kb.y    
                 when 'up''down'    then return neighbor if neighbor.bounds.x == kb.x    
+                
+    @neighborKachel: (kachel, direction) ->
+        
+        kb = kachel.getBounds()
+        kacheln = electron.BrowserWindow.getAllWindows()
+        
+        ks = kacheln.filter (k) ->
+            return false if k == kachel
+            b = k.getBounds()
+            switch direction
+                when 'right' then b.x  >= kb.x+kb.width
+                when 'down'  then b.y  >= kb.y+kb.height
+                when 'left'  then kb.x >= b.x+b.width 
+                when 'up'    then kb.y >= b.y+b.height
+    
+        return kachel if empty ks
+                
+        inline = ks.filter (k) ->
+            b = k.getBounds()
+            switch direction
+                when 'left' 'right' then b.y < kb.y+kb.height and b.y+b.height > kb.y
+                when 'up' 'down'    then b.x < kb.x+kb.width  and b.x+b.width  > kb.x
+        
+        if inline.length then ks = inline
+                
+        ks.sort (a,b) ->
+            ab = a.getBounds()
+            bb = b.getBounds()
+            switch direction
+                when 'right' 
+                    a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (ab.x - kb.x)
+                    b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (bb.x - kb.x)
+                when 'left'  
+                    a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (kb.x - ab.x)
+                    b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (kb.x - bb.x)
+                when 'down'  
+                    a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (ab.y - kb.y)
+                    b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (bb.y - kb.y)
+                when 'up'    
+                    a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (kb.y - ab.y)
+                    b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
+            a-b
+        ks[0]
                 
     # 00     00   0000000   000   000  00000000  
     # 000   000  000   000  000   000  000       
