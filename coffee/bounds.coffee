@@ -105,12 +105,12 @@ class Bounds
     @onScreen: (b) ->
         
         b.x = clamp 0, @screenWidth  - b.width,  b.x
-        b.y = clamp 0, @screenHeight - b.height, b.y
+        b.y = clamp @screenTop, @screenTop+@screenHeight - b.height, b.y
         
-        if b.x + b.width  > @screenWidth - b.width  then b.x = @screenWidth-b.width
-        if b.y + b.height > @screenTop+@screenHeight - b.height then b.y = @screenTop+@screenHeight-b.height
-        if b.x < b.width  then b.x = 0
-        if b.y - @screenTop < b.height then b.y = @screenTop
+        # if b.x + b.width  > @screenWidth - b.width then b.x = @screenWidth-b.width
+        # if b.y + b.height > @screenTop+@screenHeight - b.height then b.y = @screenTop+@screenHeight-b.height
+        # if b.x < b.width  then b.x = 0
+        # if b.y - @screenTop < b.height then b.y = @screenTop
         b
         
     @isOnScreen: (b) ->
@@ -267,12 +267,12 @@ class Bounds
     
     @sortClosest: (k, bounds) ->
         
+        kc = kpos(k).plus kpos(k.width, k.height).times(0.5)
         bounds.sort (a,b) ->
             ac = kpos(a).plus kpos(a.width, a.height).times(0.5)
             bc = kpos(b).plus kpos(b.width, b.height).times(0.5)
-            kc = kpos(k).plus kpos(k.width, k.height).times(0.5)
-            da = Math.max Math.abs(kc.x-ac.x), Math.abs(kc.y-ac.y)
-            db = Math.max Math.abs(kc.x-bc.x), Math.abs(kc.y-bc.y)
+            da = kc.distSquare ac
+            db = kc.distSquare bc
             da - db
             
     @borderBounds: (k, dir) ->
@@ -304,6 +304,7 @@ class Bounds
                 when 'up' 'down'    then b.x < kb.x+kb.width  and b.x+b.width  > kb.x
         
         if inline.length 
+            
             inline = inline.map (i) -> i.bounds
             @sortClosest kb, inline
             inline[0]
@@ -313,8 +314,6 @@ class Bounds
     @snap: (kachel, b) ->
            
         b ?= kachel.getBounds()
-        
-        klog '----- b' b
         
         @getInfos()
                     
@@ -327,8 +326,6 @@ class Bounds
         choices.sort (a,b) -> Math.abs(a.gap) - Math.abs(b.gap)
  
         c = choices[0]
-        
-        klog c
         
         switch c.dir
             when 'up'    then b.y -= c.gap
@@ -347,20 +344,40 @@ class Bounds
             choices.push neighbor:nb, gap:gap, dir:dir
                     
         choices.sort (a,b) -> Math.abs(a.gap) - Math.abs(b.gap)
-            
-        c = choices[0]
-        if Math.abs(c.gap) < b.width
-            klog '\n' c
-            switch c.dir
-                when 'up'    then b.y -= Math.abs c.gap
-                when 'down'  then b.y += Math.abs c.gap
-                when 'left'  then b.x -= Math.abs c.gap
-                when 'right' then b.x += Math.abs c.gap
-            
-        b = @onScreen b
-        klog '\n' b
         
-        @setBounds kachel, b
-        b
+        choices = choices.filter (c) -> c.gap
+        d = choices[0]
+        if d and Math.abs(d.gap) < b.width
+
+            if d.gap < 0
+                switch d.dir
+                    when 'up' 'down'    then b.y += d.gap
+                    when 'left' 'right' then b.x += d.gap
+            else
+                switch d.dir
+                    when 'up'    then b.y -= d.gap
+                    when 'down'  then b.y += d.gap
+                    when 'left'  then b.x -= d.gap
+                    when 'right' then b.x += d.gap
+                
+        else
+            n = c.neighbor
+            switch c.dir
+                when 'up' 'down'
+                    dl = n.x - b.x
+                    dr = (n.x+n.width) - (b.x+b.width)
+                    if Math.abs(dl) < Math.abs(dr)
+                        b.x += dl
+                    else
+                        b.x += dr
+                when 'left' 'right'
+                    du = n.y - b.y
+                    dd = (n.y+n.height) - (b.y+b.height)
+                    if Math.abs(du) < Math.abs(dd)
+                        b.y += du
+                    else
+                        b.y += dd
+            
+        @setBounds kachel, @onScreen b
                 
 module.exports = Bounds
