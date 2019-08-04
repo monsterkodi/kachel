@@ -12,7 +12,17 @@ Kachel = require './kachel'
 
 class Konrad extends Kachel
         
-    @: (@kachelId:'konrad') -> super
+    @: (@kachelId:'konrad') -> 
+    
+        post.on 'app' @onApp
+        
+        super
+    
+    onApp: (action, app) =>
+        
+        switch action 
+            when 'activated' then @idleIcon()
+            when 'terminated' then @sleepIcon()
         
     onClick: (event) -> open slash.unslash @kachelId 
     
@@ -21,7 +31,7 @@ class Konrad extends Kachel
         if os.platform() == 'win32'
             wxw = require 'wxw'
             wxw 'minimize' slash.file @kachelId
-    
+                
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
     # 000  000 0 000  000     000     
@@ -32,7 +42,7 @@ class Konrad extends Kachel
         
         @udp = new udp onMsg:@onMsg, port:9559
         
-        @idleIcon()
+        @sleepIcon()
         super
         
     onMsg: (msg) =>
@@ -41,15 +51,17 @@ class Konrad extends Kachel
         
         switch prefix
             when 'version' then @idleIcon()
-            when 'error'   then @setIcon "#{__dirname}/../img/konrad_error.png"
-            when 'exit'    then @setIcon "#{__dirname}/../img/konrad_sleep.png"
+            when 'error'   then @errorIcon()
+            when 'exit'    then @sleepIcon()
             when 'output'
                 # klog 'output' msg
-                @setIcon "#{__dirname}/../img/konrad.png"
+                @workIcon()
                 setTimeout @idleIcon, 2000
         
-    idleIcon: => 
-        @setIcon "#{__dirname}/../img/konrad_idle.png"
+    workIcon:  => @setIcon "#{__dirname}/../img/konrad.png"
+    idleIcon:  => @setIcon "#{__dirname}/../img/konrad_idle.png"
+    errorIcon: => @setIcon "#{__dirname}/../img/konrad_error.png"
+    sleepIcon: => @setIcon "#{__dirname}/../img/konrad_sleep.png"
                 
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  
@@ -58,6 +70,7 @@ class Konrad extends Kachel
     # 000   0000000   0000000   000   000  
     
     setIcon: (iconPath) =>
+        
         return if not iconPath
         img = elem 'img' class:'applicon' src:slash.fileUrl slash.path iconPath
         img.ondragstart = -> false
