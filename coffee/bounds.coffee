@@ -9,6 +9,7 @@
 { post, clamp, empty, klog, kpos, os } = require 'kxk'
 
 if os.platform()=='win32' then wxw = require 'wxw'
+
 electron = require 'electron'
 
 class Bounds
@@ -32,6 +33,7 @@ class Bounds
         post.on 'cleanTiles' @cleanTiles
             
     @cleanTiles: =>
+        
         klog 'Bounds.cleanTiles'
         
     @updateScreenSize: ->
@@ -160,51 +162,14 @@ class Bounds
         
         for k in @infos
             return k if @posInBounds p, k.bounds
-            
-    @gapRight: (a, b) -> b.x - (a.x + a.width)
-    @gapLeft:  (a, b) -> a.x - (b.x + b.width)
-    @gapUp:    (a, b) -> a.y - (b.y + b.height)
-    @gapDown:  (a, b) -> b.y - (a.y + a.height)
-        
+                    
     # 000   000  00000000  000   0000000   000   000  0000000     0000000   00000000   
     # 0000  000  000       000  000        000   000  000   000  000   000  000   000  
     # 000 0 000  0000000   000  000  0000  000000000  0000000    000   000  0000000    
     # 000  0000  000       000  000   000  000   000  000   000  000   000  000   000  
     # 000   000  00000000  000   0000000   000   000  0000000     0000000   000   000  
-    
-    @isCloseNeighbor: (bounds, info, dir) ->
-        
-        switch dir
-            when 'right' then return 0 <= @gapRight(bounds, info.bounds) < bounds.width
-            when 'left'  then return 0 <= @gapLeft( bounds, info.bounds) < bounds.width
-            when 'down'  then return 0 <= @gapDown( bounds, info.bounds) < bounds.height
-            when 'up'    then return 0 <= @gapUp(   bounds, info.bounds) < bounds.height
-        
-    @closeNeighbor: (kachel, dir) ->
-        
-        kb = kachel.getBounds()
-        
-        infos = Array.from @infos # to prevent change detection from failing
-        
-        infos.sort (a,b) -> 
-            switch dir
-                when 'left''right' then Math.abs(a.bounds.y - kb.y) - Math.abs(b.bounds.y - kb.y)
-                when 'up''down'    then Math.abs(a.bounds.x - kb.x) - Math.abs(b.bounds.x - kb.x)
-        
-        for info in infos
-            continue if info.kachel == kachel
-            if @isCloseNeighbor kb, info, dir
-                return info 
-
-    @nextNeighbor: (kachel, dir) ->
-        
-        if neighbor = @closeNeighbor kachel, dir
-            kb = kachel.getBounds()
-            switch dir
-                when 'left''right' then return neighbor if neighbor.bounds.y == kb.y    
-                when 'up''down'    then return neighbor if neighbor.bounds.x == kb.x    
-                
-    @neighborKachel: (kachel, direction) ->
+                                    
+    @neighborKachel: (kachel, dir) ->
         
         kb = kachel.getBounds()
         kacheln = electron.BrowserWindow.getAllWindows()
@@ -212,26 +177,27 @@ class Bounds
         ks = kacheln.filter (k) ->
             return false if k == kachel
             b = k.getBounds()
-            switch direction
+            switch dir
                 when 'right' then b.x  >= kb.x+kb.width
                 when 'down'  then b.y  >= kb.y+kb.height
-                when 'left'  then kb.x >= b.x+b.width 
-                when 'up'    then kb.y >= b.y+b.height
+                when 'left'  then b.x+b.width  <= kb.x 
+                when 'up'    then b.y+b.height <= kb.y 
     
         return kachel if empty ks
                 
         inline = ks.filter (k) ->
             b = k.getBounds()
-            switch direction
+            switch dir
                 when 'left' 'right' then b.y < kb.y+kb.height and b.y+b.height > kb.y
                 when 'up' 'down'    then b.x < kb.x+kb.width  and b.x+b.width  > kb.x
         
-        if inline.length then ks = inline
+        if inline.length 
+            ks = inline
                 
         ks.sort (a,b) ->
             ab = a.getBounds()
             bb = b.getBounds()
-            switch direction
+            switch dir
                 when 'right' 
                     a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (ab.x - kb.x)
                     b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (bb.x - kb.x)
@@ -246,7 +212,7 @@ class Bounds
                     b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
             a-b
         ks[0]
-                
+                 
     # 00     00   0000000   000   000  00000000  
     # 000   000  000   000  000   000  000       
     # 000000000  000   000   000 000   0000000   
@@ -281,56 +247,90 @@ class Bounds
             return if r
                    
         @setBounds kachel, @isOnScreen(nb) and nb or b
-                
+
+    @gapRight: (a, b) -> b.x - (a.x + a.width)
+    @gapLeft:  (a, b) -> a.x - (b.x + b.width)
+    @gapUp:    (a, b) -> a.y - (b.y + b.height)
+    @gapDown:  (a, b) -> b.y - (a.y + a.height)
+        
     #  0000000  000   000   0000000   00000000   
     # 000       0000  000  000   000  000   000  
     # 0000000   000 0 000  000000000  00000000   
     #      000  000  0000  000   000  000        
     # 0000000   000   000  000   000  000        
     
+    @sortClosest: (k, bounds) ->
+        
+        bounds.sort (a,b) ->
+            ac = kpos(a).plus kpos(a.width, a.height).times(0.5)
+            bc = kpos(b).plus kpos(b.width, b.height).times(0.5)
+            kc = kpos(k).plus kpos(k.width, k.height).times(0.5)
+            da = Math.max Math.abs(kc.x-ac.x), Math.abs(kc.y-ac.y)
+            db = Math.max Math.abs(kc.x-bc.x), Math.abs(kc.y-bc.y)
+            da - db
+            
+    @borderBounds: (k, dir) ->
+        
+        switch dir
+            when 'left'  then x:-k.width,     y:k.y,           width:k.width, height:k.height
+            when 'right' then x:@screenWidth, y:k.y,           width:k.width, height:k.height
+            when 'up'    then x:k.x,          y:-k.height,     width:k.width, height:k.height
+            when 'down'  then x:k.x,          y:@screenHeight, width:k.width, height:k.height
+    
+    @inlineNeighborBounds: (kb, dir) ->
+        
+        kc = kpos(kb).plus kpos(kb.width, kb.height).times 0.5
+        ks = @infos.filter (info) =>
+            return false if @posInBounds kc, info.bounds
+            b = info.bounds
+            switch dir
+                when 'right' then kc.x < b.x
+                when 'up'    then kc.y < b.y
+                when 'left'  then kc.x > b.x + b.width
+                when 'down'  then kc.y > b.y + b.height
+    
+        if empty ks then return @borderBounds kb, dir
+                
+        inline = ks.filter (k) ->
+            b = k.bounds
+            switch dir
+                when 'left' 'right' then b.y < kb.y+kb.height and b.y+b.height > kb.y
+                when 'up' 'down'    then b.x < kb.x+kb.width  and b.x+b.width  > kb.x
+        
+        if inline.length 
+            @sortClosest kb, inline
+            inline[0].bounds
+        else
+            @borderBounds kb, dir
+            
     @snap: (kachel, b) ->
            
-        b ?= kachel.getBounds()
+        b ?= @onScreen kachel.getBounds()
         
-        klog 'snap' kachel.id, b
-        
-        horz = false
-        vert = false
-        
-        if b.x < 0 or b.x < 72
-            horz = true
-            b.x = 0
-        else if b.x + b.width > @screenWidth or b.x + b.width > @screenWidth - 72
-            horz = true
-            b.x = @screenWidth - b.width
-
-        if b.y < 0 or b.y < 72
-            vert = true
-            b.y = 0
-        else if b.y + b.height > @screenTop+@screenHeight or b.y + b.height > @screenTop+@screenHeight - 72
-            vert = true
-            b.y = @screenTop+@screenHeight - b.height
+        klog '----- b' b
         
         @getInfos()
                     
-        for info in @infos
-            continue if info.kachel == kachel
-            if @overlap b, info.bounds
-                b.y = info.bounds.y + info.bounds.height
+        choices = []
+        for dir in ['up' 'down' 'left' 'right']
+            choices.push @inlineNeighborBounds kachel.getBounds(), dir
+                    
+        @sortClosest kachel.getBounds(), choices
+        klog 'choices' choices
         
-        if not vert
-            if n = @closeNeighbor kachel, 'up'
-                b.y = n.bounds.y + n.bounds.height
-            else if n = @closeNeighbor kachel, 'down'
-                b.y = n.bounds.y - b.height
+        nb = choices[0]
+        if b.y > nb.y
+            b.y = nb.y + nb.height
+        else if b.y < nb.y - b.height/2
+            b.y = nb.y - b.height
 
-        if not horz
-            if n = @closeNeighbor kachel, 'right'
-                b.x = n.bounds.x - b.width
-            else if n = @closeNeighbor kachel, 'left'
-                b.x = n.bounds.x + n.bounds.width
+        if b.x > nb.x
+            b.x = nb.x + nb.width
+        else if b.x < nb.x - b.width/2
+            b.x = nb.x - b.width
                 
-        klog 'snap' kachel.id, b
+        b = @onScreen b
+        klog '\n' b
         b
                 
 module.exports = Bounds
