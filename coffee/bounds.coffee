@@ -14,6 +14,7 @@ electron = require 'electron'
 
 class Bounds
 
+    @kachelSizes: [72 108 144 216]
     @infos: null
     
     @screenWidth:  0
@@ -32,10 +33,54 @@ class Bounds
         Bounds.getInfos()
         post.on 'cleanTiles' @cleanTiles
             
+    #  0000000  000      00000000   0000000   000   000  
+    # 000       000      000       000   000  0000  000  
+    # 000       000      0000000   000000000  000 0 000  
+    # 000       000      000       000   000  000  0000  
+    #  0000000  0000000  00000000  000   000  000   000  
+    
     @cleanTiles: =>
         
-        klog 'Bounds.cleanTiles'
-        
+        @getInfos()
+        for info in @infos
+            kb = info.bounds
+            
+            if kb.width  not in @kachelSizes
+                kb.width = @kachelSizes[@kachelSize k]
+                @setBounds info.kachel, kb
+                return @cleanTiles()
+                
+            if kb.height not in @kachelSizes
+                kb.height = @kachelSizes[@kachelSize k]
+                @setBounds info.kachel, kb
+                return @cleanTiles()
+                
+            if overlap = @overlapInfo info.kachel, kb
+                ox = kb.x
+                nx = ox - 72
+                kb.x = nx
+                while nx > 0 and overlap = @overlapInfo info.kachel, kb
+                    nx -= 72
+                    kb.x = nx
+                    
+                if nx <= 0
+                    nx = ox + 72
+                    kb.x = nx
+                    while nx < @screenWidth and overlap = @overlapInfo info.kachel, kb
+                        nx += 72
+                        kb.x = nx
+                        
+                if not @overlapInfo info.kachel, kb
+                    @snap info.kachel, kb
+                    return @cleanTiles()
+                
+    @kachelSize: (k) ->
+        kb = k.getBounds()
+        size = 0        
+        while size < @kachelSizes.length-1 and Math.abs(kb.width - @kachelSizes[size]) > 18
+            size++
+        size
+                
     @updateScreenSize: ->
         
         if os.platform() == 'win32'            
@@ -106,17 +151,11 @@ class Bounds
         
         b.x = clamp 0, @screenWidth  - b.width,  b.x
         b.y = clamp @screenTop, @screenTop+@screenHeight - b.height, b.y
-        
-        # if b.x + b.width  > @screenWidth - b.width then b.x = @screenWidth-b.width
-        # if b.y + b.height > @screenTop+@screenHeight - b.height then b.y = @screenTop+@screenHeight-b.height
-        # if b.x < b.width  then b.x = 0
-        # if b.y - @screenTop < b.height then b.y = @screenTop
         b
         
     @isOnScreen: (b) ->
         
         if b.y < 0 or b.x < 0 then return false
-                
         if b.x + b.width  > @screenWidth then return false
         if b.y + b.height > @screenTop+@screenHeight then return false
         true
@@ -136,9 +175,10 @@ class Bounds
              a.y > b.y+b.height-1 or
              b.y > a.y+a.height-1)
              
-    @overlapInfo: (b) ->
+    @overlapInfo: (kachel, b) ->
         
         for info in @infos
+            if info.kachel == kachel then continue
             if @overlap info.bounds, b
                 return info
              
@@ -230,7 +270,7 @@ class Bounds
             when 'right'    then nb.x = b.x + b.width 
             when 'left'     then nb.x = b.x - b.width 
             
-        if info = @overlapInfo nb
+        if info = @overlapInfo kachel, nb
             
             gap = (s, d, f, b, o) =>
                 g = f b, o
@@ -259,11 +299,11 @@ class Bounds
             when 'left'  then @gapLeft  a, b
             when 'right' then @gapRight a, b
         
-    #  0000000  000   000   0000000   00000000   
-    # 000       0000  000  000   000  000   000  
-    # 0000000   000 0 000  000000000  00000000   
-    #      000  000  0000  000   000  000        
-    # 0000000   000   000  000   000  000        
+    #  0000000   0000000   00000000   000000000  
+    # 000       000   000  000   000     000     
+    # 0000000   000   000  0000000       000     
+    #      000  000   000  000   000     000     
+    # 0000000    0000000   000   000     000     
     
     @sortClosest: (k, bounds) ->
         
@@ -282,6 +322,12 @@ class Bounds
             when 'right' then x:@screenWidth, y:k.y,           width:k.width, height:k.height
             when 'up'    then x:k.x,          y:-k.height,     width:k.width, height:k.height
             when 'down'  then x:k.x,          y:@screenHeight, width:k.width, height:k.height
+    
+    # 000  000   000  000      000  000   000  00000000  
+    # 000  0000  000  000      000  0000  000  000       
+    # 000  000 0 000  000      000  000 0 000  0000000   
+    # 000  000  0000  000      000  000  0000  000       
+    # 000  000   000  0000000  000  000   000  00000000  
     
     @inlineNeighborBounds: (kb, dir) ->
         
@@ -311,6 +357,12 @@ class Bounds
         else
             @borderBounds kb, dir
             
+    #  0000000  000   000   0000000   00000000   
+    # 000       0000  000  000   000  000   000  
+    # 0000000   000 0 000  000000000  00000000   
+    #      000  000  0000  000   000  000        
+    # 0000000   000   000  000   000  000        
+    
     @snap: (kachel, b) ->
            
         b ?= kachel.getBounds()

@@ -13,7 +13,6 @@ Bounds   = require './bounds'
 electron = require 'electron'
 BrowserWindow = electron.BrowserWindow
 
-kachelSizes = [72 108 144 216]
 kachelDict  = {}
 kachelWids  = {}
 dragging    = false
@@ -61,12 +60,12 @@ KachelApp = new app
     icon:               '../img/app.ico'
     tray:               '../img/menu.png'
     about:              '../img/about.png'
-    minWidth:           kachelSizes[0]
-    minHeight:          kachelSizes[0]
-    maxWidth:           kachelSizes[0]
-    maxHeight:          kachelSizes[0]
-    width:              kachelSizes[0]
-    height:             kachelSizes[0]
+    minWidth:           Bounds.kachelSizes[0]
+    minHeight:          Bounds.kachelSizes[0]
+    maxWidth:           Bounds.kachelSizes[0]
+    maxHeight:          Bounds.kachelSizes[0]
+    width:              Bounds.kachelSizes[0]
+    height:             Bounds.kachelSizes[0]
     acceptFirstMouse:   true
     prefsSeperator:     '▸'
     onActivate:         -> klog 'onActivate'; post.emit 'raiseKacheln'
@@ -277,10 +276,10 @@ post.on 'newKachel' (id) ->
         show:               false
         fullscreenenable:   false
         backgroundColor:    '#181818'
-        width:              kachelSizes[kachelSize]
-        height:             kachelSizes[kachelSize]
-        maxWidth:           kachelSizes[kachelSize]
-        maxHeight:          kachelSizes[kachelSize]
+        width:              Bounds.kachelSizes[kachelSize]
+        height:             Bounds.kachelSizes[kachelSize]
+        maxWidth:           Bounds.kachelSizes[kachelSize]
+        maxHeight:          Bounds.kachelSizes[kachelSize]
         webPreferences: 
             nodeIntegration: true
         
@@ -341,19 +340,19 @@ post.on 'kachelBounds' (wid, kachelId) ->
 post.on 'kachelSize' (action, wid) ->
     
     size = 0
-    while kachelSizes[size] < winWithId(wid).getBounds().width
+    while Bounds.kachelSizes[size] < winWithId(wid).getBounds().width
         size++
     
     switch action
-        when 'increase' then size += 1; return if size > kachelSizes.length-1
+        when 'increase' then size += 1; return if size > Bounds.kachelSizes.length-1
         when 'decrease' then size -= 1; return if size < 0
         when 'reset'    then return if size == 1; size = 1
    
     w = winWithId wid
     
     b = w.getBounds()
-    b.width  = kachelSizes[size]
-    b.height = kachelSizes[size]
+    b.width  = Bounds.kachelSizes[size]
+    b.height = Bounds.kachelSizes[size]
     Bounds.snap w, b
         
 # 00000000    0000000   000   0000000  00000000

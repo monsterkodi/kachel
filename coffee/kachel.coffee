@@ -8,7 +8,7 @@
 
 { drag, post, scheme, stopEvent, prefs, slash, klog, kstr, elem, win, os, $ } = require 'kxk'
 
-kachelSizes = [72 108 144 216]
+Bounds = require './bounds'
 
 class Kachel extends win
 
@@ -61,13 +61,8 @@ class Kachel extends win
         post.toMain 'requestData' name, @id
         post.on 'data' @onData
                 
-    kachelSize: ->
-        
-        size = 0        
-        while kachelSizes[size] < @win.getBounds().width
-            size++
-        size
-    
+    kachelSize: -> Bounds.kachelSize @win
+            
     onContextMenu: (event) => stopEvent event 
     
     # 0000000    00000000    0000000    0000000   
@@ -105,7 +100,7 @@ class Kachel extends win
         
         for i in [1..4]
             document.body.classList.remove "kachelSize#{i}"
-        document.body.classList.add    "kachelSize#{@kachelSize()+1}"
+        document.body.classList.add "kachelSize#{@kachelSize()+1}"
         
         prefs.set "bounds▸#{@kachelId}" @win.getBounds()
         @onBounds()
