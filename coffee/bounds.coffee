@@ -252,6 +252,12 @@ class Bounds
     @gapLeft:  (a, b) -> a.x - (b.x + b.width)
     @gapUp:    (a, b) -> a.y - (b.y + b.height)
     @gapDown:  (a, b) -> b.y - (a.y + a.height)
+    @gap: (a,b,dir) -> 
+        switch dir
+            when 'up'    then @gapUp    a, b
+            when 'down'  then @gapDown  a, b
+            when 'left'  then @gapLeft  a, b
+            when 'right' then @gapRight a, b
         
     #  0000000  000   000   0000000   00000000   
     # 000       0000  000  000   000  000   000  
@@ -285,9 +291,9 @@ class Bounds
             b = info.bounds
             switch dir
                 when 'right' then kc.x < b.x
-                when 'up'    then kc.y < b.y
+                when 'down'  then kc.y < b.y
                 when 'left'  then kc.x > b.x + b.width
-                when 'down'  then kc.y > b.y + b.height
+                when 'up'    then kc.y > b.y + b.height
     
         if empty ks then return @borderBounds kb, dir
                 
@@ -298,14 +304,15 @@ class Bounds
                 when 'up' 'down'    then b.x < kb.x+kb.width  and b.x+b.width  > kb.x
         
         if inline.length 
+            inline = inline.map (i) -> i.bounds
             @sortClosest kb, inline
-            inline[0].bounds
+            inline[0]
         else
             @borderBounds kb, dir
             
     @snap: (kachel, b) ->
            
-        b ?= @onScreen kachel.getBounds()
+        b ?= kachel.getBounds()
         
         klog '----- b' b
         
@@ -313,24 +320,47 @@ class Bounds
                     
         choices = []
         for dir in ['up' 'down' 'left' 'right']
-            choices.push @inlineNeighborBounds kachel.getBounds(), dir
+            nb = @inlineNeighborBounds b, dir
+            gap = @gap b, nb, dir
+            choices.push neighbor:nb, gap:gap, dir:dir
                     
-        @sortClosest kachel.getBounds(), choices
-        klog 'choices' choices
+        choices.sort (a,b) -> Math.abs(a.gap) - Math.abs(b.gap)
+ 
+        c = choices[0]
         
-        nb = choices[0]
-        if b.y > nb.y
-            b.y = nb.y + nb.height
-        else if b.y < nb.y - b.height/2
-            b.y = nb.y - b.height
+        klog c
+        
+        switch c.dir
+            when 'up'    then b.y -= c.gap
+            when 'down'  then b.y += c.gap
+            when 'left'  then b.x -= c.gap
+            when 'right' then b.x += c.gap
 
-        if b.x > nb.x
-            b.x = nb.x + nb.width
-        else if b.x < nb.x - b.width/2
-            b.x = nb.x - b.width
-                
+        kachel.setBounds b
+        @getInfos()
+            
+        choices = []
+        for dir in ['up' 'down' 'left' 'right']
+            continue if dir == c.dir
+            nb = @inlineNeighborBounds b, dir
+            gap = @gap b, nb, dir
+            choices.push neighbor:nb, gap:gap, dir:dir
+                    
+        choices.sort (a,b) -> Math.abs(a.gap) - Math.abs(b.gap)
+            
+        c = choices[0]
+        if Math.abs(c.gap) < b.width
+            klog '\n' c
+            switch c.dir
+                when 'up'    then b.y -= Math.abs c.gap
+                when 'down'  then b.y += Math.abs c.gap
+                when 'left'  then b.x -= Math.abs c.gap
+                when 'right' then b.x += Math.abs c.gap
+            
         b = @onScreen b
         klog '\n' b
+        
+        @setBounds kachel, b
         b
                 
 module.exports = Bounds

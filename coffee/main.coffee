@@ -26,8 +26,6 @@ mousePos    = kpos 0 0
 if os.platform() == 'win32'
     wxw = require 'wxw'
 
-setKachelBounds = (kachel, b) -> Bounds.setBounds kachel, b
-    
 indexData = (jsFile) ->
     
     html = """
@@ -309,10 +307,7 @@ post.on 'dragStart' (wid) -> global.dragging = true
 
 post.on 'dragStop'  (wid) -> global.dragging = false
 
-post.on 'snapKachel' (wid) -> 
-
-    kachel = winWithId wid
-    setKachelBounds kachel, Bounds.snap kachel
+post.on 'snapKachel' (wid) -> Bounds.snap winWithId wid
     
 # 00     00   0000000   000   000  00000000  
 # 000   000  000   000  000   000  000       
@@ -329,7 +324,7 @@ post.on 'kachelBounds' (wid, kachelId) ->
     
     bounds = prefs.get "bounds▸#{kachelId}"
     if bounds?
-        setKachelBounds winWithId(wid), bounds
+        Bounds.setBounds winWithId(wid), bounds
         
     kachelDict[wid] = kachelId
     kachelWids[kachelId] = wid
@@ -359,7 +354,7 @@ post.on 'kachelSize' (action, wid) ->
     b = w.getBounds()
     b.width  = kachelSizes[size]
     b.height = kachelSizes[size]
-    setKachelBounds w, Bounds.snap w, b
+    Bounds.snap w, b
         
 # 00000000    0000000   000   0000000  00000000
 # 000   000  000   000  000  000       000     
