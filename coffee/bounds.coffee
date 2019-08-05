@@ -46,12 +46,12 @@ class Bounds
             kb = info.bounds
             
             if kb.width  not in @kachelSizes
-                kb.width = @kachelSizes[@kachelSize k]
+                kb.width = @kachelSizes[@kachelSize info.kachel]
                 @setBounds info.kachel, kb
                 return @cleanTiles()
                 
             if kb.height not in @kachelSizes
-                kb.height = @kachelSizes[@kachelSize k]
+                kb.height = @kachelSizes[@kachelSize info.kachel]
                 @setBounds info.kachel, kb
                 return @cleanTiles()
                 

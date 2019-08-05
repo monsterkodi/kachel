@@ -237,13 +237,16 @@ post.on 'newKachel' (id) ->
     return if id == 'main'
     
     if kachelWids[id]
-        klog "kachel exists already #{id}?"
+        raiseWin winWithId kachelWids[id]
         return
     
     kachelSize = 1
 
     html = id
-    if id.endsWith('.app') or id.endsWith('.exe')
+    if id.startsWith 'start'
+        html = 'start'
+        kachelSize = 0
+    else if id.endsWith('.app') or id.endsWith('.exe')
         if slash.base(id) == 'konrad'
             html = 'konrad'
             kachelSize = 2
