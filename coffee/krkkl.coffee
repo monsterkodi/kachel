@@ -99,10 +99,9 @@ class Krkkl
     
     onKeyDown: (event) =>
         
-        info = keyinfo.forEvent event
-        switch info.combo
+        { key, combo } = keyinfo.forEvent event
+        switch combo
             when 'n' then return @cubeCount = @cubesMax
-            # when 'F3' 'f3'
             when 'f3'
                 win = electron.remote.getCurrentWindow()
                 win.capturePage (img) =>

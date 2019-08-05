@@ -1,6 +1,6 @@
 {
   "name": "kachel",
-  "version": "0.84.0",
+  "version": "0.85.0",
   "description": "dock",
   "author": "monsterkodi",
   "license": "Unlicense",
@@ -25,6 +25,7 @@
     "electron-packager": "^14.0.4",
     "electron-rebuild": "^1.8.5",
     "konrad": "^0.158.0",
+    "node-abi": "^2.10.0",
     "sds": "^3.2.0"
   },
   "iohook": {

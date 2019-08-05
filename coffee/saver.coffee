@@ -88,10 +88,13 @@ class Saver extends Kachel
         clearTimeout @checkTimer
         @checkTimer = null
         
-        wa = wxw 'screen' 'size'
-        
-        width  = wa.width
-        height = wa.height
+        if os.platform() == 'win32'
+            wa = wxw 'screen' 'size'
+            width  = wa.width
+            height = wa.height
+        else
+            width  = electron.remote.screen.getPrimaryDisplay().workAreaSize.width
+            height = electron.remote.screen.getPrimaryDisplay().workAreaSize.height
         
         offset = 0
         if os.platform() == 'darwin' and parseInt(os.release().split('.')[0]) >= 18

@@ -6,7 +6,7 @@
 000   000  000        000        0000000  
 ###
 
-{ post, childp, slash, empty, valid, randint, klog, elem, open, os, fs, $, _ } = require 'kxk'
+{ post, childp, slash, empty, valid, randint, klog, kstr, elem, open, os, fs, $, _ } = require 'kxk'
 
 Kachel = require './kachel'
 
@@ -152,7 +152,7 @@ class Appl extends Kachel
         base = slash.base @kachelId
         if base in ['Calendar']
             time = new Date()
-            day = elem class:'calendarDay' text:time.getDate()
+            day = elem class:'calendarDay' text:kstr.lpad time.getDate(), 2, '0'
             @main.appendChild day
             mth = elem class:'calendarMonth' text:['JAN' 'FEB' 'MAR' 'APR' 'MAY' 'JUN' 'JUL' 'AUG' 'SEP' 'OCT' 'NOV' 'DEC'][time.getMonth()]
             @main.appendChild mth

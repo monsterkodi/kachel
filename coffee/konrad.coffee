@@ -12,7 +12,7 @@ Kachel = require './kachel'
 
 class Konrad extends Kachel
         
-    @: (@kachelId:'konrad') -> 
+    @: (@kachelId:'konrad') ->
     
         post.on 'app' @onApp
         
