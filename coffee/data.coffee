@@ -6,24 +6,22 @@
 0000000    000   000     000     000   000
 ###
 
-{ post, klog, slash, kstr, kpos, udp, os, _ } = require 'kxk'
+{ post, slash, empty, kstr, kpos, klog, last, udp, os, _ } = require 'kxk'
 
 sysinfo  = require 'systeminformation'
 electron = require 'electron'
-
-if os.platform() == 'win32' then wxw = require 'wxw'
+wxw      = require 'wxw'
 
 class Data
 
     @: ->
         
-        if os.platform() == 'win32'
-            
-            @udp  = udp port:66666 onMsg:@onUDP
-            @hookInput = wxw 'hook' 'input'
-            @hookProc  = wxw 'hook' 'proc'
-            @hookInfo  = wxw 'hook' 'info'
+        @udp = udp port:65432 onMsg:@onUDP
         
+        @hookProc  = wxw 'hook' 'proc'
+        @hookInfo  = wxw 'hook' 'info'
+        @hookInput = wxw 'hook' 'input'
+            
         @providers = 
             mouse:    new Mouse
             keyboard: new Keyboard
@@ -36,10 +34,13 @@ class Data
         
     detach: ->
         
-        klog wxw 'kill' 'wc.exe'
+        if os.platform() == 'win32'
+            klog wxw 'kill' 'wc.exe'
+        else
+            klog wxw 'kill' 'mc'
             
     onUDP: (msg) => 
-
+        
         switch msg.event
             when 'mousedown' 'mousemove' 'mouseup' 'mousewheel' then @providers.mouse.onEvent msg
             when 'keydown' 'keyup' then @providers.keyboard.onEvent msg
@@ -173,11 +174,12 @@ class Mouse
         @sendTimer = null
         
     onEvent: (event) =>
-        
+
         @lastEvent = event
         now = Date.now()
         clearTimeout @sendTimer
         @sendTimer = null
+        
         if now - @last > @interval
             @last = now
             
@@ -190,7 +192,8 @@ class Mouse
             
             event.x = pos.x
             event.y = pos.y
-            
+        
+            # klog 'mouse' event
             post.toMain @name, event
             for receiver in @receivers
                 post.toWin receiver, 'data', event
@@ -255,17 +258,18 @@ class Apps
         
         apps = Array.from new Set event.proc.map (p) -> p.path
          
-        apps = apps.filter (p) -> 
-            s = slash.path slash.removeDrive p 
-            if s.startsWith '/Windows/System32'
-                return slash.base(s) in ['cmd' 'powershell']
-            true
+        if os.platform() == 'win32'
+            apps = apps.filter (p) -> 
+                s = slash.path slash.removeDrive p 
+                if s.startsWith '/Windows/System32'
+                    return slash.base(s) in ['cmd' 'powershell']
+                true
                  
         apps.sort()
-         
         if @force or not _.isEqual apps, @lastApps
             delete @force
             post.toMain 'apps' apps
+            # klog 'apps' apps.length
             for receiver in @receivers
                 post.toWin receiver, 'data', apps
              
@@ -287,15 +291,17 @@ class Wins
     
     onEvent: (event) =>
         
-        return if os.platform() != 'win32' 
-        
         wins = event.info
+        
+        if os.platform() == 'darwin'
+            wins[0].status += ' top'
+        
+        wins.pop() if empty last wins
         if @force or not _.isEqual wins, @lastWins
             delete @force
             post.toMain 'wins' wins
             for receiver in @receivers
                 post.toWin receiver, 'data', apps
-            
             @lastWins = wins
     
 module.exports = Data

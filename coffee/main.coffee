@@ -11,6 +11,7 @@
 Data     = require './data'
 Bounds   = require './bounds'
 electron = require 'electron'
+wxw      = require 'wxw'
 BrowserWindow = electron.BrowserWindow
 
 kachelDict  = {}
@@ -22,8 +23,6 @@ hoverKachel = null
 mouseTimer  = null
 data        = null
 mousePos    = kpos 0 0
-if os.platform() == 'win32'
-    wxw = require 'wxw'
 
 indexData = (jsFile) ->
     
@@ -143,15 +142,15 @@ onMouse = (mouseData) ->
             return
            
     lockRaise = false
-    if os.platform() == 'win32'
-        if tmpTop
-            for win in wxw 'info'
-                if slash.file(win.path) != 'kachel.exe'
-                    tmpTop = false
-                    wxw 'raise' win.hwnd
-                    clearTimeout tmpTopTimer
-                    tmpTopTimer = setTimeout (-> wxw 'raise' win.hwnd), 500
-                    return
+
+    if tmpTop
+        for win in wxw 'info'
+            if slash.base(win.path) != 'kachel'
+                tmpTop = false
+                wxw 'raise' win.id
+                clearTimeout tmpTopTimer
+                tmpTopTimer = setTimeout (-> wxw 'raise' win.id), 500
+                return
 
 # 000   000  00000000  000   000  0000000     0000000    0000000   00000000   0000000    
 # 000  000   000        000 000   000   000  000   000  000   000  000   000  000   000  
@@ -178,8 +177,10 @@ onApps = (apps) ->
     if not _.isEqual activeApps, active
         for kid,wid of kachelWids
             if active[kid] and not activeApps[kid]
+                klog 'activated' kid
                 post.toWin wid, 'app' 'activated' kid
             else if not active[kid] and activeApps[kid]
+                klog 'terminated' kid
                 post.toWin wid, 'app' 'terminated' kid
         activeApps = active
     
@@ -196,17 +197,18 @@ onWins = (wins) ->
 
     pl = {}
 
-    top = wxw('info' 'top')[0]
-    
-    for w in wins
-        if w.hwnd == top.hwnd
-            w.status += ' top'
-            break
-    
-    if top.hwnd == wins[0].hwnd
-        tmpTop = false
-    
-    post.toWin mainWin.id, 'showDot' wins[0].path.endsWith('electron.exe') or wins[0].path.endsWith('kachel.exe')
+    if os.platform() == 'win32'
+        top = wxw('info' 'top')[0]
+        for w in wins
+            if w.id == top.id
+                w.status += ' top'
+                break
+        if top.id == wins[0].id
+            tmpTop = false
+    else
+        top = wins[0]
+            
+    post.toWin mainWin.id, 'showDot' slash.base(top.path).toLowerCase() in ['electron' 'kachel']
     
     for win in wins
         wp = slash.path win.path
