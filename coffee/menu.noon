@@ -14,7 +14,7 @@ DecreaseSize    cmdctrl+-
 ResetSize       cmdctrl+0 
 About           alt+cmdctrl+/
 Hide            cmdctrl+h
-Screenshot      cmdctrl+alt+s
+Screenshot      alt+cmdctrl+s
 Reload          alt+cmdctrl+l
 DevTools        alt+cmdctrl+i
 MoveDown        cmdctrl+down

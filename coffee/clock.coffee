@@ -41,7 +41,7 @@ class Clock extends Kachel
         face = utils.circle radius:47 clss:'face' svg:svg
         
         for m in [0..11]
-            utils.append face, 'line' class:'major' y1:45 y2:47 transform:"rotate(#{30*m*5})" 
+            utils.append face, 'line' class:'minmrk' y1:45 y2:47 transform:"rotate(#{30*m*5})" 
     
         @hour   = utils.append face, 'line' y1:0 y2:-32 class:'hour' 
         @minute = utils.append face, 'line' y1:0 y2:-42 class:'minute'

@@ -73,7 +73,7 @@ body.kachelHover #main {
   stroke: #333;
   fill: #222;
 }
-.major {
+.minmrk {
   stroke: #333;
 }
 .hour {
@@ -93,6 +93,18 @@ body.kachelHover #main {
 }
 .alarm-second {
   color: #333;
+}
+.knob {
+  fill: #181818;
+}
+.volmrk {
+  stroke: #333;
+}
+.voldot {
+  fill: #888;
+}
+.voldot.mute {
+  fill: #222;
 }
 .menuItem {
   color: #666;

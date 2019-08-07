@@ -26,7 +26,7 @@ class Default extends Kachel
         children = [
             elem 'img' class:'grid3x3_11' click:@openApp,    src:__dirname + '/../img/app.png'   
             elem 'img' class:'grid3x3_12' click:@openFolder, src:__dirname + '/../img/folder.png'    
-            # elem 'img' class:'grid3x3_13' click:@openFile,   src:__dirname + '/../img/folder.png'    
+            elem 'img' class:'grid3x3_13' click:@openVolume, src:__dirname + '/../img/volume.png'
             elem 'img' class:'grid3x3_21' click:@openDish,   src:__dirname + '/../img/dish.png' 
             elem 'img' class:'grid3x3_22' click:@openInfo,   src:__dirname + '/../img/info.png' 
             elem 'img' class:'grid3x3_23' click:@openSaver,  src:__dirname + '/../img/saver.png' 
@@ -42,13 +42,14 @@ class Default extends Kachel
     
         @main.appendChild grid
         
-    openClock: => post.toMain 'newKachel' 'clock'   
-    openAlarm: => post.toMain 'newKachel' 'alarm'   
-    openTools: => post.toMain 'newKachel' 'tools'
-    openSaver: => post.toMain 'newKachel' 'saver'   
-    openDish:  => post.toMain 'newKachel' 'sysdish'
-    openInfo:  => post.toMain 'newKachel' 'sysinfo'
-    onClick:   => log 'onClick'
+    openClock:  => post.toMain 'newKachel' 'clock'   
+    openVolume: => post.toMain 'newKachel' 'volume'   
+    openAlarm:  => post.toMain 'newKachel' 'alarm'   
+    openTools:  => post.toMain 'newKachel' 'tools'
+    openSaver:  => post.toMain 'newKachel' 'saver'   
+    openDish:   => post.toMain 'newKachel' 'sysdish'
+    openInfo:   => post.toMain 'newKachel' 'sysinfo'
+    onClick:    => log 'onClick'
     
     # 0000000    000  00000000   
     # 000   000  000  000   000  
