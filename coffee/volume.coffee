@@ -8,10 +8,9 @@
 
 { post, clamp, elem, klog, os, _ } = require 'kxk'
 
+wxw     = require 'wxw'
 utils   = require './utils'
 Kachel  = require './kachel'
-
-if os.platform() == 'win32' then wxw = require 'wxw'
 
 class Volume extends Kachel
         
@@ -22,27 +21,36 @@ class Volume extends Kachel
         @mute = false
         @main.addEventListener 'mousewheel' @onWheel
     
-        if os.platform() == 'win32'
-            @volume = parseInt wxw('volume').trim()
+        @volume = parseInt wxw('volume').trim()
                 
     onWheel: (event) => 
         
-        @volume = clamp 0 100 @volume - event.deltaY/10
+        return if event.deltaY == 0
+        if event.deltaY > 0 then delta = 2 else delta = -3
+        
+        @volume = clamp 0 100 @volume - delta
         @mute = false
-        wxw 'volume' @volume
+        @setVolume @volume
         @updateVolume()
     
+    setVolume: (v) ->
+        
+        wxw 'volume' v
+        @volume = parseInt wxw('volume').trim()
+        
     onContextMenu: (event) => 
         
-        if os.platform() == 'win32'
-            current = parseInt wxw('volume').trim()
-            if @volume == current
-                @mute = true
-                wxw 'volume' 0
-            else
-                @mute = false
-                wxw 'volume' @volume
-            @updateVolume()
+        current = parseInt wxw('volume').trim()
+        klog 'current' current, @volume
+        if @volume == current
+            klog 'mute'
+            @mute = true
+            wxw 'volume' 0
+        else
+            @mute = false
+            @setVolume @volume
+            
+        @updateVolume()
                 
     # 000       0000000    0000000   0000000    
     # 000      000   000  000   000  000   000  

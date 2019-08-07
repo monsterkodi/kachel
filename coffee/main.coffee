@@ -177,10 +177,10 @@ onApps = (apps) ->
     if not _.isEqual activeApps, active
         for kid,wid of kachelWids
             if active[kid] and not activeApps[kid]
-                klog 'activated' kid
+                # klog 'activated' kid
                 post.toWin wid, 'app' 'activated' kid
             else if not active[kid] and activeApps[kid]
-                klog 'terminated' kid
+                # klog 'terminated' kid
                 post.toWin wid, 'app' 'terminated' kid
         activeApps = active
     
