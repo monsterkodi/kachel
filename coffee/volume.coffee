@@ -6,7 +6,7 @@
     0       0000000   0000000   0000000   000   000  00000000  
 ###
 
-{ post, clamp, elem, klog, os, _ } = require 'kxk'
+{ post, clamp, kpos, elem, klog, os, _ } = require 'kxk'
 
 wxw     = require 'wxw'
 utils   = require './utils'
@@ -22,7 +22,16 @@ class Volume extends Kachel
         @main.addEventListener 'mousewheel' @onWheel
     
         @volume = parseInt wxw('volume').trim()
-                
+            
+    onClick: (event) =>
+        
+        br  = document.body.getBoundingClientRect()
+        ctr = kpos(br.width, br.height).times 0.5
+        vec = ctr.to kpos event
+        rot = vec.normal().rotation kpos(0,-1)
+        @setVolume 50 + rot / 3
+        @updateVolume()
+        
     onWheel: (event) => 
         
         return if event.deltaY == 0
@@ -35,7 +44,7 @@ class Volume extends Kachel
     
     setVolume: (v) ->
         
-        wxw 'volume' v
+        wxw 'volume' clamp 0 100 v
         @volume = parseInt wxw('volume').trim()
         
     onContextMenu: (event) => 
