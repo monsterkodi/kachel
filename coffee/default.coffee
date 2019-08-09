@@ -28,7 +28,7 @@ class Default extends Kachel
             elem 'img' class:'grid3x3_12' click:@openFolder, src:__dirname + '/../img/folder.png'    
             elem 'img' class:'grid3x3_13' click:@openVolume, src:__dirname + '/../img/volume.png'
             elem 'img' class:'grid3x3_21' click:@openDish,   src:__dirname + '/../img/dish.png' 
-            elem 'img' class:'grid3x3_22' click:@openInfo,   src:__dirname + '/../img/info.png' 
+            # elem 'img' class:'grid3x3_22' click:@openInfo,   src:__dirname + '/../img/info.png' 
             elem 'img' class:'grid3x3_23' click:@openSaver,  src:__dirname + '/../img/saver.png' 
             elem 'img' class:'grid3x3_31' click:@openClock,  src:__dirname + '/../img/clock.png'     
             elem 'img' class:'grid3x3_32' click:@openAlarm,  src:__dirname + '/../img/alarm.png'     
@@ -48,7 +48,6 @@ class Default extends Kachel
     openTools:  => post.toMain 'newKachel' 'tools'
     openSaver:  => post.toMain 'newKachel' 'saver'   
     openDish:   => post.toMain 'newKachel' 'sysdish'
-    openInfo:   => post.toMain 'newKachel' 'sysinfo'
     onClick:    => log 'onClick'
     
     # 0000000    000  00000000   
