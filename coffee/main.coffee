@@ -74,6 +74,7 @@ KachelApp = new app
     onQuit:             -> clearInterval mouseTimer
     resizable:          false
     maximizable:        false
+    closable:           false
     saveBounds:         false
     onQuit: -> klog 'onQuit'; data.detach()
     onWinReady: (win) =>
@@ -120,13 +121,13 @@ onMouse = (mouseData) ->
         if k = Bounds.kachelAtPos mousePos
             
             if k.kachel?.isDestroyed?()
-                # klog 'kachel destroyed!'
                 lockRaise = false
                 return
                                     
             if mousePos.x == 0 or mousePos.x >= Bounds.screenWidth-2 or mousePos.y == 0 or mousePos.y >= Bounds.screenHeight-2
                 if not lockRaise
-                    tmpTop = true
+                    if os.platform() == 'win32'
+                        tmpTop = true
                     post.emit 'raiseKacheln'
                     
             if not hoverKachel or hoverKachel != k.kachel.id
@@ -143,9 +144,10 @@ onMouse = (mouseData) ->
            
     lockRaise = false
 
-    if tmpTop
+    if tmpTop and os.platform() == 'win32'
+        app = slash.base process.argv[0]
         for win in wxw 'info'
-            if slash.base(win.path) != 'kachel'
+            if slash.base(win.path) != app
                 tmpTop = false
                 wxw 'raise' win.id
                 clearTimeout tmpTopTimer
@@ -195,8 +197,8 @@ post.on 'apps' onApps
 activeWins = {}
 onWins = (wins) ->
 
-    pl = {}
-
+    return if mainWin.isDestroyed()
+        
     if os.platform() == 'win32'
         top = wxw('info' 'top')[0]
         for w in wins
@@ -206,10 +208,15 @@ onWins = (wins) ->
         if top.id == wins[0].id
             tmpTop = false
     else
-        top = wins[0]
-            
-    post.toWin mainWin.id, 'showDot' slash.base(top.path).toLowerCase() in ['electron' 'kachel']
+        for w in wins
+            if w.index == 0
+                top = w
+                break
+
+    if top
+        post.toWin mainWin.id, 'showDot' (slash.base(top.path).toLowerCase() in ['electron' 'kachel'])
     
+    pl = {}
     for win in wins
         wp = slash.path win.path
         if wid = kachelWids[wp]
@@ -379,7 +386,9 @@ post.on 'raiseKacheln' ->
         wxw 'raise' 'kachel.exe'
     else
         for win in wins()
+            # win.showInactive()
             win.show()
+        # wxw 'focus' "#{slash.base process.argv[0]}.app"
     
     if not tmpTop
         raiseWin fk ? mainWin
@@ -405,7 +414,7 @@ post.on 'kachelFocus' (winId) ->
         focusKachel = winWithId winId
         
 onKachelClose = (event) ->
-    
+        
     kachel = event.sender
     if focusKachel == kachel
         focusKachel = null

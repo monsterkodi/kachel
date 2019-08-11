@@ -30,7 +30,6 @@ class Volume extends Kachel
         vec = ctr.to kpos event
         rot = vec.normal().rotation kpos(0,-1)
         @setVolume 50 + rot / 3
-        @updateVolume()
         
     onWheel: (event) => 
         
@@ -38,28 +37,24 @@ class Volume extends Kachel
         if event.deltaY > 0 then delta = 2 else delta = -3
         
         @volume = clamp 0 100 @volume - delta
-        @mute = false
         @setVolume @volume
-        @updateVolume()
     
     setVolume: (v) ->
         
+        @mute = false        
         wxw 'volume' clamp 0 100 v
         @volume = parseInt wxw('volume').trim()
+        @updateVolume()
         
     onContextMenu: (event) => 
         
         current = parseInt wxw('volume').trim()
-        klog 'current' current, @volume
         if @volume == current
-            klog 'mute'
             @mute = true
             wxw 'volume' 0
+            @updateVolume()
         else
-            @mute = false
             @setVolume @volume
-            
-        @updateVolume()
                 
     # 000       0000000    0000000   0000000    
     # 000      000   000  000   000  000   000  

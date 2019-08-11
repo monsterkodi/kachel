@@ -1,5 +1,5 @@
 name            kachel
-version         0.87.0
+version         0.89.0
 description     dock
 author          monsterkodi
 license         Unlicense
@@ -11,7 +11,6 @@ scripts
                 mac   bash ./bin/buildmac.sh
                 win   bash ./bin/buildwin.sh
 dependencies
-                empty-trash     ^3.0.0
                 kxk             ^0.334.0
                 simple-plist    ^1.0.0
                 systeminformation  ^4.14.4
@@ -23,12 +22,3 @@ devDependencies
                 konrad          ^0.158.0
                 node-abi        ^2.10.0
                 sds             ^3.2.0
-iohook
-                targets
-                  electron-70
-                  electron-73
-                platforms
-                  win32
-                  darwin
-                arches
-                  x64

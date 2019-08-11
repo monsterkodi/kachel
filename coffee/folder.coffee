@@ -6,13 +6,11 @@
 000        0000000   0000000  0000000    00000000  000   000  
 ###
 
-{ post, childp, prefs, slash, valid, open, klog, elem, os, fs, _ } = require 'kxk'
+{ post, childp, prefs, slash, valid, osaspawn, osascript, open, klog, elem, os, fs, _ } = require 'kxk'
 
 Kachel = require './kachel'
 utils  = require './utils'
-
-if os.platform() == 'win32'
-    wxw = require 'wxw'
+wxw    = require 'wxw'
 
 class Folder extends Kachel
         
@@ -67,7 +65,7 @@ class Folder extends Kachel
     #    000     000   000  000   000       000  000   000  
     #    000     000   000  000   000  0000000   000   000  
     
-    showTrashCount: (count) =>
+    showTrashDot: (count) =>
         
         if parseInt count
             if not @dot
@@ -79,24 +77,13 @@ class Folder extends Kachel
     
     checkTrash: (trashFolder) =>
         
-        if os.platform() == 'win32'
-            
-            @showTrashCount wxw 'trash' 'count'
-                
-        else
-            fs.readdir trashFolder, (err, files) =>
-                return if valid err
-                @showTrashCount files.length
+        @showTrashDot wxw 'trash' 'count'
         
     onContextMenu: => 
         
         if @isTrash
-            @showTrashCount 0
-            if os.platform() == 'win32'
-                wxw 'trash' 'empty'
-            else
-                emptyTrash = require 'empty-trash'
-                emptyTrash()
+            @showTrashDot 0
+            wxw 'trash' 'empty'
                 
     addTrash: (trashFolder) ->
             
@@ -104,10 +91,7 @@ class Folder extends Kachel
         
         @checkTrash trashFolder
         
-        if os.platform() == 'win32'
-            setInterval @checkTrash, 2000
-        else
-            fs.watch trashFolder, (change, file) => @checkTrash trashFolder
+        setInterval @checkTrash, 2000
         
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  

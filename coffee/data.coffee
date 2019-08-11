@@ -294,7 +294,9 @@ class Wins
         wins = event.info
         
         if os.platform() == 'darwin'
-            wins[0].status += ' top'
+            for win in wins
+                if win.index == 0
+                    win.status += ' top'
         
         wins.pop() if empty last wins
         if @force or not _.isEqual wins, @lastWins

@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000  00     00  000  000   000
 ###
 
-{ post, klog, elem, $, _ } = require 'kxk'
+{ post, stopEvent, klog, elem, $, _ } = require 'kxk'
 
 Kachel = require './kachel'
 
@@ -17,6 +17,10 @@ class MainWin extends Kachel
         super
         
         post.on 'showDot' @onShowDot
+        
+        @win.on 'close' (event) -> stopEvent event
+        
+        window.onbeforeunload = (e) => e.returnValue = false
     
     onLoad: -> @main.appendChild elem 'img', class:'kachelImg' src:__dirname + '/../img/about.png'    
         
@@ -33,6 +37,9 @@ class MainWin extends Kachel
     onShowDot: (show) =>
         
         dot =$ '.appldot'
+        
+        img =$ '.kachelImg'
+        img.classList.toggle 'inactive' not show
         
         if show and not dot
             dot = elem class:'appldot top'
