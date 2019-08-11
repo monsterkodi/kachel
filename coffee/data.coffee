@@ -269,7 +269,6 @@ class Apps
         if @force or not _.isEqual apps, @lastApps
             delete @force
             post.toMain 'apps' apps
-            # klog 'apps' apps.length
             for receiver in @receivers
                 post.toWin receiver, 'data', apps
              
@@ -297,7 +296,7 @@ class Wins
             for win in wins
                 if win.index == 0
                     win.status += ' top'
-        
+                    
         wins.pop() if empty last wins
         if @force or not _.isEqual wins, @lastWins
             delete @force
