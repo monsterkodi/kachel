@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, prefs, slash, clamp, empty, klog, kpos, app, os, _ } = require 'kxk'
+{ post, prefs, slash, clamp, empty, klog, kpos, kstr, app, os, _ } = require 'kxk'
 
 Data     = require './data'
 Bounds   = require './bounds'
@@ -22,6 +22,7 @@ focusKachel = null
 hoverKachel = null
 mouseTimer  = null
 data        = null
+swtch       = null
 mousePos    = kpos 0 0
 
 indexData = (jsFile) ->
@@ -89,6 +90,30 @@ KachelApp = new app
                 
         data = new Data
         
+        keys = 
+            left:       'alt+ctrl+left'
+            right:      'alt+ctrl+right'
+            up:         'alt+ctrl+up'
+            down:       'alt+ctrl+down'
+            topleft:    'alt+ctrl+1'
+            botleft:    'alt+ctrl+2'
+            topright:   'alt+ctrl+3'
+            botright:   'alt+ctrl+4'
+            top:        'alt+ctrl+5'
+            bot:        'alt+ctrl+6'
+            minimize:   'alt+ctrl+m'
+            close:      'alt+ctrl+w'
+            taskbar:    'alt+ctrl+t'
+            appswitch:  'ctrl+tab'
+            screenzoom: 'alt+z'
+            
+        keys = prefs.get 'keys', keys
+        prefs.set 'keys' keys
+        prefs.save()
+        
+        for a in _.keys keys
+            electron.globalShortcut.register keys[a], ((a) -> -> action a)(a)
+        
         for kachelId in prefs.get 'kacheln' []
             if kachelId not in ['appl' 'folder' 'file']
                 post.emit 'newKachel' kachelId
@@ -99,6 +124,101 @@ KachelApp = new app
                 
         post.on 'mouse'    onMouse
         post.on 'keyboard' onKeyboard
+        
+        getSwitch()
+        
+#  0000000  000   000  000  000000000   0000000  000   000  
+# 000       000 0 000  000     000     000       000   000  
+# 0000000   000000000  000     000     000       000000000  
+#      000  000   000  000     000     000       000   000  
+# 0000000   00     00  000     000      0000000  000   000  
+
+getSwitch = ->
+    
+    if not swtch or swtch.isDestroyed()
+        swtch = require('./switch').start()
+        swtch.on 'close' -> swtch = null
+    swtch
+    
+onAppSwitch = -> 
+
+    getSwitch()
+    post.toWin swtch.id, 'nextApp'
+    
+#  0000000    0000000  000000000  000   0000000   000   000  
+# 000   000  000          000     000  000   000  0000  000  
+# 000000000  000          000     000  000   000  000 0 000  
+# 000   000  000          000     000  000   000  000  0000  
+# 000   000   0000000     000     000   0000000   000   000  
+
+action = (act) ->
+
+    # klog 'act' act
+    
+    switch act
+        when 'maximize'   then log wxw 'maximize' 'top'
+        when 'minimize'   then log wxw 'minimize' 'top'
+        when 'taskbar'    then log wxw 'taskbar'  'toggle'
+        when 'close'      then log wxw 'close'    'top'
+        when 'screenzoom' then require('./zoom').start debug:false
+        when 'appswitch'  then onAppSwitch()
+        else moveWindow act
+        
+# 00     00   0000000   000   000  00000000  
+# 000   000  000   000  000   000  000       
+# 000000000  000   000   000 000   0000000   
+# 000 0 000  000   000     000     000       
+# 000   000   0000000       0      00000000  
+
+moveWindow = (dir) ->
+    
+    screen = wxw 'screen' 'user'
+    
+    ar = w:screen.width, h:screen.height
+    
+    if info = wxw('info' 'top')[0]
+        
+        base = slash.base info.path
+        
+        return if base in ['kachel' 'kappo']
+        
+        b = 0
+        if os.platform() == 'win32'
+            if base in ['electron' 'ko' 'konrad' 'clippo' 'klog' 'kaligraf' 'kalk' 'uniko' 'knot' 'space' 'ruler']
+                b = 0  # sane window border
+            else if base in ['devenv']
+                b = -1  # wtf?
+            else
+                b = 10 # transparent window border
+        
+        wr = x:info.x, y:info.y, w:info.width, h:info.height
+        d = 2*b
+        [x,y,w,h] = switch dir
+            when 'left'     then [-b,         0,        ar.w/2+d, ar.h+b]
+            when 'right'    then [ar.w/2-b,   0,        ar.w/2+d, ar.h+b]
+            when 'down'     then [ar.w/4-b,   0,        ar.w/2+d, ar.h+b]
+            when 'up'       then [ar.w/6-b,   0,    2/3*ar.w+d,   ar.h+b]
+            when 'topleft'  then [-b,         0,        ar.w/3+d, ar.h/2]
+            when 'top'      then [ar.w/3-b,   0,        ar.w/3+d, ar.h/2]
+            when 'topright' then [2/3*ar.w-b, 0,        ar.w/3+d, ar.h/2]
+            when 'botleft'  then [-b,         ar.h/2-b, ar.w/3+d, ar.h/2+d]
+            when 'bot'      then [ar.w/3-b,   ar.h/2-b, ar.w/3+d, ar.h/2+d]
+            when 'botright' then [2/3*ar.w-b, ar.h/2-b, ar.w/3+d, ar.h/2+d]
+        
+        sl = 20 > Math.abs wr.x -  x
+        sr = 20 > Math.abs wr.x+wr.w - (x+w)
+        st = 20 > Math.abs wr.y -  y
+        sb = 20 > Math.abs wr.y+wr.h - (y+h)
+        
+        if sl and sr and st and sb
+            switch dir
+                when 'left'  then w = ar.w/4+d
+                when 'right' then w = ar.w/4+d; x = 3*ar.w/4-b
+                when 'down'  then h = ar.h/2+d; y = ar.h/2-b
+                when 'up'    then w = ar.w+d;   x = -b
+        
+        # klog 'wxw bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
+        wxw 'bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
         
 # 00     00   0000000   000   000   0000000  00000000  
 # 000   000  000   000  000   000  000       000       
@@ -202,7 +322,7 @@ onWins = (wins) ->
     if os.platform() == 'win32'
         top = wxw('info' 'top')[0]
         for w in wins
-            if w.id == top.id
+            if kstr(w.id) == kstr(top.id)
                 w.status += ' top'
                 break
         if top.id == wins[0].id

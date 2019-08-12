@@ -42,10 +42,10 @@ class Folder extends Kachel
         if folder == slash.untilde '~'
             @setIcon slash.join __dirname, '..' 'img' 'home.png'
         else if folder == slash.untilde '~/.Trash'
-            @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycle.png'
+            @setIcon slash.join __dirname, '..' 'icons' 'recycle.png'
             @addTrash folder
         else if folder.indexOf('$Recycle.Bin') >= 0
-            @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycle.png'
+            @setIcon slash.join __dirname, '..' 'icons' 'recycle.png'
             @addTrash folder
         else if folder == slash.untilde '~/Desktop'
             @setIcon slash.join __dirname, '..' 'img' 'desktop.png'
@@ -69,10 +69,10 @@ class Folder extends Kachel
         
         if parseInt count
             if not @dot
-                @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycledot.png'
+                @setIcon slash.join __dirname, '..' 'icons' 'recycledot.png'
                 @dot = true
         else if @dot
-            @setIcon slash.join __dirname, '..' 'node_modules' 'wxw' 'icons' 'recycle.png'
+            @setIcon slash.join __dirname, '..' 'icons' 'recycle.png'
             @dot = false
     
     checkTrash: (trashFolder) =>

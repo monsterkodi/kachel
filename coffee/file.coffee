@@ -8,8 +8,9 @@
 
 { post, childp, prefs, slash, valid, open, klog, elem, os, fs, _ } = require 'kxk'
 
-Kachel = require './kachel'
-utils  = require './utils'
+Kachel  = require './kachel'
+utils   = require './utils'
+appIcon = require './icon'
 
 class File extends Kachel
         
@@ -83,8 +84,7 @@ class File extends Kachel
                         error stdout, stderr, err
                     cb()
         else
-            wxw = require 'wxw'
-            wxw 'icon' exePath, pngPath
+            appIcon exePath, pngPath
             cb pngPath
         
 module.exports = File
