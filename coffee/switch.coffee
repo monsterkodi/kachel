@@ -34,7 +34,6 @@ getApps = ->
                 
     for info in infos
         continue if info.title == 'wxw-switch'
-        continue if info.path.indexOf('wxw/node_modules/electron/dist/Electron.app') > 0
         file = slash.file info.path
         if file == 'ApplicationFrameHost.exe'
             name = last info.title.split ' ?- '
@@ -45,13 +44,12 @@ getApps = ->
         else
             apps.push info.path if info.path not in apps
             
-    if os.platform() == 'darwin'
-        for proc in wxw 'proc'
-            if proc.path not in apps
-                continue if proc.path.indexOf('wxw/node_modules/electron/dist/Electron.app') > 0
-                continue if slash.base(proc.path) == 'kappo'
-                if slash.fileExists pngPath proc.path
-                    apps.push proc.path
+    for proc in wxw 'proc'
+        if proc.path not in apps
+            base = slash.base proc.path
+            continue if base in ['kappo' 'cmd']
+            if slash.fileExists pngPath proc.path
+                apps.push proc.path
             
     # klog 'apps' apps
     apps

@@ -48,13 +48,11 @@ indexData = (jsFile) ->
     
     "data:text/html;charset=utf-8," + encodeURI html
     
-shortcut = slash.win() and 'ctrl+alt+k' or 'command+alt+k'
-
 KachelApp = new app
     
     dir:                __dirname
     pkg:                require '../package.json'
-    shortcut:           shortcut
+    shortcut:           slash.win() and 'Ctrl+F1' or 'Command+F1'
     index:              indexData 'mainwin'
     indexURL:           "file://#{__dirname}/../js/index.html"
     icon:               '../img/app.ico'
@@ -254,11 +252,7 @@ onMouse = (mouseData) ->
 
                 post.toWin hoverKachel, 'leave' if hoverKachel
                 hoverKachel = k.kachel.id
-                if false # focusKachel?.isFocused() and hoverKachel != focusKachel.id
-                    focusKachel = winWithId hoverKachel
-                    focusKachel.focus()
-                else
-                    post.toWin hoverKachel, 'hover'
+                post.toWin hoverKachel, 'hover'
                     
             return
            
@@ -299,10 +293,8 @@ onApps = (apps) ->
     if not _.isEqual activeApps, active
         for kid,wid of kachelWids
             if active[kid] and not activeApps[kid]
-                # klog 'activated' kid
                 post.toWin wid, 'app' 'activated' kid
             else if not active[kid] and activeApps[kid]
-                # klog 'terminated' kid
                 post.toWin wid, 'app' 'terminated' kid
         activeApps = active
     
@@ -334,7 +326,9 @@ onWins = (wins) ->
                 break
 
     if top
-        post.toWin mainWin.id, 'showDot' (slash.base(top.path).toLowerCase() in ['electron' 'kachel'])
+        active = slash.base(top.path).toLowerCase() in ['electron' 'kachel']
+        post.toWin mainWin.id, 'showDot' active
+        if not active then lockRaise = false
     
     pl = {}
     for win in wins
@@ -390,8 +384,6 @@ post.on 'newKachel' (id) ->
         when 'saver' then kachelSize = 0
         when 'sysdish' 'sysinfo' 'clock' 'default' then kachelSize = 2
         
-    # klog '+' html, id
-    
     win = new electron.BrowserWindow
         
         movable:            true
@@ -435,7 +427,6 @@ post.on 'newKachel' (id) ->
 # 0000000   000   000  000   000  000        
 
 post.on 'dragStart' (wid) -> global.dragging = true
-
 post.on 'dragStop'  (wid) -> global.dragging = false
 
 post.on 'snapKachel' (wid) -> Bounds.snap winWithId wid
@@ -508,7 +499,6 @@ post.on 'raiseKacheln' ->
         for win in wins()
             # win.showInactive()
             win.show()
-        # wxw 'focus' "#{slash.base process.argv[0]}.app"
     
     if not tmpTop
         raiseWin fk ? mainWin

@@ -70,7 +70,7 @@ class Bounds
                         nx += 72
                         kb.x = nx
                         
-                if not @overlapInfo info.kachel, kb
+                if @overlapInfo info.kachel, kb
                     @snap info.kachel, kb
                     return @cleanTiles()
                 
