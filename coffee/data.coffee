@@ -16,11 +16,10 @@ class Data
 
     @: ->
         
-        @udp = udp port:65432 onMsg:@onUDP
-        
-        @hookProc  = wxw 'hook' 'proc'
-        @hookInfo  = wxw 'hook' 'info'
-        @hookInput = wxw 'hook' 'input'
+        if os.platform() != 'darwin'
+            @hookProc  = wxw 'hook' 'proc'
+            @hookInput = wxw 'hook' 'input'
+            @hookInfo  = wxw 'hook' 'info'
             
         @providers = 
             mouse:    new Mouse
@@ -30,6 +29,9 @@ class Data
         
         post.on 'requestData' @onRequestData
         
+    start: ->
+        
+        @udp = udp port:65432 onMsg:@onUDP
         setTimeout @slowTick, 1000
         
     detach: ->
@@ -193,7 +195,6 @@ class Mouse
             event.x = pos.x
             event.y = pos.y
         
-            # klog 'mouse' event
             post.toMain @name, event
             for receiver in @receivers
                 post.toWin receiver, 'data', event
@@ -252,12 +253,12 @@ class Apps
         
         @lastApps = null        
         
-    start: => @force = true
-        
     onEvent: (event) =>
         
         apps = Array.from new Set event.proc.map (p) -> p.path
-         
+        
+        apps.pop() if empty last apps
+        
         if os.platform() == 'win32'
             apps = apps.filter (p) -> 
                 s = slash.path slash.removeDrive p 
@@ -266,8 +267,7 @@ class Apps
                 true
                  
         apps.sort()
-        if @force or not _.isEqual apps, @lastApps
-            delete @force
+        if not _.isEqual apps, @lastApps
             post.toMain 'apps' apps
             for receiver in @receivers
                 post.toWin receiver, 'data', apps
@@ -286,8 +286,6 @@ class Wins
         
         @lastWins = null
 
-    start: => @force = true
-    
     onEvent: (event) =>
         
         wins = event.info
@@ -298,8 +296,7 @@ class Wins
                     win.status += ' top'
                     
         wins.pop() if empty last wins
-        if @force or not _.isEqual wins, @lastWins
-            delete @force
+        if not _.isEqual wins, @lastWins
             post.toMain 'wins' wins
             for receiver in @receivers
                 post.toWin receiver, 'data', apps

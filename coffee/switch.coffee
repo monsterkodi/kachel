@@ -21,7 +21,8 @@ appIcon  = require './icon'
 apps = []
 getApps = ->
 
-    infos = wxw 'info'
+    infos = post.get 'wins'
+    
     apps = []
     
     if os.platform() == 'darwin'
@@ -51,7 +52,6 @@ getApps = ->
             if slash.fileExists pngPath proc.path
                 apps.push proc.path
             
-    # klog 'apps' apps
     apps
     
 # 00000000   000   000   0000000   
@@ -84,9 +84,9 @@ winRect = (numApps) ->
 
 start = (opt={}) -> 
     
-    apps = getApps()
+    # apps = getApps()
             
-    wr = winRect apps.length
+    wr = winRect 1
             
     win = new electron.BrowserWindow
 
@@ -192,8 +192,6 @@ activeApp = null
 
 activate = ->
     
-    done()
-        
     if activeApp.id
         
         if activeApp.id in ['Mail' 'Calendar']
@@ -214,10 +212,12 @@ activate = ->
                     return
             childp.spawn 'start', [{Calculator:'calculator:' Settings:'ms-settings:' 'Microsoft Store':'ms-windows-store:'}[activeApp.id]], encoding:'utf8' shell:true detached:true stdio:'inherit'
         else
-            if empty wxw('info', activeApp.id)
-                wxw 'launch' activeApp.id
-            else
-                wxw 'focus' activeApp.id 
+            # if empty wxw('info', activeApp.id)
+            wxw 'launch' activeApp.id
+            # else
+                # wxw 'focus' activeApp.id 
+                
+    done()
 
 # 000   000  000   0000000   000   000  000      000   0000000   000   000  000000000  
 # 000   000  000  000        000   000  000      000  000        000   000     000     
@@ -364,7 +364,7 @@ initWin = ->
     
     post.on 'nextApp' onNextApp
                     
-    loadApps()
+    # loadApps()
     
 # 000       0000000    0000000   0000000         0000000   00000000   00000000    0000000  
 # 000      000   000  000   000  000   000      000   000  000   000  000   000  000       

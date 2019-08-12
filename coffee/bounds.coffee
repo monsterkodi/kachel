@@ -29,8 +29,8 @@ class Bounds
 
     @init: ->
         
-        Bounds.updateScreenSize()
-        Bounds.getInfos()
+        @updateScreenSize()
+        @update()
         post.on 'cleanTiles' @cleanTiles
             
     #  0000000  000      00000000   0000000   000   000  
@@ -41,7 +41,7 @@ class Bounds
     
     @cleanTiles: =>
         
-        @getInfos()
+        @update()
         for info in @infos
             kb = info.bounds
             
@@ -95,15 +95,15 @@ class Bounds
             @screenHeight = electron.screen.getPrimaryDisplay().workAreaSize.height
             @screenTop    = electron.screen.getPrimaryDisplay().workArea.y
     
-    # 000  000   000  00000000   0000000    0000000  
-    # 000  0000  000  000       000   000  000       
-    # 000  000 0 000  000000    000   000  0000000   
-    # 000  000  0000  000       000   000       000  
-    # 000  000   000  000        0000000   0000000   
+    # 000   000  00000000   0000000     0000000   000000000  00000000  
+    # 000   000  000   000  000   000  000   000     000     000       
+    # 000   000  00000000   000   000  000000000     000     0000000   
+    # 000   000  000        000   000  000   000     000     000       
+    #  0000000   000        0000000    000   000     000     00000000  
     
-    @getInfos: (kacheln) ->
+    @update: ->
         
-        kacheln ?= electron.BrowserWindow.getAllWindows()
+        kacheln = global.kacheln()
         
         minX = minY = 9999
         maxX = maxY = 0
@@ -212,7 +212,7 @@ class Bounds
     @neighborKachel: (kachel, dir) ->
         
         kb = kachel.getBounds()
-        kacheln = electron.BrowserWindow.getAllWindows()
+        kacheln = global.kacheln()
         
         ks = kacheln.filter (k) ->
             return false if k == kachel
@@ -367,7 +367,7 @@ class Bounds
            
         b ?= kachel.getBounds()
         
-        @getInfos()
+        @update()
                     
         choices = []
         for dir in ['up' 'down' 'left' 'right']
@@ -386,7 +386,7 @@ class Bounds
             when 'right' then b.x += c.gap
 
         kachel.setBounds b
-        @getInfos()
+        @update()
             
         choices = []
         for dir in ['up' 'down' 'left' 'right']

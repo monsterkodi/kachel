@@ -16,6 +16,7 @@ BrowserWindow = electron.BrowserWindow
 
 kachelDict  = {}
 kachelWids  = {}
+kachelIds   = null
 dragging    = false
 mainWin     = null
 focusKachel = null
@@ -112,18 +113,20 @@ KachelApp = new app
         for a in _.keys keys
             electron.globalShortcut.register keys[a], ((a) -> -> action a)(a)
         
-        for kachelId in prefs.get 'kacheln' []
+        kachelIds = prefs.get 'kacheln' []
+        for kachelId in kachelIds
             if kachelId not in ['appl' 'folder' 'file']
                 post.emit 'newKachel' kachelId
                         
-        for s in [1..8]
-            setTimeout data.providers.apps.start, s*1000
-            setTimeout data.providers.wins.start, s*1000
-                
         post.on 'mouse'    onMouse
-        post.on 'keyboard' onKeyboard
+        post.on 'keyboard' onKeyboard        
         
-        getSwitch()
+startData = ->
+    
+    getSwitch()
+    Bounds.update()
+    data.start()
+    
         
 #  0000000  000   000  000  000000000   0000000  000   000  
 # 000       000 0 000  000     000     000       000   000  
@@ -151,8 +154,6 @@ onAppSwitch = ->
 
 action = (act) ->
 
-    # klog 'act' act
-    
     switch act
         when 'maximize'   then log wxw 'maximize' 'top'
         when 'minimize'   then log wxw 'minimize' 'top'
@@ -174,20 +175,39 @@ moveWindow = (dir) ->
     
     ar = w:screen.width, h:screen.height
     
-    if info = wxw('info' 'top')[0]
+    if os.platform() == 'darwin'
         
+        [x,y,w,h] = switch dir
+            when 'left'     then [0,          0,        ar.w/2, ar.h]
+            when 'right'    then [ar.w/2,     0,        ar.w/2, ar.h]
+            when 'down'     then [ar.w/4,     0,        ar.w/2, ar.h]
+            when 'up'       then [ar.w/6,     0,    2/3*ar.w,   ar.h]
+            when 'topleft'  then [0,          0,        ar.w/3, ar.h/2]
+            when 'top'      then [ar.w/3,     0,        ar.w/3, ar.h/2]
+            when 'topright' then [2/3*ar.w,   0,        ar.w/3, ar.h/2]
+            when 'botleft'  then [0,          ar.h/2,   ar.w/3, ar.h/2]
+            when 'bot'      then [ar.w/3,     ar.h/2,   ar.w/3, ar.h/2]
+            when 'botright' then [2/3*ar.w,   ar.h/2,   ar.w/3, ar.h/2]
+        
+        klog 'wxw bounds' 'top', parseInt(x), parseInt(y), parseInt(w), parseInt(h)
+        wxw 'bounds', 'top', parseInt(x), parseInt(y), parseInt(w), parseInt(h)
+            
+        return
+    
+    if info = wxw('info' 'top')[0]
+                
         base = slash.base info.path
         
         return if base in ['kachel' 'kappo']
         
         b = 0
-        if os.platform() == 'win32'
-            if base in ['electron' 'ko' 'konrad' 'clippo' 'klog' 'kaligraf' 'kalk' 'uniko' 'knot' 'space' 'ruler']
-                b = 0  # sane window border
-            else if base in ['devenv']
-                b = -1  # wtf?
-            else
-                b = 10 # transparent window border
+
+        if base in ['electron' 'ko' 'konrad' 'clippo' 'klog' 'kaligraf' 'kalk' 'uniko' 'knot' 'space' 'ruler']
+            b = 0  # sane window border
+        else if base in ['devenv']
+            b = -1  # wtf?
+        else
+            b = 10 # transparent window border
         
         wr = x:info.x, y:info.y, w:info.width, h:info.height
         d = 2*b
@@ -284,7 +304,8 @@ onKeyboard = (data) ->
 
 activeApps = {}
 onApps = (apps) ->
-
+    # klog 'apps ------------ ' apps.length
+    # klog apps
     active = {}
     for app in apps
         if wid = kachelWids[slash.path app]
@@ -306,9 +327,13 @@ post.on 'apps' onApps
 # 000   000  000  000  0000       000  
 # 00     00  000  000   000  0000000   
 
+
+lastWins = []
 activeWins = {}
 onWins = (wins) ->
 
+    lastWins = wins
+    
     return if mainWin.isDestroyed()
         
     if os.platform() == 'win32'
@@ -348,6 +373,7 @@ onWins = (wins) ->
             activeWins[kid] = []
         
 post.on 'wins' onWins
+post.onGet 'wins' -> lastWins
 
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      
@@ -413,7 +439,7 @@ post.on 'newKachel' (id) ->
         wid = event.sender.id
         post.toWin wid, 'initKachel' id
         winWithId(wid).show()
-        Bounds.getInfos()
+        Bounds.update()
           
     win.on 'close' onKachelClose
     win.setHasShadow false    
@@ -450,6 +476,11 @@ post.on 'kachelBounds' (wid, kachelId) ->
         
     kachelDict[wid] = kachelId
     kachelWids[kachelId] = wid
+    
+    if kachelIds
+        if kachelIds.length == _.size kachelDict
+            kachelIds = null
+            setTimeout startData, 2000
     
     if activeApps[kachelId]
         post.toWin wid, 'app' 'activated' kachelId
@@ -496,7 +527,7 @@ post.on 'raiseKacheln' ->
     if os.platform() == 'win32'
         wxw 'raise' 'kachel.exe'
     else
-        for win in wins()
+        for win in kacheln()
             # win.showInactive()
             win.show()
     
@@ -508,7 +539,7 @@ raiseWin = (win) ->
     win.focus()
 
 post.on 'quit' KachelApp.quitApp
-post.on 'hide' -> for w in wins() then w.hide()
+post.on 'hide' -> for w in kacheln() then w.hide()
 
 # 00000000   0000000    0000000  000   000   0000000  
 # 000       000   000  000       000   000  000       
@@ -547,6 +578,9 @@ onKachelClose = (event) ->
 # 00     00  000  000   000  0000000   
 
 wins      = -> BrowserWindow.getAllWindows()
+kacheln   = -> wins().filter (w) -> w.id != swtch?.id
 activeWin = -> BrowserWindow.getFocusedWindow()
 winWithId = (id) -> BrowserWindow.fromId id
+
+global.kacheln = kacheln
             
