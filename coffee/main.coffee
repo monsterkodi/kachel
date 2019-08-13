@@ -247,6 +247,9 @@ moveWindow = (dir) ->
         klog 'wxw bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
         wxw 'bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
         
+    else 
+        klog 'no info!'
+        
 # 00     00   0000000   000   000   0000000  00000000  
 # 000   000  000   000  000   000  000       000       
 # 000000000  000   000  000   000  0000000   0000000   
