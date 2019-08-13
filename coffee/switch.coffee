@@ -150,7 +150,7 @@ start = (opt={}) ->
         </style>
         </head>
         <body>
-        <div class="apps" tabindex=0></div>
+        <div class="apps" tabindex=1></div>
         <script>
             var pth = process.resourcesPath + "/app/js/switch.js";
             if (process.resourcesPath.indexOf("node_modules\\\\electron\\\\dist\\\\resources")>=0) { pth = process.cwd() + "/js/switch.js"; }
@@ -259,7 +259,10 @@ quitApp = ->
 # 000 0 000  000   000  000   000       000  000       
 # 000   000   0000000    0000000   0000000   00000000  
 
-onMouseMove = (event) -> highlight event.target
+onMouseMove = (event) -> 
+
+    highlight event.target
+    
 onMouseDown = (event) -> 
     
     activeApp = event.target
@@ -275,10 +278,10 @@ onKeyDown = (event) ->
     
     { mod, key, char, combo } = keyinfo.forEvent event
     
-    # klog 'onKeyDown' combo
-    
     win = electron.remote.getCurrentWindow()
      
+    return if event.repeat
+    
     switch key
         when 'esc'   then return done()
         when 'right' then return nextApp()
@@ -298,9 +301,11 @@ onKeyUp = (event) ->
     
     { mod, key, char, combo } = keyinfo.forEvent event
         
-    # klog 'onKeyUp' combo, 'key', key, 'wxw', wxw('key').trim()
+    klog 'onKeyUp' mod, key, char, combo
     
-    if empty(combo) and empty wxw('key').trim()
+    modifiers = wxw('key').trim()
+    if empty(combo) and empty modifiers
+        klog "modifiers >#{modifiers}<", mod
         activate()
 
 # 000   000  00000000  000   000  000000000   0000000   00000000   00000000   
@@ -318,29 +323,33 @@ onNextApp = ->
     else
         a =$ '.apps'
         a.innerHTML = ''
+        a.focus()
         
         if os.platform() == 'win32'
             win.setPosition -10000,-10000 # move window offscreen before show
             win.show()
-            
+            a.focus()
             restore = -> 
                 
                 wr = winRect apps.length
                 win.setBounds wr
                 win.focus()
+                a.focus()
                     
             setTimeout restore, 30 # give windows some time to do it's flickering
             loadApps()
         else
             loadApps()
             
-            if empty wxw('key').trim()
-                activate()
-            else
+            # if empty wxw('key').trim()
+                # activate()
+            # else
+            if 1
                 wr = winRect apps.length
                 win.setBounds wr
                 win.show()
                 win.focus()
+                a.focus()
         
 # 000  000   000  000  000000000    000   000  000  000   000  
 # 000  0000  000  000     000       000 0 000  000  0000  000  
@@ -351,19 +360,19 @@ onNextApp = ->
 initWin = ->
     
     a =$ '.apps'
-    
+
     a.onmousedown = onMouseDown
     a.onkeydown   = onKeyDown
     a.onkeyup     = onKeyUp
 
+    a.focus()
+    
     win = electron.remote.getCurrentWindow()
     
     win.on 'blur' -> done()
     
     post.on 'nextApp' onNextApp
                     
-    # loadApps()
-    
 # 000       0000000    0000000   0000000         0000000   00000000   00000000    0000000  
 # 000      000   000  000   000  000   000      000   000  000   000  000   000  000       
 # 000      000   000  000000000  000   000      000000000  00000000   00000000   0000000   
