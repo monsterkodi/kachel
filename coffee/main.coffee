@@ -196,13 +196,13 @@ moveWindow = (dir) ->
 #             
         # return
     
-    if os.platform() == 'darwin'   
-        for info in lastWins
-            if info.index == 0
-                break
-    else
-        info = wxw('info' 'top')[0]
-        
+    # if os.platform() == 'darwin'   
+        # for info in lastWins
+            # if info.index == 0
+                # break
+    # else
+    info = wxw('info' 'top')[0]
+    klog 'top:' info 
     if info
                 
         base = slash.base info.path

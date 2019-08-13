@@ -17,7 +17,7 @@
     "kxk": "^0.334.0",
     "simple-plist": "^1.0.0",
     "systeminformation": "^4.14.4",
-    "wxw": "^1.80.0"
+    "wxw": "^1.81.0"
   },
   "devDependencies": {
     "electron": "^6.0.2",

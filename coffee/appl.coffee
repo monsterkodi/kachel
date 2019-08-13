@@ -99,18 +99,18 @@ class Appl extends Kachel
 
     onMiddleClick: (event) => 
         
-        if os.platform() == 'win32'
-            infos = wxw 'info' slash.file @kachelId
-            if infos.length
-                maximized = false
-                for info in infos
-                    if info.status == 'maximized'
-                        maximized = true
-                        break
-                if maximized
-                    wxw 'restore' slash.file @kachelId
-                else
-                    wxw 'maximize' slash.file @kachelId
+        # if os.platform() == 'win32'
+        infos = wxw 'info' slash.file @kachelId
+        if infos.length
+            maximized = false
+            for info in infos
+                if info.status == 'maximized'
+                    maximized = true
+                    break
+            if maximized
+                wxw 'restore' slash.file @kachelId
+            else
+                wxw 'maximize' slash.file @kachelId
             
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     

@@ -41,9 +41,8 @@ class Volume extends Kachel
     
     setVolume: (v) ->
         
-        @mute = false        
-        wxw 'volume' clamp 0 100 v
-        @volume = parseInt wxw('volume').trim()
+        @mute = false
+        @volume = parseInt wxw('volume' "#{parseInt clamp 0 100 v}").trim()
         @updateVolume()
         
     onContextMenu: (event) => 
