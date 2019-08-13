@@ -171,30 +171,39 @@ action = (act) ->
 
 moveWindow = (dir) ->
     
-    screen = wxw 'screen' 'user'
-    
-    ar = w:screen.width, h:screen.height
-    
     if os.platform() == 'darwin'
-        
-        [x,y,w,h] = switch dir
-            when 'left'     then [0,          0,        ar.w/2, ar.h]
-            when 'right'    then [ar.w/2,     0,        ar.w/2, ar.h]
-            when 'down'     then [ar.w/4,     0,        ar.w/2, ar.h]
-            when 'up'       then [ar.w/6,     0,    2/3*ar.w,   ar.h]
-            when 'topleft'  then [0,          0,        ar.w/3, ar.h/2]
-            when 'top'      then [ar.w/3,     0,        ar.w/3, ar.h/2]
-            when 'topright' then [2/3*ar.w,   0,        ar.w/3, ar.h/2]
-            when 'botleft'  then [0,          ar.h/2,   ar.w/3, ar.h/2]
-            when 'bot'      then [ar.w/3,     ar.h/2,   ar.w/3, ar.h/2]
-            when 'botright' then [2/3*ar.w,   ar.h/2,   ar.w/3, ar.h/2]
-        
-        klog 'wxw bounds' 'top', parseInt(x), parseInt(y), parseInt(w), parseInt(h)
-        wxw 'bounds', 'top', parseInt(x), parseInt(y), parseInt(w), parseInt(h)
-            
-        return
+        ar = w:Bounds.screenWidth, h:Bounds.screenHeight
+    else
+        screen = wxw 'screen' 'user'
+        ar = w:screen.width, h:screen.height
     
-    if info = wxw('info' 'top')[0]
+    # if os.platform() == 'darwin'
+#         
+        # [x,y,w,h] = switch dir
+            # when 'left'     then [0,          0,        ar.w/2, ar.h]
+            # when 'right'    then [ar.w/2,     0,        ar.w/2, ar.h]
+            # when 'down'     then [ar.w/4,     0,        ar.w/2, ar.h]
+            # when 'up'       then [ar.w/6,     0,    2/3*ar.w,   ar.h]
+            # when 'topleft'  then [0,          0,        ar.w/3, ar.h/2]
+            # when 'top'      then [ar.w/3,     0,        ar.w/3, ar.h/2]
+            # when 'topright' then [2/3*ar.w,   0,        ar.w/3, ar.h/2]
+            # when 'botleft'  then [0,          ar.h/2,   ar.w/3, ar.h/2]
+            # when 'bot'      then [ar.w/3,     ar.h/2,   ar.w/3, ar.h/2]
+            # when 'botright' then [2/3*ar.w,   ar.h/2,   ar.w/3, ar.h/2]
+#         
+        # klog 'wxw bounds' 'top', parseInt(x), parseInt(y), parseInt(w), parseInt(h)
+        # wxw 'bounds', 'top', parseInt(x), parseInt(y), parseInt(w), parseInt(h)
+#             
+        # return
+    
+    if os.platform() == 'darwin'   
+        for info in lastWins
+            if info.index == 0
+                break
+    else
+        info = wxw('info' 'top')[0]
+        
+    if info
                 
         base = slash.base info.path
         
@@ -235,7 +244,7 @@ moveWindow = (dir) ->
                 when 'down'  then h = ar.h/2+d; y = ar.h/2-b
                 when 'up'    then w = ar.w+d;   x = -b
         
-        # klog 'wxw bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
+        klog 'wxw bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
         wxw 'bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
         
 # 00     00   0000000   000   000   0000000  00000000  
@@ -528,7 +537,6 @@ post.on 'raiseKacheln' ->
         wxw 'raise' 'kachel.exe'
     else
         for win in kacheln()
-            # win.showInactive()
             win.show()
     
     if not tmpTop

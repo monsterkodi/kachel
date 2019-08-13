@@ -46,9 +46,9 @@ class Kachel extends win
         
         post.toMain 'kachelBounds' @id, @kachelId
         
-        if os.platform() == 'darwin'
-            if parseInt(os.release().split('.')[0]) >= 18
-                document.body.classList.add 'mojave'
+        # if os.platform() == 'darwin'
+            # if parseInt(os.release().split('.')[0]) >= 18
+                # document.body.classList.add 'mojave'
          
     # 00000000   00000000   0000000   000   000  00000000   0000000  000000000
     # 000   000  000       000   000  000   000  000       000          000   

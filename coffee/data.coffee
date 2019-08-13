@@ -38,8 +38,8 @@ class Data
         
         if os.platform() == 'win32'
             klog wxw 'kill' 'wc.exe'
-        else
-            klog wxw 'kill' 'mc'
+        # else
+            # klog wxw 'kill' 'mc'
             
     onUDP: (msg) => 
         

@@ -77,7 +77,8 @@ class Folder extends Kachel
     
     checkTrash: (trashFolder) =>
         
-        @showTrashDot wxw 'trash' 'count'
+        if os.platform() == 'win23'
+            @showTrashDot wxw 'trash' 'count'
         
     onContextMenu: => 
         

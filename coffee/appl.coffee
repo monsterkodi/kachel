@@ -149,6 +149,8 @@ class Appl extends Kachel
         appName = slash.base @kachelId
         pngPath = slash.resolve slash.join iconDir, appName + ".png"
         
+        # klog 'refreshIcon' @kachelId, pngPath
+        
         appIcon @kachelId, pngPath
         @setIcon pngPath
         

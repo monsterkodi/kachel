@@ -51,7 +51,6 @@ getApps = ->
             continue if base in ['kappo' 'cmd']
             if slash.fileExists pngPath proc.path
                 apps.push proc.path
-            
     apps
     
 # 00000000   000   000   0000000   
@@ -84,8 +83,6 @@ winRect = (numApps) ->
 
 start = (opt={}) -> 
     
-    # apps = getApps()
-            
     wr = winRect 1
             
     win = new electron.BrowserWindow
@@ -213,6 +210,7 @@ activate = ->
             childp.spawn 'start', [{Calculator:'calculator:' Settings:'ms-settings:' 'Microsoft Store':'ms-windows-store:'}[activeApp.id]], encoding:'utf8' shell:true detached:true stdio:'inherit'
         else
             # if empty wxw('info', activeApp.id)
+            klog 'wxw launch' activeApp.id
             wxw 'launch' activeApp.id
             # else
                 # wxw 'focus' activeApp.id 

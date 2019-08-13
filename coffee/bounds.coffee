@@ -8,7 +8,7 @@
 
 { post, clamp, empty, klog, kpos, os } = require 'kxk'
 
-if os.platform()=='win32' then wxw = require 'wxw'
+wxw = require 'wxw'
 
 electron = require 'electron'
 

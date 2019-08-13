@@ -6,7 +6,7 @@
 000   0000000   0000000   000   000  
 ###
 
-{ slash, fs } = require 'kxk'
+{ slash, klog, fs } = require 'kxk'
 
 wxw = require 'wxw'
 
@@ -34,7 +34,9 @@ fakeIcon = (exePath, pngPath) ->
     
 appIcon = (exePath, pngPath) ->
     
+    klog 'appIcon' exePath, pngPath
     if not fakeIcon(exePath, pngPath)
+        klog 'wxw icon' exePath, pngPath
         wxw 'icon' exePath, pngPath
         
 module.exports = appIcon
