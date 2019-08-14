@@ -240,7 +240,7 @@ class Sysdish extends Kachel
 
              @dskrNew = 180*@data.dsk.r_sec/@data.dsk.r_max
              @dskwNew = 180*@data.dsk.w_sec/@data.dsk.w_max
-
+             
          @netrOld = @netrNow = @netrNew
          @nettOld = @nettNow = @nettNew
 

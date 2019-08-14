@@ -154,6 +154,7 @@ onAppSwitch = ->
 
 action = (act) ->
 
+    # klog 'action' act
     switch act
         when 'maximize'   then log wxw 'maximize' 'top'
         when 'minimize'   then log wxw 'minimize' 'top'
@@ -202,7 +203,7 @@ moveWindow = (dir) ->
                 # break
     # else
     info = wxw('info' 'top')[0]
-    klog 'top:' info 
+    # klog 'top:' info 
     if info
                 
         base = slash.base info.path
@@ -244,7 +245,7 @@ moveWindow = (dir) ->
                 when 'down'  then h = ar.h/2+d; y = ar.h/2-b
                 when 'up'    then w = ar.w+d;   x = -b
         
-        klog 'wxw bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
+        # klog 'wxw bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
         wxw 'bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
         
     else 
@@ -386,6 +387,7 @@ onWins = (wins) ->
         
 post.on 'wins' onWins
 post.onGet 'wins' -> lastWins
+post.onGet 'mouse' -> mousePos
 
 # 000   000   0000000    0000000  000   000  00000000  000      
 # 000  000   000   000  000       000   000  000       000      

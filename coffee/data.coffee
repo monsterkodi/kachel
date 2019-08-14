@@ -143,8 +143,8 @@ class Sysinfo
                 cpu:
                     sys: d.currentLoad.currentload/100 
                     usr: d.currentLoad.currentload_user/100
-                    
-            if data.disksIO?
+             
+            if d.disksIO?
                 
                 r_sec = d.disksIO.rIO_sec
                 w_sec = d.disksIO.wIO_sec

@@ -12,6 +12,8 @@ wxw      = require 'wxw'
 electron = require 'electron'
 appIcon  = require './icon'
 
+startMouse = kpos 0 0
+
 #  0000000   00000000  000000000        0000000   00000000   00000000    0000000  
 # 000        000          000          000   000  000   000  000   000  000       
 # 000  0000  0000000      000          000000000  00000000   00000000   0000000   
@@ -165,7 +167,7 @@ start = (opt={}) ->
     win.loadURL data, baseURLForDataURL:slash.fileUrl __dirname + '/index.html'
 
     win.debug = opt.debug
-    
+        
     if opt.debug then win.webContents.openDevTools mode:'detach'
     # win.webContents.openDevTools mode:'detach'
     
@@ -209,11 +211,11 @@ activate = ->
                     return
             childp.spawn 'start', [{Calculator:'calculator:' Settings:'ms-settings:' 'Microsoft Store':'ms-windows-store:'}[activeApp.id]], encoding:'utf8' shell:true detached:true stdio:'inherit'
         else
-            # if empty wxw('info', activeApp.id)
             klog 'wxw launch' activeApp.id
-            wxw 'launch' activeApp.id
+            # if os.platform() == 'win32'
+            klog wxw 'launch' activeApp.id
             # else
-                # wxw 'focus' activeApp.id 
+                # open activeApp.path
                 
     done()
 
@@ -239,8 +241,11 @@ prevApp = -> highlight activeApp.previousSibling ? $('.apps').lastChild
 # 000 0000   000   000  000     000     
 #  00000 00   0000000   000     000     
 
+activationTimer = null
+
 quitApp = -> 
     
+    clearTimeout activationTimer
     klog 'wxw quit' "\"#{activeApp.id}\""
     if valid wxw 'quit' "\"#{activeApp.id}\""
         oldActive = activeApp
@@ -274,38 +279,69 @@ onMouseDown = (event) ->
 # 000  000   000          000     
 # 000   000  00000000     000     
 
+lastCombo = null
+
 onKeyDown = (event) -> 
     
     { mod, key, char, combo } = keyinfo.forEvent event
     
     win = electron.remote.getCurrentWindow()
-     
-    return if event.repeat
+         
+    modifiers = wxw('key').trim()
+    
+    lastCombo = combo
+    klog 'onKeyDown' combo, 'mod:', modifiers
     
     switch key
-        when 'esc'   then return done()
         when 'right' then return nextApp()
         when 'left'  then return prevApp()
-        when 'enter' 'return' 'space' then return activate()
         
     switch combo
-        when 'alt+ctrl+i'     then return win.webContents.openDevTools()
         when 'ctrl+shift+tab' then return prevApp()
-        when 'ctrl+q'         then return stopEvent event, quitApp()
-        when 'command+q'      then return stopEvent event, quitApp()
-        when 'alt+ctrl+q'     then return electron.remote.app.quit()
-        when 'alt+ctrl+/'     then return post.toMain 'showAbout'
         # else klog 'combo' combo
+        
+    if not event.repeat
+    
+        switch key
+            when 'esc'                    then return done()
+            when 'enter' 'return' 'space' then return activate()
+        
+        switch combo
+            when 'ctrl+q'         then return stopEvent event, quitApp()
+            when 'command+q'      then return stopEvent event, quitApp()
+            when 'alt+ctrl+q'     then return electron.remote.app.quit()
+            when 'alt+ctrl+/'     then return post.toMain 'showAbout'
+            when 'alt+ctrl+i'     then return win.webContents.openDevTools()
         
 onKeyUp = (event) ->        
     
     { mod, key, char, combo } = keyinfo.forEvent event
         
-    klog 'onKeyUp' mod, key, char, combo
-    
     modifiers = wxw('key').trim()
-    if empty(combo) and empty modifiers
-        klog "modifiers >#{modifiers}<", mod
+    
+    klog 'onKeyUp' lastCombo
+    
+    if empty(combo) and empty modifiers and empty lastCombo
+        
+        if os.platform() == 'darwin'
+            activationTimer = setTimeout (->
+                mousePos = post.get 'mouse'
+                klog 'mousePos' kpos(mousePos), startMouse, kpos(mousePos).distSquare startMouse
+                if kpos(mousePos).distSquare(startMouse) == 0
+                    if valid(lastCombo) and lastCombo not in ['command']
+                        startMouse = mousePos
+                        lastCombo = null
+                        klog 'comboactive' lastCombo
+                        return
+                    klog 'mouse not moved! activate!'
+                    activate()
+                else
+                    klog 'mouse moved! skip!'
+                    startMouse = mousePos
+                ), 20
+            return
+        
+        klog "modifiers >#{modifiers}<"
         activate()
 
 # 000   000  00000000  000   000  000000000   0000000   00000000   00000000   
@@ -325,6 +361,8 @@ onNextApp = ->
         a.innerHTML = ''
         a.focus()
         
+        lastCombo = null
+        
         if os.platform() == 'win32'
             win.setPosition -10000,-10000 # move window offscreen before show
             win.show()
@@ -341,15 +379,18 @@ onNextApp = ->
         else
             loadApps()
             
-            # if empty wxw('key').trim()
-                # activate()
-            # else
-            if 1
+            startMouse = post.get 'mouse'
+            klog 'onNextApp' startMouse
+            
+            if empty wxw('key').trim() # command key released before window was shown
+                activate()
+            else
                 wr = winRect apps.length
                 win.setBounds wr
-                win.show()
-                win.focus()
-                a.focus()
+                setImmediate ->
+                    win.show()
+                    win.focus()
+                    a.focus()
         
 # 000  000   000  000  000000000    000   000  000  000   000  
 # 000  0000  000  000     000       000 0 000  000  0000  000  
@@ -366,13 +407,13 @@ initWin = ->
     a.onkeyup     = onKeyUp
 
     a.focus()
-    
+            
     win = electron.remote.getCurrentWindow()
     
     win.on 'blur' -> done()
     
     post.on 'nextApp' onNextApp
-                    
+    
 # 000       0000000    0000000   0000000         0000000   00000000   00000000    0000000  
 # 000      000   000  000   000  000   000      000   000  000   000  000   000  000       
 # 000      000   000  000000000  000   000      000000000  00000000   00000000   0000000   

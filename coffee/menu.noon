@@ -7,7 +7,7 @@
 
 New             cmdctrl+n
 Close           cmdctrl+w delete
-Quit            cmdctrl+q
+Quit            alt+cmdctrl+q
 Scheme          cmdctrl+i
 IncreaseSize    cmdctrl+= 
 DecreaseSize    cmdctrl+- 
