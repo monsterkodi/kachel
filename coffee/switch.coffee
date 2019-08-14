@@ -293,12 +293,13 @@ onKeyDown = (event) ->
     # klog 'onKeyDown' combo, 'mod:', modifiers
     
     switch key
-        when 'right''tab''down' then return nextApp()
+        when 'right''down'      then return nextApp()
         when 'left''up'         then return prevApp()
         when 'page up''home'    then return firstApp()
         when 'page down''end'   then return lastApp()
         
     switch combo
+        when 'ctrl+tab''tab'             then return nextApp()
         when 'ctrl+shift+tab''shift+tab' then return prevApp()
         # else klog 'combo' combo
         
