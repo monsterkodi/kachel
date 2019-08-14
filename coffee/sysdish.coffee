@@ -6,7 +6,7 @@
 0000000      000     0000000   0000000    000  0000000   000   000  
 ###
 
-{ post, empty, elem, klog, _ } = require 'kxk'
+{ post, empty, clamp, deg2rad, elem, klog, _ } = require 'kxk'
 
 utils   = require './utils'
 Kachel  = require './kachel'
@@ -17,7 +17,7 @@ class Sysdish extends Kachel
         
         super
         
-        @mode = 'dish'
+        @animCount = 0
         
         @history = 
             net: []
@@ -40,6 +40,8 @@ class Sysdish extends Kachel
             cpu: '66%'
         
         @requestData 'sysinfo'
+        
+        @dishMode()
     
     #  0000000  000      000   0000000  000   000  
     # 000       000      000  000       000  000   
@@ -60,9 +62,11 @@ class Sysdish extends Kachel
         @drawGraph()
         
     dishMode: ->
-        
+                
         @mode = 'dish'
+        @initDish()
         @drawDish()
+        @animDish()
         
     #  0000000   000   000  0000000     0000000   000000000   0000000   
     # 000   000  0000  000  000   000  000   000     000     000   000  
@@ -87,6 +91,7 @@ class Sysdish extends Kachel
                 
         if @mode == 'dish'
             @drawDish()
+            @animDish()
         else
             @drawGraph()
         
@@ -126,60 +131,135 @@ class Sysdish extends Kachel
                         else
                             ctx.fillRect @width-hist.length+i, @height/2, 2, h
                 
-    # 0000000    00000000    0000000   000   000  0000000    000   0000000  000   000  
-    # 000   000  000   000  000   000  000 0 000  000   000  000  000       000   000  
-    # 000   000  0000000    000000000  000000000  000   000  000  0000000   000000000  
-    # 000   000  000   000  000   000  000   000  000   000  000       000  000   000  
-    # 0000000    000   000  000   000  00     00  0000000    000  0000000   000   000  
+    #  0000000   000   000  000  00     00  0000000    000   0000000  000   000  
+    # 000   000  0000  000  000  000   000  000   000  000  000       000   000  
+    # 000000000  000 0 000  000  000000000  000   000  000  0000000   000000000  
+    # 000   000  000  0000  000  000 0 000  000   000  000       000  000   000  
+    # 000   000  000   000  000  000   000  0000000    000  0000000   000   000  
     
-    drawDish: ->
-                
+    animDish: =>
+        
+        clearTimeout @animTimer
+        
+        return if not @data
+        
+        @animCount += 1
+        if @animCount <= 30
+
+            pie180 = (pie, radius, angle, start=0) ->
+                angle = clamp 0, 180, angle
+                sx =  radius * Math.sin deg2rad start+angle
+                sy = -radius * Math.cos deg2rad start+angle
+                ex =  radius * Math.sin deg2rad start
+                ey = -radius * Math.cos deg2rad start
+                pie.setAttribute 'd' "M 0 0 L #{sx} #{sy} A #{radius} #{radius} #{start} 0 0 #{ex} #{ey} z"
+            
+            pie360 = (pie, radius, angle) ->
+                angle = clamp 0, 359, angle
+                sx =  radius * Math.sin deg2rad angle
+                sy = -radius * Math.cos deg2rad angle
+                ex =  0
+                ey = -radius
+                f = angle <= 180 and '0 0' or '1 0'
+                pie.setAttribute 'd' "M 0 0 L #{sx} #{sy} A #{radius} #{radius} 0 #{f} #{ex} #{ey} z"
+            
+            if @data.dsk?
+                 
+                @dskrNow += (@dskrNew - @dskrOld) / 30
+                @dskwNow += (@dskwNew - @dskwOld) / 30
+                 
+                pie180 @dskrPie, 50, @dskrNow
+                pie180 @dskwPie, 50, @dskwNow, 180
+                             
+            @netrNow += (@netrNew - @netrOld) / 30
+            @nettNow += (@nettNew - @nettOld) / 30
+             
+            pie180 @netrPie, 47, @netrNow
+            pie180 @nettPie, 47, @nettNow, 180
+            
+            @sysNow += (@sysNew - @sysOld) / 30
+            @usrNow += (@usrNew - @usrOld) / 30
+            
+            pie360 @usrPie, 44, @usrNow
+            pie360 @sysPie, 44, @sysNow
+            
+            @memuNow += (@memuNew - @memuOld) / 30
+            @memaNow += (@memaNew - @memaOld) / 30
+            
+            pie360 @memuPie, 18, @memuNow
+            pie360 @memaPie, 18, @memaNow
+                            
+        if @mode == 'dish'
+            @animTimer = setTimeout @animDish, 1000 / 30
+    
+    # 000  000   000  000  000000000  0000000    000   0000000  000   000  
+    # 000  0000  000  000     000     000   000  000  000       000   000  
+    # 000  000 0 000  000     000     000   000  000  0000000   000000000  
+    # 000  000  0000  000     000     000   000  000       000  000   000  
+    # 000  000   000  000     000     0000000    000  0000000   000   000  
+    
+    initDish: ->
+        
         @main.innerHTML = ''
         svg = utils.svg clss:'clock'
         @main.appendChild svg
         
-        # 000   0000000   
-        # 000  000   000  
-        # 000  000   000  
-        # 000  000   000  
-        # 000   0000000   
+        pie = utils.circle clss:'sysdish_disk_bgr' svg:svg
+        @dskrPie = utils.pie svg:pie, radius:50 clss:'sysdish_disk_read'  angle:0
+        @dskwPie = utils.pie svg:pie, radius:50 clss:'sysdish_disk_write' angle:0, start:180
         
-        if @data.dsk?
-        
-            pie = utils.circle clss:'sysdish_disk_bgr' svg:svg
-            utils.pie svg:pie, clss:'sysdish_disk_read'  angle:180*@data.dsk.r_sec/@data.dsk.r_max
-            utils.pie svg:pie, clss:'sysdish_disk_write' angle:180*@data.dsk.w_sec/@data.dsk.w_max, start:180
-        
-        # 000   000  00000000  000000000  
-        # 0000  000  000          000     
-        # 000 0 000  0000000      000     
-        # 000  0000  000          000     
-        # 000   000  00000000     000     
-                
         pie = utils.circle radius:47 clss:'sysdish_net_bgr' svg:svg
-        utils.pie svg:pie, radius:47 clss:'sysdish_net_recv' angle:180*@data.net.rx_sec/@data.net.rx_max
-        utils.pie svg:pie, radius:47 clss:'sysdish_net_send' angle:180*@data.net.tx_sec/@data.net.tx_max, start:180
+        @netrPie = utils.pie svg:pie, radius:47 clss:'sysdish_net_recv' angle:0
+        @nettPie = utils.pie svg:pie, radius:47 clss:'sysdish_net_send' angle:0 start:180
             
-        # 000       0000000    0000000   0000000    
-        # 000      000   000  000   000  000   000  
-        # 000      000   000  000000000  000   000  
-        # 000      000   000  000   000  000   000  
-        # 0000000   0000000   000   000  0000000    
-        
         pie = utils.circle radius:44 clss:'sysdish_load_bgr' svg:svg
-        utils.pie svg:pie, radius:44 clss:'sysdish_load_sys' angle:360*@data.cpu.sys
-        utils.pie svg:pie, radius:44 clss:'sysdish_load_usr' angle:360*@data.cpu.usr
-            
-        # 00     00  00000000  00     00  
-        # 000   000  000       000   000  
-        # 000000000  0000000   000000000  
-        # 000 0 000  000       000 0 000  
-        # 000   000  00000000  000   000  
-        
+        @sysPie = utils.pie svg:pie, radius:44 clss:'sysdish_load_sys' angle:0
+        @usrPie = utils.pie svg:pie, radius:44 clss:'sysdish_load_usr' angle:0
+
         pie = utils.circle radius:18 clss:'sysdish_mem_bgr' svg:svg
-        utils.pie svg:pie, radius:18 clss:'sysdish_mem_used'   angle:360*@data.mem.used/@data.mem.total
-        utils.pie svg:pie, radius:18 clss:'sysdish_mem_active' angle:360*@data.mem.active/@data.mem.total
+        @memuPie = utils.pie svg:pie, radius:18 clss:'sysdish_mem_used'   angle:0
+        @memaPie = utils.pie svg:pie, radius:18 clss:'sysdish_mem_active' angle:0
             
+        
+     # 0000000    00000000    0000000   000   000  0000000    000   0000000  000   000
+     # 000   000  000   000  000   000  000 0 000  000   000  000  000       000   000
+     # 000   000  0000000    000000000  000000000  000   000  000  0000000   000000000
+     # 000   000  000   000  000   000  000   000  000   000  000       000  000   000
+     # 0000000    000   000  000   000  00     00  0000000    000  0000000   000   000
+
+     drawDish: ->
+
+         return if not @data
+
+         @animCount = 0
+
+         if @data.dsk?
+
+             @dskrOld = @dskrNow = @dskrNew
+             @dskwOld = @dskwNow = @dskwNew
+
+             @dskrNew = 180*@data.dsk.r_sec/@data.dsk.r_max
+             @dskwNew = 180*@data.dsk.w_sec/@data.dsk.w_max
+
+         @netrOld = @netrNow = @netrNew
+         @nettOld = @nettNow = @nettNew
+
+         @netrNew = 180*@data.net.rx_sec/@data.net.rx_max
+         @nettNew = 180*@data.net.tx_sec/@data.net.tx_max
+
+         @sysOld = @sysNow = @sysNew
+         @usrOld = @usrNow = @usrNew
+
+         @sysNew = 360*@data.cpu.sys
+         @usrNew = 360*@data.cpu.usr
+
+         @memuOld = @memuNow = @memuNew
+         @memaOld = @memaNow = @memaNew
+
+         @memuNew = 360*@data.mem.used/@data.mem.total
+         @memaNew = 360*@data.mem.active/@data.mem.total
+
+        
     # 0000000     0000000   000   000  000   000  0000000     0000000  
     # 000   000  000   000  000   000  0000  000  000   000  000       
     # 0000000    000   000  000   000  000 0 000  000   000  0000000   

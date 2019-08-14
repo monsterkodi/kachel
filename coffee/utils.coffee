@@ -39,18 +39,18 @@ class utils
         
     @pie: (radius:50, cx:0, cy:0, angle:0, start:0, clss:, svg:) ->
 
-        if angle == start
-            return svg
+        # if angle == start
+            # return svg
             
-        if angle > start and (angle-start)%360 == 0
-            return @circle radius:radius, cx:cx, cy:cy, clss:clss, svg:svg
+        # if angle > start and (angle-start)%360 == 0
+            # return @circle radius:radius, cx:cx, cy:cy, clss:clss, svg:svg
         
-        start = clamp 0, 360, start%360
-        angle = clamp 0, 360, (start+angle)%360
+        start = clamp 0 360 start%360
+        angle = clamp 0 360 (start+angle)%360
         
         svg ?= @svg width:2*radius, height:2*radius
         g    = @append svg, 'g'
-        pie  = @append g, 'path', class:clss
+        pie  = @append g, 'path' class:clss
         
         sx = cx + radius * Math.sin deg2rad angle
         sy = cy - radius * Math.cos deg2rad angle
@@ -58,9 +58,9 @@ class utils
         ey = cy - radius * Math.cos deg2rad start
         
         f = angle-start <= 180 and '0 0' or '1 0'
-        pie.setAttribute 'd', "M #{cx} #{cy} L #{sx} #{sy} A #{radius} #{radius} #{start} #{f} #{ex} #{ey} z"
+        pie.setAttribute 'd' "M #{cx} #{cy} L #{sx} #{sy} A #{radius} #{radius} #{start} #{f} #{ex} #{ey} z"
         # A rx ry x-axis-rotation large-arc-flag sweep-flag x y
             
-        svg
+        pie
 
 module.exports = utils
