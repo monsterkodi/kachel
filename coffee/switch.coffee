@@ -75,7 +75,7 @@ winRect = (numApps) ->
     ss     = screen.getPrimaryDisplay().workAreaSize
     as     = 128
     border = 20
-    width  = (as+border)*apps.length+border
+    width  = (as+border)*numApps+border
     height = as+border*2
     
     x:      parseInt (ss.width-width)/2
@@ -211,11 +211,8 @@ activate = ->
                     return
             childp.spawn 'start', [{Calculator:'calculator:' Settings:'ms-settings:' 'Microsoft Store':'ms-windows-store:'}[activeApp.id]], encoding:'utf8' shell:true detached:true stdio:'inherit'
         else
-            klog 'wxw launch' activeApp.id
-            # if os.platform() == 'win32'
-            klog wxw 'launch' activeApp.id
-            # else
-                # open activeApp.path
+            # klog 'wxw launch' activeApp.id
+            wxw 'launch' activeApp.id
                 
     done()
 
@@ -235,6 +232,9 @@ highlight = (e) ->
 nextApp = -> highlight activeApp.nextSibling ? $('.apps').firstChild
 prevApp = -> highlight activeApp.previousSibling ? $('.apps').lastChild
 
+firstApp = -> highlight $('.apps').firstChild
+lastApp  = -> highlight $('.apps').lastChild
+
 #  0000000   000   000  000  000000000  
 # 000   000  000   000  000     000     
 # 000 00 00  000   000  000     000     
@@ -245,16 +245,16 @@ activationTimer = null
 
 quitApp = -> 
     
+    apps = getApps()
+    wr   = winRect apps.length-1
+    win  = electron.remote.getCurrentWindow()
+    win.setBounds wr
     clearTimeout activationTimer
-    klog 'wxw quit' "\"#{activeApp.id}\""
-    if valid wxw 'quit' "\"#{activeApp.id}\""
+    klog 'wxw terminate' "\"#{activeApp.id}\""
+    if valid wxw 'terminate' "\"#{activeApp.id}\""
         oldActive = activeApp
         nextApp()
         oldActive.remove()
-        apps = getApps()
-        wr  = winRect apps.length
-        win = electron.remote.getCurrentWindow()
-        win.setBounds wr
     else
         kerror "can't quit?"
     
@@ -290,14 +290,16 @@ onKeyDown = (event) ->
     modifiers = wxw('key').trim()
     
     lastCombo = combo
-    klog 'onKeyDown' combo, 'mod:', modifiers
+    # klog 'onKeyDown' combo, 'mod:', modifiers
     
     switch key
-        when 'right' then return nextApp()
-        when 'left'  then return prevApp()
+        when 'right''tab''down' then return nextApp()
+        when 'left''up'         then return prevApp()
+        when 'page up''home'    then return firstApp()
+        when 'page down''end'   then return lastApp()
         
     switch combo
-        when 'ctrl+shift+tab' then return prevApp()
+        when 'ctrl+shift+tab''shift+tab' then return prevApp()
         # else klog 'combo' combo
         
     if not event.repeat
@@ -307,8 +309,7 @@ onKeyDown = (event) ->
             when 'enter' 'return' 'space' then return activate()
         
         switch combo
-            when 'ctrl+q'         then return stopEvent event, quitApp()
-            when 'command+q'      then return stopEvent event, quitApp()
+            when 'ctrl+q''delete''command+q' then return stopEvent event, quitApp()
             when 'alt+ctrl+q'     then return electron.remote.app.quit()
             when 'alt+ctrl+/'     then return post.toMain 'showAbout'
             when 'alt+ctrl+i'     then return win.webContents.openDevTools()
@@ -319,24 +320,24 @@ onKeyUp = (event) ->
         
     modifiers = wxw('key').trim()
     
-    klog 'onKeyUp' lastCombo
+    # klog 'onKeyUp' lastCombo
     
     if empty(combo) and empty modifiers and empty lastCombo
         
         if os.platform() == 'darwin'
             activationTimer = setTimeout (->
                 mousePos = post.get 'mouse'
-                klog 'mousePos' kpos(mousePos), startMouse, kpos(mousePos).distSquare startMouse
+                # klog 'mousePos' kpos(mousePos), startMouse, kpos(mousePos).distSquare startMouse
                 if kpos(mousePos).distSquare(startMouse) == 0
                     if valid(lastCombo) and lastCombo not in ['command']
                         startMouse = mousePos
                         lastCombo = null
-                        klog 'comboactive' lastCombo
+                        # klog 'comboactive' lastCombo
                         return
-                    klog 'mouse not moved! activate!'
+                    # klog 'mouse not moved! activate!'
                     activate()
                 else
-                    klog 'mouse moved! skip!'
+                    # klog 'mouse moved! skip!'
                     startMouse = mousePos
                 ), 20
             return
@@ -380,13 +381,14 @@ onNextApp = ->
             loadApps()
             
             startMouse = post.get 'mouse'
-            klog 'onNextApp' startMouse
+            # klog 'onNextApp' startMouse
             
             if empty wxw('key').trim() # command key released before window was shown
                 activate()
             else
                 wr = winRect apps.length
                 win.setBounds wr
+                klog apps.length, wr.width
                 setImmediate ->
                     win.show()
                     win.focus()
