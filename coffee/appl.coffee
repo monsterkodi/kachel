@@ -134,7 +134,7 @@ class Appl extends Kachel
             @refreshIcon()
             setInterval @refreshIcon, 1000*60*minutes
             
-        super
+        super @kachelId
            
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  

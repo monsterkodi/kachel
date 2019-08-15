@@ -8,20 +8,19 @@
 
 { post, prefs, slash, clamp, empty, klog, kpos, kstr, app, os, _ } = require 'kxk'
 
-Data     = require './data'
-Bounds   = require './bounds'
-electron = require 'electron'
-wxw      = require 'wxw'
+Data      = require './data'
+Bounds    = require './bounds'
+KachelSet = require './kachelset'
+electron  = require 'electron'
+wxw       = require 'wxw'
+
 BrowserWindow = electron.BrowserWindow
 
-kachelDict  = {}
-kachelWids  = {}
-kachelIds   = null
 dragging    = false
 mainWin     = null
 focusKachel = null
 hoverKachel = null
-mouseTimer  = null
+kachelSet   = null
 data        = null
 swtch       = null
 mousePos    = kpos 0 0
@@ -71,12 +70,11 @@ KachelApp = new app
     onWillShowWin:      -> post.emit 'raiseKacheln'
     onOtherInstance:    -> post.emit 'raiseKacheln'
     onShortcut:         -> post.emit 'raiseKacheln'
-    onQuit:             -> clearInterval mouseTimer
+    onQuit:             -> klog 'onQuit'; data.detach()
     resizable:          false
     maximizable:        false
     closable:           false
     saveBounds:         false
-    onQuit: -> klog 'onQuit'; data.detach()
     onWinReady: (win) =>
         
         Bounds.init()
@@ -113,20 +111,17 @@ KachelApp = new app
         for a in _.keys keys
             electron.globalShortcut.register keys[a], ((a) -> -> action a)(a)
         
-        kachelIds = prefs.get 'kacheln' []
-        for kachelId in kachelIds
-            if kachelId not in ['appl' 'folder' 'file']
-                post.emit 'newKachel' kachelId
-                        
         post.on 'mouse'    onMouse
         post.on 'keyboard' onKeyboard        
         
-startData = ->
-    
-    getSwitch()
-    Bounds.update()
-    data.start()
-    
+        kachelSet = new KachelSet win.id
+        kachelSet.load()
+        
+        post.on 'setLoaded' ->
+        
+            getSwitch()
+            Bounds.update()
+            data.start()
         
 #  0000000  000   000  000  000000000   0000000  000   000  
 # 000       000 0 000  000     000     000       000   000  
@@ -307,7 +302,7 @@ onMouse = (mouseData) ->
 # 000  000   000          000     000   000  000   000  000   000  000   000  000   000  
 # 000   000  00000000     000     0000000     0000000   000   000  000   000  0000000    
 
-onKeyboard = (data) ->
+onKeyboard = ->
     
 #  0000000   00000000   00000000    0000000  
 # 000   000  000   000  000   000  000       
@@ -321,11 +316,11 @@ onApps = (apps) ->
     # klog apps
     active = {}
     for app in apps
-        if wid = kachelWids[slash.path app]
+        if wid = kachelSet.wids[slash.path app]
             active[slash.path app] = wid
             
     if not _.isEqual activeApps, active
-        for kid,wid of kachelWids
+        for kid,wid of kachelSet.wids
             if active[kid] and not activeApps[kid]
                 post.toWin wid, 'app' 'activated' kid
             else if not active[kid] and activeApps[kid]
@@ -371,19 +366,21 @@ onWins = (wins) ->
     pl = {}
     for win in wins
         wp = slash.path win.path
-        if wid = kachelWids[wp]
+        if wid = kachelSet.wids[wp]
             pl[wp] ?= []
             pl[wp].push win
          
     for kid,wins of pl
         if not _.isEqual activeWins[kid], wins
-            activeWins[kid] = pl[kid]
-            post.toWin kachelWids[kid], 'win' wins
-            
+            if kachelSet.wids[kid]
+                activeWins[kid] = pl[kid]
+                post.toWin kachelSet.wids[kid], 'win' wins
+                
     for kid,wins of activeWins
         if not pl[kid]
-            post.toWin kachelWids[kid], 'win' []
-            activeWins[kid] = []
+            if kachelSet.wids[kid]
+                post.toWin kachelSet.wids[kid], 'win' []
+                activeWins[kid] = []
         
 post.on 'wins' onWins
 post.onGet 'wins' -> lastWins
@@ -399,8 +396,8 @@ post.on 'newKachel' (id) ->
 
     return if id == 'main'
     
-    if kachelWids[id]
-        raiseWin winWithId kachelWids[id]
+    if kachelSet.wids[id]
+        raiseWin winWithId kachelSet.wids[id]
         return
     
     kachelSize = 1
@@ -447,11 +444,14 @@ post.on 'newKachel' (id) ->
         
     win.loadURL indexData(html), baseURLForDataURL:"file://#{__dirname}/../js/index.html"
     
-    win.webContents.on 'dom-ready' (event) ->
+    win.kachelId = id
+    
+    win.webContents.on 'dom-ready' ((id) -> (event) ->
         wid = event.sender.id
         post.toWin wid, 'initKachel' id
         winWithId(wid).show()
         Bounds.update()
+        )(id)
           
     win.on 'close' onKachelClose
     win.setHasShadow false    
@@ -479,21 +479,26 @@ post.on 'kachelMove' (dir, wid) ->
 
     kachel = winWithId wid
     Bounds.moveKachel kachel, dir
+        
+post.on 'updateBounds' (kachelId) ->
+    
+    wid = kachelSet.wids[kachelId]
+    klog 'updateBounds' wid, kachelId
+    setId = prefs.get 'set' ''
+    bounds = prefs.get "bounds#{setId}▸#{kachelId}"
+    if bounds?
+        Bounds.setBounds winWithId(wid), bounds
+                
+    if activeApps[kachelId]
+        post.toWin wid, 'app' 'activated' kachelId
     
 post.on 'kachelBounds' (wid, kachelId) ->
     
-    bounds = prefs.get "bounds▸#{kachelId}"
+    setId = prefs.get 'set' ''
+    bounds = prefs.get "bounds#{setId}▸#{kachelId}"
     if bounds?
         Bounds.setBounds winWithId(wid), bounds
-        
-    kachelDict[wid] = kachelId
-    kachelWids[kachelId] = wid
-    
-    if kachelIds
-        if kachelIds.length == _.size kachelDict
-            kachelIds = null
-            setTimeout startData, 2000
-    
+                
     if activeApps[kachelId]
         post.toWin wid, 'app' 'activated' kachelId
         
@@ -575,10 +580,7 @@ onKachelClose = (event) ->
         hoverKachel = null
         
     Bounds.remove kachel
-        
-    if kachelId = kachelDict[kachel.id]
-        delete kachelWids[kachelId]
-        delete kachelDict[kachel.id]
+    kachelSet.remove kachel        
         
     setTimeout (-> post.emit 'bounds' 'dirty'), 200
                     

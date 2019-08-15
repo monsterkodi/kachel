@@ -101,8 +101,8 @@ class Kachel extends win
         for i in [1..6]
             document.body.classList.remove "kachelSize#{i}"
         document.body.classList.add "kachelSize#{@kachelSize()+1}"
-        klog 'onSaveBounds' @kachelSize()+1, @win.getBounds()
-        prefs.set "bounds▸#{@kachelId}" @win.getBounds()
+        setId = prefs.get 'set' ''
+        prefs.set "bounds#{setId}▸#{@kachelId}" @win.getBounds()
         @onBounds()
         
     onHover: (event) => document.body.classList.add 'kachelHover'
@@ -119,17 +119,14 @@ class Kachel extends win
             
         @onClose event
         
-    onInitKachel: =>
+    onInitKachel: (@kachelId) =>
            
-        if @kachelId != 'main'
-            kacheln = prefs.get 'kacheln' []
-            if @kachelId not in kacheln
-                kacheln.push @kachelId 
-                prefs.set 'kacheln' kacheln
-        
+        # klog 'onInitKachel @kachelId' @kachelId
+                
         @win.setTitle "kachel #{@kachelId}"
                 
         post.toMain 'kachelBounds' @id, @kachelId
+        post.toMain 'kachelLoad' @id, @kachelId
     
     onLoad:   -> # to be overridden in subclasses
     onMove:   -> # to be overridden in subclasses

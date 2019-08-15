@@ -48,7 +48,7 @@ class File extends Kachel
         else
             @setIcon iconPath
         
-        super
+        super @kachelId
                           
     # 00000000  000   000  00000000  
     # 000        000 000   000       

@@ -16,7 +16,7 @@ class Data
 
     @: ->
         
-        if os.platform() != 'darwin'
+        if os.platform() == 'win32'
             @hookProc  = wxw 'hook' 'proc'
             @hookInput = wxw 'hook' 'input'
             @hookInfo  = wxw 'hook' 'info'
@@ -31,7 +31,11 @@ class Data
         
     start: ->
         
-        @udp = udp port:65432 onMsg:@onUDP
+        return if @udp
+        
+        klog 'Data.start'
+        
+        @udp = new udp port:65432 onMsg:@onUDP
         setTimeout @slowTick, 1000
         
     detach: ->

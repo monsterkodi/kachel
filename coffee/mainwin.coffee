@@ -26,6 +26,8 @@ class MainWin extends Kachel
         
     onClick: -> post.toMain 'newKachel' 'default'
     
+    onMiddleClick: -> post.toMain 'toggleSet'
+    
     onContextMenu: => post.toMain 'raiseKacheln'
 
     # 0000000     0000000   000000000  

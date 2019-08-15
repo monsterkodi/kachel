@@ -136,7 +136,6 @@ class Bounds
             info = @infos[index]
             if info.kachel == kachel
                 @infos.splice index, 1
-                klog "removing kachel #{index}" kachel.id
                 return
     
     #  0000000   0000000  00000000   00000000  00000000  000   000  

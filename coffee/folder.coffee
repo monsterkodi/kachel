@@ -57,7 +57,7 @@ class Folder extends Kachel
             name = elem 'div' class:'foldername' text:slash.base folder
             @main.appendChild name
         
-        super
+        super @kachelId
        
     # 000000000  00000000    0000000    0000000  000   000  
     #    000     000   000  000   000  000       000   000  
@@ -77,8 +77,7 @@ class Folder extends Kachel
     
     checkTrash: (trashFolder) =>
         
-        if os.platform() == 'win23'
-            @showTrashDot wxw 'trash' 'count'
+        @showTrashDot wxw 'trash' 'count'
         
     onContextMenu: => 
         

@@ -43,7 +43,7 @@ class Konrad extends Kachel
         @udp = new udp onMsg:@onMsg, port:9559
         
         @sleepIcon()
-        super
+        super @kachelId
         
     onMsg: (msg) =>
         
