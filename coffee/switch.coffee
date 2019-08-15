@@ -39,7 +39,7 @@ getApps = ->
         continue if info.title == 'wxw-switch'
         file = slash.file info.path
         if file == 'ApplicationFrameHost.exe'
-            name = last info.title.split ' ?- '
+            name = last info.title.split '- '
             if name in ['Calendar' 'Mail']
                 apps.push name if name not in apps
             else if info.title in ['Settings' 'Calculator' 'Microsoft Store']
@@ -51,8 +51,10 @@ getApps = ->
         if proc.path not in apps
             base = slash.base proc.path
             continue if base in ['kappo' 'cmd']
+            continue if base.startsWith 'ServiceHub'
             if slash.fileExists pngPath proc.path
                 apps.push proc.path
+    # klog apps
     apps
     
 # 00000000   000   000   0000000   
@@ -77,6 +79,9 @@ winRect = (numApps) ->
     border = 20
     width  = (as+border)*numApps+border
     height = as+border*2
+    
+    if width > ss.width
+        width = Math.floor(ss.width / (as+border)) * (as+border) + border
     
     x:      parseInt (ss.width-width)/2
     y:      parseInt (ss.height-height)/2
@@ -343,7 +348,7 @@ onKeyUp = (event) ->
                 ), 20
             return
         
-        klog "modifiers >#{modifiers}<"
+        # klog "modifiers >#{modifiers}<"
         activate()
 
 # 000   000  00000000  000   000  000000000   0000000   00000000   00000000   

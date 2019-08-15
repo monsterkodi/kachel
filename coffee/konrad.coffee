@@ -62,19 +62,5 @@ class Konrad extends Kachel
     idleIcon:  => @setIcon "#{__dirname}/../img/konrad_idle.png"
     errorIcon: => @setIcon "#{__dirname}/../img/konrad_error.png"
     sleepIcon: => @setIcon "#{__dirname}/../img/konrad_sleep.png"
-                
-    # 000   0000000   0000000   000   000  
-    # 000  000       000   000  0000  000  
-    # 000  000       000   000  000 0 000  
-    # 000  000       000   000  000  0000  
-    # 000   0000000   0000000   000   000  
-    
-    setIcon: (iconPath) =>
-        
-        return if not iconPath
-        img = elem 'img' class:'applicon' src:slash.fileUrl slash.path iconPath
-        img.ondragstart = -> false
-        @main.innerHTML = ''
-        @main.appendChild img
-                   
+                                   
 module.exports = Konrad

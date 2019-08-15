@@ -149,8 +149,6 @@ class Appl extends Kachel
         appName = slash.base @kachelId
         pngPath = slash.resolve slash.join iconDir, appName + ".png"
         
-        # klog 'refreshIcon' @kachelId, pngPath
-        
         appIcon @kachelId, pngPath
         @setIcon pngPath
         
@@ -165,10 +163,7 @@ class Appl extends Kachel
     setIcon: (iconPath) =>
         
         return if not iconPath
-        img = elem 'img' class:'applicon' src:slash.fileUrl iconPath
-        img.ondragstart = -> false
-        @main.innerHTML = ''
-        @main.appendChild img
+        super
         @updateDot()
                            
 module.exports = Appl

@@ -24,15 +24,15 @@ class Default extends Kachel
     onLoad: =>
 
         children = [
-            elem 'img' class:'grid3x3_11' click:@openApp,    src:__dirname + '/../img/app.png'   
-            elem 'img' class:'grid3x3_12' click:@openFolder, src:__dirname + '/../img/folder.png'    
-            elem 'img' class:'grid3x3_13' click:@openVolume, src:__dirname + '/../img/volume.png'
-            elem 'img' class:'grid3x3_21' click:@openDish,   src:__dirname + '/../img/dish.png' 
-            # elem 'img' class:'grid3x3_22' click:@openInfo,   src:__dirname + '/../img/info.png' 
-            elem 'img' class:'grid3x3_23' click:@openSaver,  src:__dirname + '/../img/saver.png' 
-            elem 'img' class:'grid3x3_31' click:@openClock,  src:__dirname + '/../img/clock.png'     
-            elem 'img' class:'grid3x3_32' click:@openAlarm,  src:__dirname + '/../img/alarm.png'     
-            elem 'img' class:'grid3x3_33' click:@openTools,  src:__dirname + '/../img/tools.png'     
+            elem 'img' class:'grid3x3_11' click:@openApp,     src:__dirname + '/../img/app.png'   
+            elem 'img' class:'grid3x3_12' click:@openFolder,  src:__dirname + '/../img/folder.png'    
+            elem 'img' class:'grid3x3_13' click:@openClean,   src:__dirname + '/../img/clean.png'     
+            elem 'img' class:'grid3x3_21' click:@openDish,    src:__dirname + '/../img/dish.png' 
+            elem 'img' class:'grid3x3_22' click:@openTaskbar, src:__dirname + '/../img/taskbar.png' 
+            elem 'img' class:'grid3x3_23' click:@openSaver,   src:__dirname + '/../img/saver.png' 
+            elem 'img' class:'grid3x3_31' click:@openClock,   src:__dirname + '/../img/clock.png'     
+            elem 'img' class:'grid3x3_32' click:@openAlarm,   src:__dirname + '/../img/alarm.png'     
+            elem 'img' class:'grid3x3_33' click:@openVolume,  src:__dirname + '/../img/volume.png'
         ]
         
         for child in children
@@ -42,13 +42,14 @@ class Default extends Kachel
     
         @main.appendChild grid
         
-    openClock:  => post.toMain 'newKachel' 'clock'   
-    openVolume: => post.toMain 'newKachel' 'volume'   
-    openAlarm:  => post.toMain 'newKachel' 'alarm'   
-    openTools:  => post.toMain 'newKachel' 'tools'
-    openSaver:  => post.toMain 'newKachel' 'saver'   
-    openDish:   => post.toMain 'newKachel' 'sysdish'
-    onClick:    => log 'onClick'
+    openClock:   => post.toMain 'newKachel' 'clock'   
+    openVolume:  => post.toMain 'newKachel' 'volume'   
+    openAlarm:   => post.toMain 'newKachel' 'alarm'   
+    openClean:   => post.toMain 'newKachel' 'clean'
+    openSaver:   => post.toMain 'newKachel' 'saver'   
+    openDish:    => post.toMain 'newKachel' 'sysdish'
+    openTaskbar: => post.toMain 'newKachel' 'taskbar'
+    onClick:     => log 'onClick'
     
     # 0000000    000  00000000   
     # 000   000  000  000   000  

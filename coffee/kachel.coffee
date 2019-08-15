@@ -141,6 +141,20 @@ class Kachel extends win
     onClose:  -> # to be overridden in subclasses
     onBounds: -> # to be overridden in subclasses
         
+    # 000   0000000   0000000   000   000  
+    # 000  000       000   000  0000  000  
+    # 000  000       000   000  000 0 000  
+    # 000  000       000   000  000  0000  
+    # 000   0000000   0000000   000   000  
+    
+    setIcon: (iconPath) =>
+        
+        return if not iconPath
+        img = elem 'img' class:'applicon' src:slash.fileUrl slash.path iconPath
+        img.ondragstart = -> false
+        @main.innerHTML = ''
+        @main.appendChild img
+    
     # 00     00  00000000  000   000  000   000
     # 000   000  000       0000  000  000   000
     # 000000000  0000000   000 0 000  000   000

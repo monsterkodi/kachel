@@ -93,19 +93,5 @@ class Folder extends Kachel
         @checkTrash trashFolder
         
         setInterval @checkTrash, 2000
-        
-    # 000   0000000   0000000   000   000  
-    # 000  000       000   000  0000  000  
-    # 000  000       000   000  000 0 000  
-    # 000  000       000   000  000  0000  
-    # 000   0000000   0000000   000   000  
-    
-    setIcon: (iconPath) =>
-        
-        return if not iconPath
-        img = elem 'img' class:'applicon' src:slash.fileUrl iconPath
-        img.ondragstart = -> false
-        @main.innerHTML = ''
-        @main.appendChild img
-        
+                
 module.exports = Folder

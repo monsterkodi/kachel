@@ -37,12 +37,14 @@ class Volume extends Kachel
         if event.deltaY > 0 then delta = 2 else delta = -3
         
         @volume = clamp 0 100 @volume - delta
+        
         @setVolume @volume
     
     setVolume: (v) ->
         
         @mute = false
         @volume = parseInt wxw('volume' "#{parseInt clamp 0 100 v}").trim()
+        
         @updateVolume()
         
     onContextMenu: (event) => 

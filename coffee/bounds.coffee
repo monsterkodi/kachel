@@ -14,7 +14,7 @@ electron = require 'electron'
 
 class Bounds
 
-    @kachelSizes: [72 108 144 216]
+    @kachelSizes: [36 72 108 144 216]
     @infos: null
     
     @screenWidth:  0
@@ -40,12 +40,12 @@ class Bounds
     #  0000000  0000000  00000000  000   000  000   000  
     
     @cleanTiles: =>
-        
+        klog 'cleanTiles', @infos.length
         @update()
         for info in @infos
             kb = info.bounds
             
-            if kb.width  not in @kachelSizes
+            if kb.width not in @kachelSizes
                 kb.width = @kachelSizes[@kachelSize info.kachel]
                 @setBounds info.kachel, kb
                 return @cleanTiles()
@@ -56,6 +56,7 @@ class Bounds
                 return @cleanTiles()
                 
             if overlap = @overlapInfo info.kachel, kb
+                
                 ox = kb.x
                 nx = ox - 72
                 kb.x = nx
@@ -70,7 +71,7 @@ class Bounds
                         nx += 72
                         kb.x = nx
                         
-                if @overlapInfo info.kachel, kb
+                if not @overlapInfo info.kachel, kb
                     @snap info.kachel, kb
                     return @cleanTiles()
                 
@@ -168,8 +169,8 @@ class Bounds
     
     @overlap: (a,b) ->
         
-        if not a or not b
-            return false
+        if not a or not b then return false
+            
         not (a.x > b.x+b.width-1  or
              b.x > a.x+a.width-1  or
              a.y > b.y+b.height-1 or

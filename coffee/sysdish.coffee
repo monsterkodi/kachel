@@ -6,7 +6,7 @@
 0000000      000     0000000   0000000    000  0000000   000   000  
 ###
 
-{ post, empty, clamp, deg2rad, elem, klog, _ } = require 'kxk'
+{ post, empty, clamp, last, deg2rad, elem, klog, _ } = require 'kxk'
 
 utils   = require './utils'
 Kachel  = require './kachel'
@@ -86,6 +86,9 @@ class Sysdish extends Kachel
                                 hist.push [@data.mem.active/@data.mem.total, @data.mem.used/@data.mem.total]
                 when 'cpu' then hist.push [@data.cpu.sys,    @data.cpu.usr]
                 when 'net' then hist.push [@data.net.rx_sec, @data.net.tx_sec]
+             
+            for m in [0..1]
+                @max[n][m] = Math.max last(hist)[m], @max[n][m]
                 
             hist.shift() while hist.length > @width
                 
@@ -111,7 +114,7 @@ class Sysdish extends Kachel
             canvas = @canvas[n]
             canvas.height = canvas.height
             ctx = canvas.getContext '2d'
-            max = [@max[n][0], @max[n][1]]
+            
             for m in [0,1]
                 ctx.fillStyle = "rgb(#{@colors[n][m][0]}, #{@colors[n][m][1]}, #{@colors[n][m][2]})"
                 for i in [0...hist.length]
@@ -124,7 +127,7 @@ class Sysdish extends Kachel
                             h = @height * hist[i][1]
                             ctx.fillRect @width-hist.length+i, @height-h, 2, h
                     else
-                        @max[n][m] = Math.max hist[i][m], @max[n][m]
+                        max = [@max[n][0], @max[n][1]]
                         h = (hist[i][m] / max[m]) * @height/2
                         if m 
                             ctx.fillRect @width-hist.length+i, @height/2-h, 2, h
