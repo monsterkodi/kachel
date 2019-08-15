@@ -98,10 +98,10 @@ class Kachel extends win
     
     onSaveBounds: =>
         
-        for i in [1..4]
+        for i in [1..6]
             document.body.classList.remove "kachelSize#{i}"
         document.body.classList.add "kachelSize#{@kachelSize()+1}"
-        
+        klog 'onSaveBounds' @kachelSize()+1, @win.getBounds()
         prefs.set "bounds▸#{@kachelId}" @win.getBounds()
         @onBounds()
         

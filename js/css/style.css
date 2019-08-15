@@ -108,15 +108,21 @@ svg {
   background-color: #e8564e;
 }
 .kachelSize1 .calendarMonth {
-  font-size: 9px;
+  font-size: 4px;
 }
 .kachelSize2 .calendarMonth {
-  font-size: 13px;
+  font-size: 6px;
 }
 .kachelSize3 .calendarMonth {
-  font-size: 18px;
+  font-size: 9px;
 }
 .kachelSize4 .calendarMonth {
+  font-size: 13px;
+}
+.kachelSize5 .calendarMonth {
+  font-size: 18px;
+}
+.kachelSize6 .calendarMonth {
   font-size: 27px;
 }
 .calendarDay {
@@ -130,15 +136,21 @@ svg {
   background-color: #f8f8f8;
 }
 .kachelSize1 .calendarDay {
-  font-size: 20px;
+  font-size: 9px;
 }
 .kachelSize2 .calendarDay {
-  font-size: 30px;
+  font-size: 14px;
 }
 .kachelSize3 .calendarDay {
-  font-size: 42px;
+  font-size: 20px;
 }
 .kachelSize4 .calendarDay {
+  font-size: 30px;
+}
+.kachelSize5 .calendarDay {
+  font-size: 42px;
+}
+.kachelSize6 .calendarDay {
   font-size: 62px;
 }
 .kachelImg {

@@ -442,8 +442,6 @@ post.on 'newKachel' (id) ->
         backgroundColor:    '#181818'
         width:              Bounds.kachelSizes[kachelSize]
         height:             Bounds.kachelSizes[kachelSize]
-        maxWidth:           Bounds.kachelSizes[kachelSize]
-        maxHeight:          Bounds.kachelSizes[kachelSize]
         webPreferences: 
             nodeIntegration: true
         

@@ -261,7 +261,6 @@ class Sysdish extends Kachel
 
          @memuNew = 360*@data.mem.used/@data.mem.total
          @memaNew = 360*@data.mem.active/@data.mem.total
-
         
     # 0000000     0000000   000   000  000   000  0000000     0000000  
     # 000   000  000   000  000   000  0000  000  000   000  000       

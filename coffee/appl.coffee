@@ -99,7 +99,6 @@ class Appl extends Kachel
 
     onMiddleClick: (event) => 
         
-        # if os.platform() == 'win32'
         infos = wxw 'info' slash.file @kachelId
         if infos.length
             maximized = false

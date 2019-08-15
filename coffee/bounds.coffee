@@ -14,7 +14,7 @@ electron = require 'electron'
 
 class Bounds
 
-    @kachelSizes: [36 72 108 144 216]
+    @kachelSizes: [36 48 72 108 144 216]
     @infos: null
     
     @screenWidth:  0
@@ -22,7 +22,6 @@ class Bounds
     @screenTop:    0
     
     @setBounds: (kachel, b) ->
-        
         kachel.setBounds b
         post.toWin kachel.id, 'saveBounds'
         post.emit 'bounds' kachel, b
@@ -78,7 +77,7 @@ class Bounds
     @kachelSize: (k) ->
         kb = k.getBounds()
         size = 0        
-        while size < @kachelSizes.length-1 and Math.abs(kb.width - @kachelSizes[size]) > 18
+        while size < @kachelSizes.length-1 and Math.abs(kb.width - @kachelSizes[size]) > 8
             size++
         size
                 
