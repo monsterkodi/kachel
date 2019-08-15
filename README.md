@@ -3,7 +3,7 @@
 <br>
 <br>
 <br>
-<table bgcolor="#333"><tr>
+<table bgcolor="#333" style="background-color:#333"><tr>
 <td>
 <p align="center"><img src="img/screenshot_mac.png"></p></td>
 <td>
