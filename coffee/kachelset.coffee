@@ -116,7 +116,7 @@ class KachelSet
             post.emit 'newKachel' kachelId
             
         if @kachelIds.length == 0
-            klog 'loaded ++ focus main'
+            # klog 'loaded ++ focus main'
             @win('main').focus()
             post.emit 'setLoaded'
            
@@ -140,7 +140,7 @@ class KachelSet
             if index >= 0
                 @kachelIds.splice index, 1
                 if @kachelIds.length == 0
-                    klog 'set loaded -- focus main'
+                    # klog 'set loaded -- focus main'
                     @win('main').focus()
                     post.emit 'setLoaded'
             else

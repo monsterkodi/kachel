@@ -585,7 +585,7 @@ onKachelClose = (event) ->
 # 00     00  000  000   000  0000000   
 
 wins      = -> BrowserWindow.getAllWindows()
-kacheln   = -> wins().filter (w) -> w.id != swtch?.id
+kacheln   = -> wins().filter (w) -> w.id != swtch?.id and w.isVisible()
 activeWin = -> BrowserWindow.getFocusedWindow()
 winWithId = (id) -> BrowserWindow.fromId id
 

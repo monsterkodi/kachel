@@ -385,8 +385,8 @@ onKeyUp = (event) ->
         else
             if empty(combo) and lastCombo == 'command'
                 activate()
-            else
-                klog 'combo' combo, 'lastCombo' lastCombo
+            # else
+                # klog 'combo' combo, 'lastCombo' lastCombo
 
 # 000   000  00000000  000   000  000000000   0000000   00000000   00000000   
 # 0000  000  000        000 000      000     000   000  000   000  000   000  
