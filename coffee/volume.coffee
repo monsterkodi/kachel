@@ -21,7 +21,7 @@ class Volume extends Kachel
         @mute = false
         @main.addEventListener 'mousewheel' @onWheel
     
-        @volume = parseInt wxw('volume').trim()
+        @volume = parseInt wxw 'volume'
             
     onLeftClick: (event) =>
         
@@ -43,13 +43,13 @@ class Volume extends Kachel
     setVolume: (v) ->
         
         @mute = false
-        @volume = parseInt wxw('volume' "#{parseInt clamp 0 100 v}").trim()
+        @volume = parseInt wxw 'volume' "#{parseInt clamp 0 100 v}"
         
         @updateVolume()
         
     onContextMenu: (event) => 
         
-        current = parseInt wxw('volume').trim()
+        current = parseInt wxw 'volume'
         if @volume == current
             @mute = true
             wxw 'volume' 0

@@ -138,7 +138,7 @@ start = (opt={}) ->
                 bottom:         0px;
                 right:          0px;
                 overflow:       hidden;
-                background:     rgb(16,16,16);
+                background:     rgb(32,32,32);
                 border-radius:  6px;
                 padding:        10px;
             }
@@ -147,12 +147,13 @@ start = (opt={}) ->
                 width:          128px;
                 height:         128px;
                 padding:        10px;
+                border-radius:  4px;
             }            
             .app:hover {
-                background:     rgb(20,20,20);
+                background:     rgb(28,28,28);
             }
             .app.highlight {
-                background:     rgb(24,24,24);
+                background:     rgb(20,20,20);
             }
         </style>
         </head>
@@ -216,7 +217,6 @@ activate = ->
                     return
             childp.spawn 'start', [{Calculator:'calculator:' Settings:'ms-settings:' 'Microsoft Store':'ms-windows-store:'}[activeApp.id]], encoding:'utf8' shell:true detached:true stdio:'inherit'
         else
-            # klog 'wxw launch' activeApp.id
             wxw 'launch' activeApp.id
                 
     done()
@@ -255,7 +255,7 @@ quitApp = ->
     win  = electron.remote.getCurrentWindow()
     win.setBounds wr
     clearTimeout activationTimer
-    klog 'wxw terminate' "\"#{activeApp.id}\""
+    # klog 'wxw terminate' "\"#{activeApp.id}\""
     if valid wxw 'terminate' "\"#{activeApp.id}\""
         oldActive = activeApp
         nextApp()
@@ -317,36 +317,41 @@ onKeyDown = (event) ->
             when 'alt+ctrl+/'     then return post.toMain 'showAbout'
             when 'alt+ctrl+i'     then return win.webContents.openDevTools()
         
+# 000   000  00000000  000   000  000   000  00000000   
+# 000  000   000        000 000   000   000  000   000  
+# 0000000    0000000     00000    000   000  00000000   
+# 000  000   000          000     000   000  000        
+# 000   000  00000000     000      0000000   000        
+
 onKeyUp = (event) ->        
     
     { mod, key, char, combo } = keyinfo.forEvent event
         
-    # klog 'onKeyUp' combo, lastCombo, event.metaKey, event.altKey, event.ctrlKey, event.shiftKey
+    klog 'up combo' combo, 'lastCombo' lastCombo, 'mod' event.metaKey, event.altKey, event.ctrlKey, event.shiftKey
     
     if os.platform() == 'win32'
         
         if empty(combo) then activate()
         
-    else if os.platform() == 'darwin' # mac triggers keyup on first mouse move
+    else # mac triggers keyup on first mouse move
     
         if empty(combo) and empty(lastCombo)
-        
-            # modifiers = wxw('key').trim()
+            
             activationTimer = setTimeout (->
                 mousePos = post.get 'mouse'
-                # klog 'mousePos' kpos(mousePos), startMouse, kpos(mousePos).distSquare startMouse
-                if kpos(mousePos).distSquare(startMouse) == 0
-                    if valid(lastCombo) and lastCombo not in ['command']
-                        startMouse = mousePos
-                        lastCombo = null
-                        # klog 'comboactive' lastCombo
+                if kpos(mousePos).distSquare(startMouse) == 0 # mouse didn't move
+                    if valid(lastCombo) and lastCombo not in ['command'] # key was released
+                        lastCombo = null 
                         return
-                    # klog 'mouse not moved! activate!'
                     activate()
                 else
-                    # klog 'mouse moved! skip!'
                     startMouse = mousePos
                 ), 20
+        else
+            if empty(combo) and lastCombo == 'command'
+                activate()
+            else
+                klog 'combo' combo, 'lastCombo' lastCombo
 
 # 000   000  00000000  000   000  000000000   0000000   00000000   00000000   
 # 0000  000  000        000 000      000     000   000  000   000  000   000  
@@ -384,18 +389,20 @@ onNextApp = ->
             loadApps()
             
             startMouse = post.get 'mouse'
-            # klog 'onNextApp' startMouse
             
-            if empty wxw('key').trim() # command key released before window was shown
+            if empty wxw 'key'  # command key released before window was shown
                 activate()
             else
+                activationTimer = null
                 wr = winRect apps.length
                 win.setBounds wr
-                klog apps.length, wr.width
                 setImmediate ->
                     win.show()
                     win.focus()
                     a.focus()
+                setTimeout (-> # sometimes the key up doesn't get catched 
+                    if not activationTimer and empty wxw 'key'
+                        activate()), 10
         
 # 000  000   000  000  000000000    000   000  000  000   000  
 # 000  0000  000  000     000       000 0 000  000  0000  000  

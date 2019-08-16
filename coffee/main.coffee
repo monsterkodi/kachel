@@ -87,22 +87,42 @@ KachelApp = new app
                 
         data = new Data
         
-        keys = 
-            left:       'alt+ctrl+left'
-            right:      'alt+ctrl+right'
-            up:         'alt+ctrl+up'
-            down:       'alt+ctrl+down'
-            topleft:    'alt+ctrl+1'
-            botleft:    'alt+ctrl+2'
-            topright:   'alt+ctrl+3'
-            botright:   'alt+ctrl+4'
-            top:        'alt+ctrl+5'
-            bot:        'alt+ctrl+6'
-            minimize:   'alt+ctrl+m'
-            close:      'alt+ctrl+w'
-            taskbar:    'alt+ctrl+t'
-            appswitch:  'ctrl+tab'
-            screenzoom: 'alt+z'
+        if os.platform() == 'win32'
+            keys = 
+                left:       'alt+ctrl+left'
+                right:      'alt+ctrl+right'
+                up:         'alt+ctrl+up'
+                down:       'alt+ctrl+down'
+                topleft:    'alt+ctrl+1'
+                botleft:    'alt+ctrl+2'
+                topright:   'alt+ctrl+3'
+                botright:   'alt+ctrl+4'
+                top:        'alt+ctrl+5'
+                bot:        'alt+ctrl+6'
+                minimize:   'alt+ctrl+m'
+                maximize:   'alt+ctrl+shift+m'
+                close:      'alt+ctrl+w'
+                taskbar:    'alt+ctrl+t'
+                appswitch:  'ctrl+tab'
+                screenzoom: 'alt+z'
+        else
+            keys = 
+                left:       'alt+command+left'
+                right:      'alt+command+right'
+                up:         'alt+command+up'
+                down:       'alt+command+down'
+                topleft:    'alt+command+1'
+                botleft:    'alt+command+2'
+                topright:   'alt+command+3'
+                botright:   'alt+command+4'
+                top:        'alt+command+5'
+                bot:        'alt+command+6'
+                minimize:   'alt+command+m'
+                maximize:   'alt+command+shift+m'
+                close:      'alt+command+w'
+                taskbar:    'alt+command+t'
+                appswitch:  'alt+tab'
+                screenzoom: 'alt+z'
             
         keys = prefs.get 'keys', keys
         prefs.set 'keys' keys
@@ -260,7 +280,11 @@ onMouse = (mouseData) ->
                 post.toWin hoverKachel, 'hover'
                     
             return
-           
+         
+    if hoverKachel
+        post.toWin hoverKachel, 'leave' if hoverKachel
+        hoverKachel = null
+    
     lockRaise = false
 
     if tmpTop and os.platform() == 'win32'
