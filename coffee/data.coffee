@@ -33,8 +33,6 @@ class Data
         
         return if @udp
         
-        klog 'Data.start'
-        
         @udp = new udp port:65432 onMsg:@onUDP
         setTimeout @slowTick, 1000
         

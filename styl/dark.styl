@@ -7,6 +7,7 @@
 
 bgColor             = #202020
 bgHover             = #222
+bgFocus             = #282828
 frameColor          = #222
 scrollHoverColor    = #b00
 titleRedColor       = #f00
@@ -17,39 +18,93 @@ textActiveColor     = #999
 textFocusColor      = #fff
 
 body
-    background-color        bgColor
-
-    border-top-color        #282828
-    &.mojave
-        border-top-color    #111
-    border-left-color       #282828
-    border-right-color      #181818
-    border-bottom-color     #181818
-
+    &:not(.kachelFocus)
+        animation-name      noFocusFrame
+        animation-duration  0.2s
+        
+        background-color        bgColor    
+        border-top-color        #282828
+        &.mojave
+            border-top-color    #111
+        border-left-color       #282828
+        border-right-color      #181818
+        border-bottom-color     #181818
+        
+        & #main
+            background-color    bgColor
+            animation-name      noFocusBackground
+            animation-duration  0.2s
+    
     &.kachelHover
         border-top-color    #333
         background-color    bgHover
         border-left-color   #333
         border-right-color  #111
         border-bottom-color #111
+        & #main
+            background-color     bgHover
     
     &.kachelFocus
+        animation-name      focusFrame
+        animation-duration  0.4s
+        background-color    bgFocus
         border-top-color    #555
         border-left-color   #555
         border-right-color  #000
         border-bottom-color #000
-    
+        & #main
+            background-color     bgFocus
+            animation-name      focusBackground
+            animation-duration  0.4s
+                
     &:active
         border-top-color    #000
         border-left-color   #000
         border-right-color  #444
         border-bottom-color #444
+     
+@keyframes focusFrame
+    from  
+        background-color    bgColor
+        border-top-color    #282828
+        border-left-color   #282828
+        border-right-color  #181818
+        border-bottom-color #181818
+    to    
+        background-color    bgFocus
+        border-top-color    #555
+        border-left-color   #555
+        border-right-color  #000
+        border-bottom-color #000
+        
+@keyframes focusBackground
+    from  
+        background-color    bgColor
+    to    
+        background-color    bgFocus
+
+@keyframes noFocusFrame
+    from  
+        background-color    bgFocus
+        border-top-color    #555
+        border-left-color   #555
+        border-right-color  #000
+        border-bottom-color #000
+    to    
+        background-color    bgColor
+        border-top-color    #282828
+        border-left-color   #282828
+        border-right-color  #181818
+        border-bottom-color #181818
+        
+@keyframes noFocusBackground
+    from  
+        background-color    bgFocus
+    to    
+        background-color    bgColor
         
 #main
     background-color     bgColor
-    
-body.kachelHover #main
-    background-color     bgHover
     
 //  0000000  000   000   0000000  0000000    000   0000000  000   000  
 // 000        000 000   000       000   000  000  000       000   000  

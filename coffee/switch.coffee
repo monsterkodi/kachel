@@ -129,6 +129,14 @@ start = (opt={}) ->
                 overflow:       hidden;
                 margin:         0;
             }
+            body.fadeOut {
+                animation-name: fadeOutAnim;
+                animation-duration: 0.45s;
+            }
+            body.fadeIn {
+                animation-name: fadeInAnim;
+                animation-duration: 0.25s;
+            }
             .apps {
                 opacity:        1;
                 white-space:    nowrap;
@@ -155,6 +163,25 @@ start = (opt={}) ->
             .app.highlight {
                 background:     rgb(20,20,20);
             }
+            
+            @keyframes fadeOutAnim {
+              from {
+                opacity: 1;
+              }
+              to {
+                opacity: 0;
+              }
+            }
+
+            @keyframes fadeInAnim {
+              from {
+                opacity: 0;
+              }
+              to {
+                opacity: 1;
+              }
+            }
+            
         </style>
         </head>
         <body>
@@ -185,7 +212,15 @@ start = (opt={}) ->
 # 000   000  000   000  000  0000  000       
 # 0000000     0000000   000   000  00000000  
 
-done = -> electron.remote.getCurrentWindow().hide()
+done = -> 
+    
+    document.body.classList.remove 'fadeIn'
+    
+    setTimeout (->
+        document.body.classList.remove 'fadeOut'
+        electron.remote.getCurrentWindow().hide()), 450
+        
+    document.body.classList.add 'fadeOut'
 
 #  0000000    0000000  000000000  000  000   000   0000000   000000000  00000000  
 # 000   000  000          000     000  000   000  000   000     000     000       
@@ -327,7 +362,7 @@ onKeyUp = (event) ->
     
     { mod, key, char, combo } = keyinfo.forEvent event
         
-    klog 'up combo' combo, 'lastCombo' lastCombo, 'mod' event.metaKey, event.altKey, event.ctrlKey, event.shiftKey
+    # klog 'up combo' combo, 'lastCombo' lastCombo, 'mod' event.metaKey, event.altKey, event.ctrlKey, event.shiftKey
     
     if os.platform() == 'win32'
         
@@ -371,6 +406,8 @@ onNextApp = ->
         a.focus()
         
         lastCombo = null
+        
+        document.body.classList.add 'fadeIn'
         
         if os.platform() == 'win32'
             win.setPosition -10000,-10000 # move window offscreen before show

@@ -18,7 +18,6 @@ BrowserWindow = electron.BrowserWindow
 
 dragging    = false
 mainWin     = null
-focusKachel = null
 hoverKachel = null
 kachelSet   = null
 data        = null
@@ -66,11 +65,11 @@ KachelApp = new app
     height:             Bounds.kachelSizes[0]
     acceptFirstMouse:   true
     prefsSeperator:     '▸'
-    onActivate:         -> klog 'onActivate'; post.emit 'raiseKacheln'
+    onActivate:         -> post.emit 'raiseKacheln'
     onWillShowWin:      -> post.emit 'raiseKacheln'
     onOtherInstance:    -> post.emit 'raiseKacheln'
     onShortcut:         -> post.emit 'raiseKacheln'
-    onQuit:             -> klog 'onQuit'; data.detach()
+    onQuit:             -> data.detach()
     resizable:          false
     maximizable:        false
     closable:           false
@@ -540,13 +539,14 @@ post.on 'raiseKacheln' ->
     
     lockRaise = true
     
-    fk = focusKachel
+    fk = kachelSet.focusKachel
 
     if os.platform() == 'win32'
         wxw 'raise' 'kachel.exe'
     else
         for win in kacheln()
-            win.show()
+            if win.isVisible()
+                win.show()
     
     if not tmpTop
         raiseWin fk ? mainWin
@@ -565,18 +565,11 @@ post.on 'hide' -> for w in kacheln() then w.hide()
 # 000        0000000    0000000   0000000   0000000   
 
 post.on 'focusNeighbor' (winId, direction) -> raiseWin Bounds.neighborKachel winWithId(winId), direction
-   
-post.on 'kachelFocus' (winId) ->
-    
-    if winId != mainWin.id
-        focusKachel = winWithId winId
-        
+           
 onKachelClose = (event) ->
         
     kachel = event.sender
-    if focusKachel == kachel
-        focusKachel = null
-        
+            
     if hoverKachel == kachel.id
         hoverKachel = null
         

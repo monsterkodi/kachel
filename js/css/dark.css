@@ -1,12 +1,19 @@
-body {
+body:not(.kachelFocus) {
+  animation-name: noFocusFrame;
+  animation-duration: 0.2s;
   background-color: #202020;
   border-top-color: #282828;
   border-left-color: #282828;
   border-right-color: #181818;
   border-bottom-color: #181818;
 }
-body.mojave {
+body:not(.kachelFocus).mojave {
   border-top-color: #111;
+}
+body:not(.kachelFocus) #main {
+  background-color: #202020;
+  animation-name: noFocusBackground;
+  animation-duration: 0.2s;
 }
 body.kachelHover {
   border-top-color: #333;
@@ -15,11 +22,22 @@ body.kachelHover {
   border-right-color: #111;
   border-bottom-color: #111;
 }
+body.kachelHover #main {
+  background-color: #222;
+}
 body.kachelFocus {
+  animation-name: focusFrame;
+  animation-duration: 0.4s;
+  background-color: #282828;
   border-top-color: #555;
   border-left-color: #555;
   border-right-color: #000;
   border-bottom-color: #000;
+}
+body.kachelFocus #main {
+  background-color: #282828;
+  animation-name: focusBackground;
+  animation-duration: 0.4s;
 }
 body:active {
   border-top-color: #000;
@@ -29,9 +47,6 @@ body:active {
 }
 #main {
   background-color: #202020;
-}
-body.kachelHover #main {
-  background-color: #222;
 }
 .sysdish_mem_bgr {
   fill: #222;
@@ -142,4 +157,196 @@ body.kachelHover #main {
 }
 .popupCombo {
   color: #333;
+}
+@-moz-keyframes focusFrame {
+  from {
+    background-color: #202020;
+    border-top-color: #282828;
+    border-left-color: #282828;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+  }
+  to {
+    background-color: #282828;
+    border-top-color: #555;
+    border-left-color: #555;
+    border-right-color: #000;
+    border-bottom-color: #000;
+  }
+}
+@-webkit-keyframes focusFrame {
+  from {
+    background-color: #202020;
+    border-top-color: #282828;
+    border-left-color: #282828;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+  }
+  to {
+    background-color: #282828;
+    border-top-color: #555;
+    border-left-color: #555;
+    border-right-color: #000;
+    border-bottom-color: #000;
+  }
+}
+@-o-keyframes focusFrame {
+  from {
+    background-color: #202020;
+    border-top-color: #282828;
+    border-left-color: #282828;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+  }
+  to {
+    background-color: #282828;
+    border-top-color: #555;
+    border-left-color: #555;
+    border-right-color: #000;
+    border-bottom-color: #000;
+  }
+}
+@keyframes focusFrame {
+  from {
+    background-color: #202020;
+    border-top-color: #282828;
+    border-left-color: #282828;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+  }
+  to {
+    background-color: #282828;
+    border-top-color: #555;
+    border-left-color: #555;
+    border-right-color: #000;
+    border-bottom-color: #000;
+  }
+}
+@-moz-keyframes focusBackground {
+  from {
+    background-color: #202020;
+  }
+  to {
+    background-color: #282828;
+  }
+}
+@-webkit-keyframes focusBackground {
+  from {
+    background-color: #202020;
+  }
+  to {
+    background-color: #282828;
+  }
+}
+@-o-keyframes focusBackground {
+  from {
+    background-color: #202020;
+  }
+  to {
+    background-color: #282828;
+  }
+}
+@keyframes focusBackground {
+  from {
+    background-color: #202020;
+  }
+  to {
+    background-color: #282828;
+  }
+}
+@-moz-keyframes noFocusFrame {
+  from {
+    background-color: #282828;
+    border-top-color: #555;
+    border-left-color: #555;
+    border-right-color: #000;
+    border-bottom-color: #000;
+  }
+  to {
+    background-color: #202020;
+    border-top-color: #282828;
+    border-left-color: #282828;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+  }
+}
+@-webkit-keyframes noFocusFrame {
+  from {
+    background-color: #282828;
+    border-top-color: #555;
+    border-left-color: #555;
+    border-right-color: #000;
+    border-bottom-color: #000;
+  }
+  to {
+    background-color: #202020;
+    border-top-color: #282828;
+    border-left-color: #282828;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+  }
+}
+@-o-keyframes noFocusFrame {
+  from {
+    background-color: #282828;
+    border-top-color: #555;
+    border-left-color: #555;
+    border-right-color: #000;
+    border-bottom-color: #000;
+  }
+  to {
+    background-color: #202020;
+    border-top-color: #282828;
+    border-left-color: #282828;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+  }
+}
+@keyframes noFocusFrame {
+  from {
+    background-color: #282828;
+    border-top-color: #555;
+    border-left-color: #555;
+    border-right-color: #000;
+    border-bottom-color: #000;
+  }
+  to {
+    background-color: #202020;
+    border-top-color: #282828;
+    border-left-color: #282828;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+  }
+}
+@-moz-keyframes noFocusBackground {
+  from {
+    background-color: #282828;
+  }
+  to {
+    background-color: #202020;
+  }
+}
+@-webkit-keyframes noFocusBackground {
+  from {
+    background-color: #282828;
+  }
+  to {
+    background-color: #202020;
+  }
+}
+@-o-keyframes noFocusBackground {
+  from {
+    background-color: #282828;
+  }
+  to {
+    background-color: #202020;
+  }
+}
+@keyframes noFocusBackground {
+  from {
+    background-color: #282828;
+  }
+  to {
+    background-color: #202020;
+  }
 }

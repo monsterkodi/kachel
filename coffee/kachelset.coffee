@@ -14,15 +14,35 @@ class KachelSet
 
     @: (mainId) ->
         
+        @focusKachel = null
         @dict  = "#{mainId}": 'main'
         @wids  = main:mainId
         @set   = []
         @sid   = ''
         
-        post.on 'kachelLoad' @onKachelLoad
-        post.on 'toggleSet'  @onToggleSet
-        post.on 'newSet'     @onNewSet
+        post.on 'kachelLoad'  @onKachelLoad
+        post.on 'toggleSet'   @onToggleSet
+        post.on 'newSet'      @onNewSet
+        post.on 'kachelFocus' @onKachelFocus
+            
+    # 00000000   0000000    0000000  000   000   0000000  
+    # 000       000   000  000       000   000  000       
+    # 000000    000   000  000       000   000  0000000   
+    # 000       000   000  000       000   000       000  
+    # 000        0000000    0000000   0000000   0000000   
+    
+    onKachelFocus: (winId) =>
+    
+        # klog 'on focus' @dict[winId]
+        if @dict[winId] != 'main'
+            @focusKachel = electron.BrowserWindow.fromId winId
 
+    # 000   000  00000000  000   000  
+    # 0000  000  000       000 0 000  
+    # 000 0 000  0000000   000000000  
+    # 000  0000  000       000   000  
+    # 000   000  00000000  00     00  
+    
     onNewSet: =>
         
         sets = prefs.get 'sets' ['']
@@ -30,6 +50,12 @@ class KachelSet
         prefs.set 'sets' sets
         @load sets[-1]
         
+    # 000000000   0000000    0000000    0000000   000      00000000  
+    #    000     000   000  000        000        000      000       
+    #    000     000   000  000  0000  000  0000  000      0000000   
+    #    000     000   000  000   000  000   000  000      000       
+    #    000      0000000    0000000    0000000   0000000  00000000  
+    
     onToggleSet: =>
         
         sets = prefs.get 'sets' ['']
@@ -38,6 +64,12 @@ class KachelSet
         if index >= sets.length-1 then index = -1
         @load sets[index+1]
         
+    # 000       0000000    0000000   0000000    
+    # 000      000   000  000   000  000   000  
+    # 000      000   000  000000000  000   000  
+    # 000      000   000  000   000  000   000  
+    # 0000000   0000000   000   000  0000000    
+    
     load: (newSid) ->
                 
         newSid ?= prefs.get 'set' ''
@@ -46,6 +78,7 @@ class KachelSet
 
         @kachelIds = []
         updateIds = ['main']
+        showIds = []
         newSet = prefs.get "kacheln#{newSid}" []
         # oldLen = newSet.length
         # newSet = newSet.filter (i) -> i not in ['main' 'kachel' 'appl' 'folder' 'file' 'null' 'undefined' null undefined]
@@ -57,13 +90,15 @@ class KachelSet
                     updateIds.push kachelId
                     @set.splice @set.indexOf(kachelId), 1
                 else
-                    @kachelIds.push kachelId
+                    showIds.push kachelId
+                    if not @wids[kachelId]
+                        @kachelIds.push kachelId
 
         if @set.length
             for kachelId in @set.slice()
                 if kachelId not in ['main' 'null' null]
                     if @wids[kachelId]
-                        electron.BrowserWindow.fromId(@wids[kachelId]).close()
+                        @win(kachelId).hide()
                     else
                         klog 'no wid for' kachelId
         
@@ -76,13 +111,21 @@ class KachelSet
         
         for kachelId in updateIds
             post.emit 'updateBounds' kachelId
-        
+
+        for kachelId in showIds
+            post.emit 'newKachel' kachelId
+            
         if @kachelIds.length == 0
+            klog 'loaded ++ focus main'
+            @win('main').focus()
             post.emit 'setLoaded'
-        else
-            for kachelId in @kachelIds
-                post.emit 'newKachel' kachelId
            
+    #  0000000   000   000         000       0000000    0000000   0000000    
+    # 000   000  0000  000         000      000   000  000   000  000   000  
+    # 000   000  000 0 000         000      000   000  000000000  000   000  
+    # 000   000  000  0000         000      000   000  000   000  000   000  
+    #  0000000   000   000         0000000   0000000   000   000  0000000    
+    
     onKachelLoad: (wid, kachelId) =>
         
         if kachelId not in @set
@@ -97,11 +140,22 @@ class KachelSet
             if index >= 0
                 @kachelIds.splice index, 1
                 if @kachelIds.length == 0
+                    klog 'set loaded -- focus main'
+                    @win('main').focus()
                     post.emit 'setLoaded'
             else
                 klog 'unknown kachel?' kachelId
 
+    # 00000000   00000000  00     00   0000000   000   000  00000000  
+    # 000   000  000       000   000  000   000  000   000  000       
+    # 0000000    0000000   000000000  000   000   000 000   0000000   
+    # 000   000  000       000 0 000  000   000     000     000       
+    # 000   000  00000000  000   000   0000000       0      00000000  
+    
     remove: (kachel) ->
+        
+        if @focusKachel == kachel
+            @focusKachel = null
         
         if kachelId = @dict[kachel.id]
             if @set.indexOf(kachelId) >= 0
@@ -111,4 +165,8 @@ class KachelSet
             # klog "prefs remove from #{@sid}" kachelId
             prefs.set "kacheln#{@sid}" @set
                 
+    win: (kachelId) ->
+            
+        electron.BrowserWindow.fromId @wids[kachelId]
+        
 module.exports = KachelSet
