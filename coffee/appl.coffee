@@ -98,18 +98,20 @@ class Appl extends Kachel
         wxw 'minimize' slash.file @kachelId
 
     onMiddleClick: (event) => 
+  
+        wxw 'terminate' @kachelId
         
-        infos = wxw 'info' slash.file @kachelId
-        if infos.length
-            maximized = false
-            for info in infos
-                if info.status == 'maximized'
-                    maximized = true
-                    break
-            if maximized
-                wxw 'restore' slash.file @kachelId
-            else
-                wxw 'maximize' slash.file @kachelId
+        # infos = wxw 'info' slash.file @kachelId
+        # if infos.length
+            # maximized = false
+            # for info in infos
+                # if info.status == 'maximized'
+                    # maximized = true
+                    # break
+            # if maximized
+                # wxw 'restore' slash.file @kachelId
+            # else
+                # wxw 'maximize' slash.file @kachelId
             
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     

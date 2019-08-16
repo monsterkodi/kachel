@@ -6,8 +6,9 @@
 000   000  000   000   0000000  000   000  00000000  0000000  0000000   00000000     000   
 ###
 
-{ post, prefs, klog } = require 'kxk'
+{ post, slash, prefs, klog } = require 'kxk'
 
+Bounds   = require './bounds'
 electron = require 'electron'
 
 class KachelSet
@@ -15,6 +16,8 @@ class KachelSet
     @: (mainId) ->
         
         @focusKachel = null
+        @hoverKachel = null
+        
         @dict  = "#{mainId}": 'main'
         @wids  = main:mainId
         @set   = []
@@ -24,7 +27,100 @@ class KachelSet
         post.on 'toggleSet'   @onToggleSet
         post.on 'newSet'      @onNewSet
         post.on 'kachelFocus' @onKachelFocus
+        post.on 'newKachel'   @onNewKachel
             
+    # 000   000  00000000  000   000        000   000   0000000    0000000  000   000  00000000  000      
+    # 0000  000  000       000 0 000        000  000   000   000  000       000   000  000       000      
+    # 000 0 000  0000000   000000000        0000000    000000000  000       000000000  0000000   000      
+    # 000  0000  000       000   000        000  000   000   000  000       000   000  000       000      
+    # 000   000  00000000  00     00        000   000  000   000   0000000  000   000  00000000  0000000  
+
+    onNewKachel: (id) =>
+
+        return if id == 'main'
+        
+        if @wids[id]
+            win = @win id
+            win.showInactive()
+            win.focus()
+            return
+        
+        kachelSize = 3
+    
+        type = id
+        if id.startsWith 'start'
+            type = 'start'
+            kachelSize = 2
+        else if id.endsWith('.app') or id.endsWith('.exe')
+            if slash.base(id) == 'konrad'
+                type = 'konrad'
+                kachelSize = 4
+            else
+                type = 'appl'
+                kachelSize = 2
+        else if id.startsWith('/') or id[1] == ':'
+            type = 'folder'
+            kachelSize = 2
+            
+        switch type
+            when 'saver' then kachelSize = 0
+            when 'sysdish' 'sysinfo' 'clock' 'default' then kachelSize = 2
+            
+        win = new electron.BrowserWindow
+            
+            movable:            true
+            transparent:        true
+            autoHideMenuBar:    true
+            acceptFirstMouse:   true
+            transparent:        true
+            hasShadow:          false
+            frame:              false
+            resizable:          false
+            maximizable:        false
+            minimizable:        false
+            fullscreen:         false
+            show:               false
+            fullscreenenable:   false
+            backgroundColor:    '#181818'
+            width:              Bounds.kachelSizes[kachelSize]
+            height:             Bounds.kachelSizes[kachelSize]
+            webPreferences: 
+                nodeIntegration: true
+            
+        win.loadURL KachelSet.html(type), baseURLForDataURL:"file://#{__dirname}/../js/index.html"
+        
+        win.kachelId = id
+        
+        win.webContents.on 'dom-ready' ((id) -> (event) ->
+            wid = event.sender.id
+            post.toWin wid, 'initKachel' id
+            electron.BrowserWindow.fromId(wid).show()
+            Bounds.update()
+            )(id)
+              
+        win.on 'close' @onKachelClose
+        win.setHasShadow false    
+                
+        win
+        
+    #  0000000  000       0000000    0000000  00000000  
+    # 000       000      000   000  000       000       
+    # 000       000      000   000  0000000   0000000   
+    # 000       000      000   000       000  000       
+    #  0000000  0000000   0000000   0000000   00000000  
+    
+    onKachelClose: (event) =>
+            
+        kachel = event.sender
+                
+        if @hoverKachel == kachel.id
+            @hoverKachel = null
+            
+        Bounds.remove kachel
+        @remove kachel        
+            
+        setTimeout (-> post.emit 'bounds' 'dirty'), 200
+        
     # 00000000   0000000    0000000  000   000   0000000  
     # 000       000   000  000       000   000  000       
     # 000000    000   000  000       000   000  0000000   
@@ -80,9 +176,6 @@ class KachelSet
         updateIds = ['main']
         showIds = []
         newSet = prefs.get "kacheln#{newSid}" []
-        # oldLen = newSet.length
-        # newSet = newSet.filter (i) -> i not in ['main' 'kachel' 'appl' 'folder' 'file' 'null' 'undefined' null undefined]
-        # klog 'newSet' oldLen, newSet.length
 
         for kachelId in newSet ? []
             if kachelId != 'main'
@@ -168,5 +261,34 @@ class KachelSet
     win: (kachelId) ->
             
         electron.BrowserWindow.fromId @wids[kachelId]
+        
+    # 000   000  000000000  00     00  000      
+    # 000   000     000     000   000  000      
+    # 000000000     000     000000000  000      
+    # 000   000     000     000 0 000  000      
+    # 000   000     000     000   000  0000000  
+    
+    @html: (type) ->
+        
+        html = """
+            <!DOCTYPE html>
+            <html lang="en">
+              <head>
+                <meta charset="utf-8">
+                <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'">
+                <link rel="stylesheet" href="./css/style.css" type="text/css">
+                <link rel="stylesheet" href="./css/dark.css" type="text/css" id="style-link">
+              </head>
+              <body>
+                <div id="main" tabindex="0"></div>
+              </body>
+              <script>
+                Kachel = require("./#{type}.js");
+                new Kachel({});
+              </script>
+            </html>
+        """
+        
+        "data:text/html;charset=utf-8," + encodeURI html
         
 module.exports = KachelSet

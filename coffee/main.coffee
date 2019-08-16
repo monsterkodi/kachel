@@ -18,41 +18,17 @@ BrowserWindow = electron.BrowserWindow
 
 dragging    = false
 mainWin     = null
-hoverKachel = null
 kachelSet   = null
 data        = null
 swtch       = null
 mousePos    = kpos 0 0
-
-indexData = (jsFile) ->
-    
-    html = """
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="utf-8">
-            <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'">
-            <link rel="stylesheet" href="./css/style.css" type="text/css">
-            <link rel="stylesheet" href="./css/dark.css" type="text/css" id="style-link">
-          </head>
-          <body>
-            <div id="main" tabindex="0"></div>
-          </body>
-          <script>
-            Kachel = require("./#{jsFile}.js");
-            new Kachel({});
-          </script>
-        </html>
-    """
-    
-    "data:text/html;charset=utf-8," + encodeURI html
     
 KachelApp = new app
     
     dir:                __dirname
     pkg:                require '../package.json'
     shortcut:           slash.win() and 'Ctrl+F1' or 'Command+F1'
-    index:              indexData 'mainwin'
+    index:              KachelSet.html 'mainwin'
     indexURL:           "file://#{__dirname}/../js/index.html"
     icon:               '../img/app.ico'
     tray:               '../img/menu.png'
@@ -130,8 +106,7 @@ KachelApp = new app
         for a in _.keys keys
             electron.globalShortcut.register keys[a], ((a) -> -> action a)(a)
         
-        post.on 'mouse'    onMouse
-        post.on 'keyboard' onKeyboard        
+        post.on 'mouse' onMouse
         
         kachelSet = new KachelSet win.id
         kachelSet.load()
@@ -176,72 +151,8 @@ action = (act) ->
         when 'close'      then log wxw 'close'    'top'
         when 'screenzoom' then require('./zoom').start debug:false
         when 'appswitch'  then onAppSwitch()
-        else moveWindow act
-        
-# 00     00   0000000   000   000  00000000  
-# 000   000  000   000  000   000  000       
-# 000000000  000   000   000 000   0000000   
-# 000 0 000  000   000     000     000       
-# 000   000   0000000       0      00000000  
-
-moveWindow = (dir) ->
-    
-    if os.platform() == 'darwin'
-        ar = w:Bounds.screenWidth, h:Bounds.screenHeight
-    else
-        screen = wxw 'screen' 'user'
-        ar = w:screen.width, h:screen.height
-    
-    info = wxw('info' 'top')[0]
-
-    if info
+        else require('./movewin') act
                 
-        base = slash.base info.path
-        
-        return if base in ['kachel' 'kappo']
-        
-        b = 0
-
-        if os.platform() == 'win32'
-            if base in ['electron' 'ko' 'konrad' 'clippo' 'klog' 'kaligraf' 'kalk' 'uniko' 'knot' 'space' 'ruler']
-                b = 0  # sane window border
-            else if base in ['devenv']
-                b = -1  # wtf?
-            else
-                b = 10 # transparent window border
-        
-        wr = x:info.x, y:info.y, w:info.width, h:info.height
-        d = 2*b
-        [x,y,w,h] = switch dir
-            when 'left'     then [-b,         0,        ar.w/2+d, ar.h+b]
-            when 'right'    then [ar.w/2-b,   0,        ar.w/2+d, ar.h+b]
-            when 'down'     then [ar.w/4-b,   0,        ar.w/2+d, ar.h+b]
-            when 'up'       then [ar.w/6-b,   0,    2/3*ar.w+d,   ar.h+b]
-            when 'topleft'  then [-b,         0,        ar.w/3+d, ar.h/2]
-            when 'top'      then [ar.w/3-b,   0,        ar.w/3+d, ar.h/2]
-            when 'topright' then [2/3*ar.w-b, 0,        ar.w/3+d, ar.h/2]
-            when 'botleft'  then [-b,         ar.h/2-b, ar.w/3+d, ar.h/2+d]
-            when 'bot'      then [ar.w/3-b,   ar.h/2-b, ar.w/3+d, ar.h/2+d]
-            when 'botright' then [2/3*ar.w-b, ar.h/2-b, ar.w/3+d, ar.h/2+d]
-        
-        sl = 20 > Math.abs wr.x -  x
-        sr = 20 > Math.abs wr.x+wr.w - (x+w)
-        st = 20 > Math.abs wr.y -  y
-        sb = 20 > Math.abs wr.y+wr.h - (y+h)
-        
-        if sl and sr and st and sb
-            switch dir
-                when 'left'  then w = ar.w/4+d
-                when 'right' then w = ar.w/4+d; x = 3*ar.w/4-b
-                when 'down'  then h = ar.h/2+d; y = ar.h/2-b
-                when 'up'    then w = ar.w+d;   x = -b
-        
-        # klog 'wxw bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
-        wxw 'bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
-        
-    else 
-        klog 'no info!'
-        
 # 00     00   0000000   000   000   0000000  00000000  
 # 000   000  000   000  000   000  000       000       
 # 000000000  000   000  000   000  0000000   0000000   
@@ -272,17 +183,17 @@ onMouse = (mouseData) ->
                         tmpTop = true
                     post.emit 'raiseKacheln'
                     
-            if not hoverKachel or hoverKachel != k.kachel.id
+            if not kachelSet.hoverKachel or kachelSet.hoverKachel != k.kachel.id
 
-                post.toWin hoverKachel, 'leave' if hoverKachel
-                hoverKachel = k.kachel.id
-                post.toWin hoverKachel, 'hover'
+                post.toWin kachelSet.hoverKachel, 'leave' if kachelSet.hoverKachel
+                kachelSet.hoverKachel = k.kachel.id
+                post.toWin kachelSet.hoverKachel, 'hover'
                     
             return
          
-    if hoverKachel
-        post.toWin hoverKachel, 'leave' if hoverKachel
-        hoverKachel = null
+    if kachelSet.hoverKachel
+        post.toWin kachelSet.hoverKachel, 'leave' if kachelSet.hoverKachel
+        kachelSet.hoverKachel = null
     
     lockRaise = false
 
@@ -296,14 +207,6 @@ onMouse = (mouseData) ->
                 tmpTopTimer = setTimeout (-> wxw 'raise' win.id), 500
                 return
 
-# 000   000  00000000  000   000  0000000     0000000    0000000   00000000   0000000    
-# 000  000   000        000 000   000   000  000   000  000   000  000   000  000   000  
-# 0000000    0000000     00000    0000000    000   000  000000000  0000000    000   000  
-# 000  000   000          000     000   000  000   000  000   000  000   000  000   000  
-# 000   000  00000000     000     0000000     0000000   000   000  000   000  0000000    
-
-onKeyboard = ->
-    
 #  0000000   00000000   00000000    0000000  
 # 000   000  000   000  000   000  000       
 # 000000000  00000000   00000000   0000000   
@@ -385,78 +288,6 @@ onWins = (wins) ->
 post.on 'wins' onWins
 post.onGet 'wins' -> lastWins
 post.onGet 'mouse' -> mousePos
-
-# 000   000   0000000    0000000  000   000  00000000  000      
-# 000  000   000   000  000       000   000  000       000      
-# 0000000    000000000  000       000000000  0000000   000      
-# 000  000   000   000  000       000   000  000       000      
-# 000   000  000   000   0000000  000   000  00000000  0000000  
-
-post.on 'newKachel' (id) ->
-
-    return if id == 'main'
-    
-    if kachelSet.wids[id]
-        raiseWin winWithId kachelSet.wids[id]
-        return
-    
-    kachelSize = 3
-
-    html = id
-    if id.startsWith 'start'
-        html = 'start'
-        kachelSize = 2
-    else if id.endsWith('.app') or id.endsWith('.exe')
-        if slash.base(id) == 'konrad'
-            html = 'konrad'
-            kachelSize = 4
-        else
-            html = 'appl'
-            kachelSize = 2
-    else if id.startsWith('/') or id[1] == ':'
-        html = 'folder'
-        kachelSize = 2
-        
-    switch html
-        when 'saver' then kachelSize = 0
-        when 'sysdish' 'sysinfo' 'clock' 'default' then kachelSize = 2
-        
-    win = new electron.BrowserWindow
-        
-        movable:            true
-        transparent:        true
-        autoHideMenuBar:    true
-        acceptFirstMouse:   true
-        transparent:        true
-        hasShadow:          false
-        frame:              false
-        resizable:          false
-        maximizable:        false
-        minimizable:        false
-        fullscreen:         false
-        show:               false
-        fullscreenenable:   false
-        backgroundColor:    '#181818'
-        width:              Bounds.kachelSizes[kachelSize]
-        height:             Bounds.kachelSizes[kachelSize]
-        webPreferences: 
-            nodeIntegration: true
-        
-    win.loadURL indexData(html), baseURLForDataURL:"file://#{__dirname}/../js/index.html"
-    
-    win.kachelId = id
-    
-    win.webContents.on 'dom-ready' ((id) -> (event) ->
-        wid = event.sender.id
-        post.toWin wid, 'initKachel' id
-        winWithId(wid).show()
-        Bounds.update()
-        )(id)
-          
-    win.on 'close' onKachelClose
-    win.setHasShadow false    
-            
-    win
         
 #  0000000  000   000   0000000   00000000   
 # 000       0000  000  000   000  000   000  
@@ -565,19 +396,7 @@ post.on 'hide' -> for w in kacheln() then w.hide()
 # 000        0000000    0000000   0000000   0000000   
 
 post.on 'focusNeighbor' (winId, direction) -> raiseWin Bounds.neighborKachel winWithId(winId), direction
-           
-onKachelClose = (event) ->
-        
-    kachel = event.sender
-            
-    if hoverKachel == kachel.id
-        hoverKachel = null
-        
-    Bounds.remove kachel
-    kachelSet.remove kachel        
-        
-    setTimeout (-> post.emit 'bounds' 'dirty'), 200
-                    
+                               
 # 000   000  000  000   000   0000000  
 # 000 0 000  000  0000  000  000       
 # 000000000  000  000 0 000  0000000   
