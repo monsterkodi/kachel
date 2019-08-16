@@ -112,12 +112,7 @@ class Kachel extends win
     onWinBlur:  (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
     onWinLoad:  (event) => @onLoad event
     onWinMove:  (event) => @onMove event
-                
-    onWinClose: (event) => 
-        if @kachelId != 'main'
-            prefs.set 'kacheln' prefs.get('kacheln').filter (k) => k != @kachelId
-            
-        @onClose event
+    onWinClose: (event) => @onClose event
         
     onInitKachel: (@kachelId) =>
            

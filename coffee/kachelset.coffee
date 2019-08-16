@@ -19,22 +19,24 @@ class KachelSet
         @set   = []
         @sid   = ''
         
-        post.on 'toggleSet'  @onToggleSet
         post.on 'kachelLoad' @onKachelLoad
+        post.on 'toggleSet'  @onToggleSet
+        post.on 'newSet'     @onNewSet
 
+    onNewSet: =>
+        
+        sets = prefs.get 'sets' ['']
+        sets.push "#{sets.length}"
+        prefs.set 'sets' sets
+        @load sets[-1]
+        
     onToggleSet: =>
         
         sets = prefs.get 'sets' ['']
         index = Math.max 0, sets.indexOf(@sid)
         
-        if index == sets.length-1 and @set.length < 1
-            @load ''
-        else
-            if sets.length == 1 or index == sets.length-1
-                sets.push "#{sets.length}"
-                prefs.set 'sets' sets
-                
-            @load sets[index+1]
+        if index >= sets.length-1 then index = -1
+        @load sets[index+1]
         
     load: (newSid) ->
                 
@@ -43,31 +45,37 @@ class KachelSet
         oldKacheln = prefs.get "kacheln#{@sid}" []
 
         @kachelIds = []
+        updateIds = ['main']
         newSet = prefs.get "kacheln#{newSid}" []
-        newSet = newSet.filter (i) -> i not in ['main' 'appl' 'folder' 'file' 'null' 'undefined' null undefined]
+        # oldLen = newSet.length
+        # newSet = newSet.filter (i) -> i not in ['main' 'kachel' 'appl' 'folder' 'file' 'null' 'undefined' null undefined]
+        # klog 'newSet' oldLen, newSet.length
 
         for kachelId in newSet ? []
-            if kachelId == 'main'
-                post.emit 'updateBounds' kachelId
-            else
+            if kachelId != 'main'
                 if @set.indexOf(kachelId) >= 0
-                    post.emit 'updateBounds' kachelId
+                    updateIds.push kachelId
                     @set.splice @set.indexOf(kachelId), 1
                 else
                     @kachelIds.push kachelId
 
         if @set.length
-            for kachelId in @set.slice 0
+            for kachelId in @set.slice()
                 if kachelId not in ['main' 'null' null]
-                    electron.BrowserWindow.fromId(@wids[kachelId]).close()
+                    if @wids[kachelId]
+                        electron.BrowserWindow.fromId(@wids[kachelId]).close()
+                    else
+                        klog 'no wid for' kachelId
         
-        klog 'restore oldKacheln' oldKacheln.length
         prefs.set "kacheln#{@sid}" oldKacheln
                     
         @sid = newSid
         prefs.set 'set' @sid
                     
         @set = newSet
+        
+        for kachelId in updateIds
+            post.emit 'updateBounds' kachelId
         
         if @kachelIds.length == 0
             post.emit 'setLoaded'
@@ -78,7 +86,7 @@ class KachelSet
     onKachelLoad: (wid, kachelId) =>
         
         if kachelId not in @set
-            @set.push @kachelId 
+            @set.push kachelId 
             prefs.set "kacheln#{@sid}" @set
         
         @dict[wid] = kachelId
@@ -90,15 +98,14 @@ class KachelSet
                 @kachelIds.splice index, 1
                 if @kachelIds.length == 0
                     post.emit 'setLoaded'
-                # else
-                    # klog 'kachel loaded' kachelId, @kachelIds.length
             else
                 klog 'unknown kachel?' kachelId
 
     remove: (kachel) ->
         
         if kachelId = @dict[kachel.id]
-            @set.splice @set.indexOf(kachelId), 1
+            if @set.indexOf(kachelId) >= 0
+                @set.splice @set.indexOf(kachelId), 1
             delete @wids[kachelId]
             delete @dict[kachel.id]
             # klog "prefs remove from #{@sid}" kachelId

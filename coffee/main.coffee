@@ -400,22 +400,22 @@ post.on 'newKachel' (id) ->
         raiseWin winWithId kachelSet.wids[id]
         return
     
-    kachelSize = 1
+    kachelSize = 3
 
     html = id
     if id.startsWith 'start'
         html = 'start'
-        kachelSize = 0
+        kachelSize = 2
     else if id.endsWith('.app') or id.endsWith('.exe')
         if slash.base(id) == 'konrad'
             html = 'konrad'
-            kachelSize = 2
+            kachelSize = 4
         else
             html = 'appl'
-            kachelSize = 0
+            kachelSize = 2
     else if id.startsWith('/') or id[1] == ':'
         html = 'folder'
-        kachelSize = 0
+        kachelSize = 2
         
     switch html
         when 'saver' then kachelSize = 0
@@ -483,7 +483,7 @@ post.on 'kachelMove' (dir, wid) ->
 post.on 'updateBounds' (kachelId) ->
     
     wid = kachelSet.wids[kachelId]
-    klog 'updateBounds' wid, kachelId
+    # klog 'updateBounds' wid, kachelId
     setId = prefs.get 'set' ''
     bounds = prefs.get "bounds#{setId}▸#{kachelId}"
     if bounds?

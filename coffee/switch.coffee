@@ -292,10 +292,7 @@ onKeyDown = (event) ->
     
     win = electron.remote.getCurrentWindow()
          
-    modifiers = wxw('key').trim()
-    
     lastCombo = combo
-    # klog 'onKeyDown' combo, 'mod:', modifiers
     
     switch key
         when 'right''down'      then return nextApp()
@@ -311,7 +308,7 @@ onKeyDown = (event) ->
     if not event.repeat
     
         switch key
-            when 'esc'                    then return done()
+            when 'esc'                    then return stopEvent event, done()
             when 'enter' 'return' 'space' then return activate()
         
         switch combo
@@ -324,13 +321,17 @@ onKeyUp = (event) ->
     
     { mod, key, char, combo } = keyinfo.forEvent event
         
-    modifiers = wxw('key').trim()
+    # klog 'onKeyUp' combo, lastCombo, event.metaKey, event.altKey, event.ctrlKey, event.shiftKey
     
-    # klog 'onKeyUp' lastCombo
-    
-    if empty(combo) and empty modifiers and empty lastCombo
+    if os.platform() == 'win32'
         
-        if os.platform() == 'darwin'
+        if empty(combo) then activate()
+        
+    else if os.platform() == 'darwin' # mac triggers keyup on first mouse move
+    
+        if empty(combo) and empty(lastCombo)
+        
+            # modifiers = wxw('key').trim()
             activationTimer = setTimeout (->
                 mousePos = post.get 'mouse'
                 # klog 'mousePos' kpos(mousePos), startMouse, kpos(mousePos).distSquare startMouse
@@ -346,10 +347,6 @@ onKeyUp = (event) ->
                     # klog 'mouse moved! skip!'
                     startMouse = mousePos
                 ), 20
-            return
-        
-        # klog "modifiers >#{modifiers}<"
-        activate()
 
 # 000   000  00000000  000   000  000000000   0000000   00000000   00000000   
 # 0000  000  000        000 000      000     000   000  000   000  000   000  
