@@ -173,32 +173,8 @@ moveWindow = (dir) ->
         screen = wxw 'screen' 'user'
         ar = w:screen.width, h:screen.height
     
-    # if os.platform() == 'darwin'
-#         
-        # [x,y,w,h] = switch dir
-            # when 'left'     then [0,          0,        ar.w/2, ar.h]
-            # when 'right'    then [ar.w/2,     0,        ar.w/2, ar.h]
-            # when 'down'     then [ar.w/4,     0,        ar.w/2, ar.h]
-            # when 'up'       then [ar.w/6,     0,    2/3*ar.w,   ar.h]
-            # when 'topleft'  then [0,          0,        ar.w/3, ar.h/2]
-            # when 'top'      then [ar.w/3,     0,        ar.w/3, ar.h/2]
-            # when 'topright' then [2/3*ar.w,   0,        ar.w/3, ar.h/2]
-            # when 'botleft'  then [0,          ar.h/2,   ar.w/3, ar.h/2]
-            # when 'bot'      then [ar.w/3,     ar.h/2,   ar.w/3, ar.h/2]
-            # when 'botright' then [2/3*ar.w,   ar.h/2,   ar.w/3, ar.h/2]
-#         
-        # klog 'wxw bounds' 'top', parseInt(x), parseInt(y), parseInt(w), parseInt(h)
-        # wxw 'bounds', 'top', parseInt(x), parseInt(y), parseInt(w), parseInt(h)
-#             
-        # return
-    
-    # if os.platform() == 'darwin'   
-        # for info in lastWins
-            # if info.index == 0
-                # break
-    # else
     info = wxw('info' 'top')[0]
-    # klog 'top:' info 
+
     if info
                 
         base = slash.base info.path
@@ -207,12 +183,13 @@ moveWindow = (dir) ->
         
         b = 0
 
-        if base in ['electron' 'ko' 'konrad' 'clippo' 'klog' 'kaligraf' 'kalk' 'uniko' 'knot' 'space' 'ruler']
-            b = 0  # sane window border
-        else if base in ['devenv']
-            b = -1  # wtf?
-        else
-            b = 10 # transparent window border
+        if os.platform() == 'win32'
+            if base in ['electron' 'ko' 'konrad' 'clippo' 'klog' 'kaligraf' 'kalk' 'uniko' 'knot' 'space' 'ruler']
+                b = 0  # sane window border
+            else if base in ['devenv']
+                b = -1  # wtf?
+            else
+                b = 10 # transparent window border
         
         wr = x:info.x, y:info.y, w:info.width, h:info.height
         d = 2*b

@@ -49,7 +49,7 @@ class Default extends Kachel
     openSaver:   => post.toMain 'newKachel' 'saver'   
     openDish:    => post.toMain 'newKachel' 'sysdish'
     openTaskbar: => post.toMain 'newKachel' 'taskbar'
-    onClick:     => log 'onClick'
+    onLeftClick: => log 'onLeftClick'
     
     # 0000000    000  00000000   
     # 000   000  000  000   000  

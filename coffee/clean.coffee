@@ -16,6 +16,6 @@ class Clean extends Kachel
         super
         @setIcon __dirname + '/../img/clean.png'
     
-    onClick: -> post.toMain 'cleanTiles'
+    onLeftClick: -> post.toMain 'cleanTiles'
     
 module.exports = Clean

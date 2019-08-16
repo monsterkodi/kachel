@@ -16,7 +16,7 @@ class Taskbar extends Kachel
         super
         @setIcon __dirname + '/../img/taskbar.png'
                         
-    onClick: -> 
+    onLeftClick: -> 
     
         if os.platform() == 'win32'
             wxw = require 'wxw'

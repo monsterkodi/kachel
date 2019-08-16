@@ -49,8 +49,8 @@ class Sysdish extends Kachel
     # 000       000      000  000       000  000   
     #  0000000  0000000  000   0000000  000   000  
     
-    onContextMenu: => @onClick()
-    onClick: =>
+    onRightClick: => @onLeftClick()
+    onLeftClick: =>
         
         if @mode == 'dish' then @graphMode()
         else @dishMode()

@@ -80,7 +80,7 @@ class Appl extends Kachel
     # 000       000      000  000       000  000   
     #  0000000  0000000  000   0000000  000   000  
     
-    onClick: (event) -> 
+    onLeftClick: (event) -> 
         
         # klog 'appl.onClick' slash.file @kachelId
         

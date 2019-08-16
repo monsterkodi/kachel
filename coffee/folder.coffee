@@ -22,7 +22,7 @@ class Folder extends Kachel
     # 000       000      000  000       000  000   
     #  0000000  0000000  000   0000000  000   000  
     
-    onClick: (event) -> 
+    onLeftClick: (event) -> 
         
         if os.platform() == 'win32' and @kachelId.endsWith '$Recycle.Bin'
             childp.execSync "start shell:RecycleBinFolder"

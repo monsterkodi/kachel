@@ -50,7 +50,7 @@ class Saver extends Kachel
         elapsed = now - @last
         
         if elapsed > @interval
-            @onClick()
+            @onLeftClick()
         else
             @startCheck Math.max 100, @interval - elapsed
         
@@ -75,7 +75,7 @@ class Saver extends Kachel
     # 000       000      000  000       000  000   
     #  0000000  0000000  000   0000000  000   000  
     
-    onClick: => 
+    onLeftClick: => 
     
         if os.platform() == 'win32'
             info = wxw('info' 'taskbar')[0]

@@ -24,7 +24,7 @@ class Konrad extends Kachel
             when 'activated' then @idleIcon()
             when 'terminated' then @sleepIcon()
         
-    onClick: (event) -> open slash.unslash @kachelId 
+    onLeftClick: (event) -> open slash.unslash @kachelId 
     
     onContextMenu: (event) => 
         

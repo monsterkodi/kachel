@@ -89,9 +89,11 @@ class Kachel extends win
         if Math.abs(drag.deltaSum.x) < 10 and Math.abs(drag.deltaSum.y) < 10
             @win.setBounds @startBounds
             if event.button == 0
-                @onClick event
+                @onLeftClick event
             else if event.button == 1
                 @onMiddleClick event
+            else if event.button == 2
+                @onRightClick event
         else
             post.toMain 'snapKachel' @id
         post.toMain 'dragStop' @id
@@ -125,13 +127,14 @@ class Kachel extends win
     
     onLoad:   -> # to be overridden in subclasses
     onMove:   -> # to be overridden in subclasses
-    onClick:  -> # to be overridden in subclasses
-    onMiddleClick:  -> # to be overridden in subclasses
     onFocus:  -> # to be overridden in subclasses
     onBlur:   -> # to be overridden in subclasses
     onMove:   -> # to be overridden in subclasses
     onClose:  -> # to be overridden in subclasses
     onBounds: -> # to be overridden in subclasses
+    onLeftClick:    -> # to be overridden in subclasses
+    onMiddleClick:  -> # to be overridden in subclasses
+    onRightClick:   -> # to be overridden in subclasses
         
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  
@@ -188,6 +191,6 @@ class Kachel extends win
                 
         switch combo
             when 'left''right''up''down' then post.toMain 'focusNeighbor' @id, combo
-            when 'enter''space' then @onClick()
+            when 'enter''space' then @onLeftClick()
             
 module.exports = Kachel

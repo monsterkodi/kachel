@@ -20,7 +20,7 @@ class Start extends Kachel
     # 000       000      000  000       000  000   
     #  0000000  0000000  000   0000000  000   000  
     
-    onClick: (event) -> 
+    onLeftClick: (event) -> 
         
         lst = @kachelId.split ' '
         cmd = lst[0]

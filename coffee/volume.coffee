@@ -23,7 +23,7 @@ class Volume extends Kachel
     
         @volume = parseInt wxw('volume').trim()
             
-    onClick: (event) =>
+    onLeftClick: (event) =>
         
         br  = document.body.getBoundingClientRect()
         ctr = kpos(br.width, br.height).times 0.5
