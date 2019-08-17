@@ -1,21 +1,40 @@
-body {
-  background-color: #fff;
-  border-top: 1px solid #f8f8f8;
-  border-left: 1px solid #f0f0f0;
-  border-right: 1px solid #e8e8e8;
-  border-bottom: 1px solid #e0e0e0;
+body:not(.kachelFocus) {
+  animation-name: noFocusFrame;
+  animation-duration: 0.2s;
+  background-color: #ccc;
+  border-top: 1px solid #d8d8d8;
+  border-left: 1px solid #d0d0d0;
+  border-right: 1px solid #b8b8b8;
+  border-bottom: 1px solid #b0b0b0;
+}
+body:not(.kachelFocus) #main {
+  background-color: #ccc;
+  animation-name: noFocusBackground;
+  animation-duration: 0.2s;
 }
 body.kachelHover {
-  border-top: 1px solid #333;
-  border-left: 1px solid #222;
-  border-right: 1px solid #111;
-  border-bottom: 1px solid #000;
+  background-color: #ddd;
+  border-top: 1px solid #eee;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #b0b0b0;
+  border-bottom: 1px solid #aaa;
+}
+body.kachelHover #main {
+  background-color: #ddd;
 }
 body.kachelFocus {
-  border-top: 1px solid #333;
-  border-left: 1px solid #222;
-  border-right: 1px solid #111;
-  border-bottom: 1px solid #000;
+  animation-name: focusFrame;
+  animation-duration: 0.4s;
+  background-color: #eee;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #999;
+}
+body.kachelFocus #main {
+  background-color: #eee;
+  animation-name: focusBackground;
+  animation-duration: 0.4s;
 }
 body:active {
   border-top: 1px solid #999;
@@ -24,50 +43,68 @@ body:active {
   border-bottom: 1px solid #eee;
 }
 #main {
-  background: #fff;
+  background-color: #ccc;
 }
-.sysinfo_load_bgr {
-  fill: #fee;
+.appldot {
+  fill: #c0c0c0;
 }
-.sysinfo_load_sys {
-  fill: #f80;
+.appldot circle.applcircle {
+  stroke-width: 0 !important;
 }
-.sysinfo_load_usr {
-  fill: #ff0;
-}
-.sysinfo_mem_bgr {
-  fill: #eef;
-}
-.sysinfo_mem_used {
-  fill: #22f;
-}
-.sysinfo_mem_active {
-  fill: #88f;
-}
-.sysinfo_net_bgr {
-  fill: #efe;
-}
-.sysinfo_net_recv {
-  fill: #080;
-}
-.sysinfo_net_send {
-  fill: #0a0;
-}
-.sysinfo_disk_bgr {
+.appldot.normal {
   fill: #eee;
 }
-.sysinfo_disk_read {
+.appldot.maximized {
+  fill: #fff;
+}
+.appldot.minimized {
+  fill: #aaa;
+}
+.appldot.top {
+  fill: #ff0;
+}
+.sysdish_load_bgr {
+  fill: #ccc;
+}
+.sysdish_load_sys {
+  fill: #f80;
+}
+.sysdish_load_usr {
+  fill: #ff0;
+}
+.sysdish_mem_bgr {
+  fill: #bbb;
+}
+.sysdish_mem_used {
+  fill: #22f;
+}
+.sysdish_mem_active {
+  fill: #88f;
+}
+.sysdish_net_bgr {
+  fill: #c0c0c0;
+}
+.sysdish_net_recv {
+  fill: #080;
+}
+.sysdish_net_send {
+  fill: #0a0;
+}
+.sysdish_disk_bgr {
+  fill: #bbb;
+}
+.sysdish_disk_read {
   fill: #666;
 }
-.sysinfo_disk_write {
+.sysdish_disk_write {
   fill: #aaa;
 }
 .face {
-  stroke: #eee;
+  stroke: #aaa;
   fill: #fff;
 }
 .minmrk {
-  stroke: #eee;
+  stroke: #aaa;
 }
 .hour {
   stroke: #000;
@@ -77,4 +114,208 @@ body:active {
 }
 .second {
   stroke: #ddd;
+}
+.knob {
+  fill: #eee;
+}
+.volmrk {
+  stroke: #bbb;
+}
+.voldot {
+  fill: #666;
+}
+.voldot.mute {
+  fill: #ccc;
+}
+@-moz-keyframes focusFrame {
+  from {
+    background-color: #ccc;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #999;
+  }
+  to {
+    background-color: #eee;
+    border-top: 1px solid #d8d8d8;
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b0b0b0;
+  }
+}
+@-webkit-keyframes focusFrame {
+  from {
+    background-color: #ccc;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #999;
+  }
+  to {
+    background-color: #eee;
+    border-top: 1px solid #d8d8d8;
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b0b0b0;
+  }
+}
+@-o-keyframes focusFrame {
+  from {
+    background-color: #ccc;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #999;
+  }
+  to {
+    background-color: #eee;
+    border-top: 1px solid #d8d8d8;
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b0b0b0;
+  }
+}
+@keyframes focusFrame {
+  from {
+    background-color: #ccc;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #999;
+  }
+  to {
+    background-color: #eee;
+    border-top: 1px solid #d8d8d8;
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b0b0b0;
+  }
+}
+@-moz-keyframes focusBackground {
+  from {
+    background-color: #ccc;
+  }
+  to {
+    background-color: #eee;
+  }
+}
+@-webkit-keyframes focusBackground {
+  from {
+    background-color: #ccc;
+  }
+  to {
+    background-color: #eee;
+  }
+}
+@-o-keyframes focusBackground {
+  from {
+    background-color: #ccc;
+  }
+  to {
+    background-color: #eee;
+  }
+}
+@keyframes focusBackground {
+  from {
+    background-color: #ccc;
+  }
+  to {
+    background-color: #eee;
+  }
+}
+@-moz-keyframes noFocusFrame {
+  from {
+    background-color: #eee;
+    border-top: 1px solid #d8d8d8;
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b0b0b0;
+  }
+  to {
+    background-color: #ccc;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #999;
+  }
+}
+@-webkit-keyframes noFocusFrame {
+  from {
+    background-color: #eee;
+    border-top: 1px solid #d8d8d8;
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b0b0b0;
+  }
+  to {
+    background-color: #ccc;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #999;
+  }
+}
+@-o-keyframes noFocusFrame {
+  from {
+    background-color: #eee;
+    border-top: 1px solid #d8d8d8;
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b0b0b0;
+  }
+  to {
+    background-color: #ccc;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #999;
+  }
+}
+@keyframes noFocusFrame {
+  from {
+    background-color: #eee;
+    border-top: 1px solid #d8d8d8;
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b0b0b0;
+  }
+  to {
+    background-color: #ccc;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #999;
+  }
+}
+@-moz-keyframes noFocusBackground {
+  from {
+    background-color: #eee;
+  }
+  to {
+    background-color: #ccc;
+  }
+}
+@-webkit-keyframes noFocusBackground {
+  from {
+    background-color: #eee;
+  }
+  to {
+    background-color: #ccc;
+  }
+}
+@-o-keyframes noFocusBackground {
+  from {
+    background-color: #eee;
+  }
+  to {
+    background-color: #ccc;
+  }
+}
+@keyframes noFocusBackground {
+  from {
+    background-color: #eee;
+  }
+  to {
+    background-color: #ccc;
+  }
 }

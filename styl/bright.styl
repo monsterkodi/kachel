@@ -5,74 +5,148 @@
 // 000   000  000   000  000  000   000  000   000     000     
 // 0000000    000   000  000   0000000   000   000     000     
 
-bgColor             = #fff
-frameFocusColor     = #ddd
-focusColor          = #fff
-textBlurColor       = #444
-textActiveColor     = #222
-textFocusColor      = #000
+bgColor             = #ccc
+bgHover             = #ddd
+bgFocus             = #eee
 
 body
-    background-color     bgColor
+    &:not(.kachelFocus)
+        animation-name      noFocusFrame
+        animation-duration  0.2s
+        
+        background-color        bgColor    
+    
+        border-top           1px solid #d8d8d8
+        border-left          1px solid #d0d0d0
+        border-right         1px solid #b8b8b8
+        border-bottom        1px solid #b0b0b0
 
-    border-top           1px solid #f8f8f8
-    border-left          1px solid #f0f0f0
-    border-right         1px solid #e8e8e8
-    border-bottom        1px solid #e0e0e0
-
+        & #main
+            background-color    bgColor
+            animation-name      noFocusBackground
+            animation-duration  0.2s
+        
     &.kachelHover
-        border-top           1px solid #333
-        border-left          1px solid #222
-        border-right         1px solid #111
-        border-bottom        1px solid #000
+        background-color     bgHover
+        border-top           1px solid #eee
+        border-left          1px solid #ddd
+        border-right         1px solid #b0b0b0
+        border-bottom        1px solid #aaa
+        & #main
+            background-color     bgHover
     
     &.kachelFocus
-        border-top           1px solid #333
-        border-left          1px solid #222
-        border-right         1px solid #111
-        border-bottom        1px solid #000
-
+        animation-name      focusFrame
+        animation-duration  0.4s
+        background-color    bgFocus
+        border-top           1px solid #fff
+        border-left          1px solid #eee
+        border-right         1px solid #aaa
+        border-bottom        1px solid #999
+        & #main
+            background-color     bgFocus
+            animation-name      focusBackground
+            animation-duration  0.4s
     &:active
         border-top           1px solid #999
         border-left          1px solid #bbb
         border-right         1px solid #ccc
         border-bottom        1px solid #eee
 
-#main
-    background           bgColor
+@keyframes focusFrame
+    from  
+        background-color    bgColor
+        border-top           1px solid #fff
+        border-left          1px solid #eee
+        border-right         1px solid #aaa
+        border-bottom        1px solid #999
+    to    
+        background-color    bgFocus
+        border-top           1px solid #d8d8d8
+        border-left          1px solid #d0d0d0
+        border-right         1px solid #b8b8b8
+        border-bottom        1px solid #b0b0b0
         
-//  0000000  000   000   0000000  000  000   000  00000000   0000000   
-// 000        000 000   000       000  0000  000  000       000   000  
-// 0000000     00000    0000000   000  000 0 000  000000    000   000  
-//      000     000          000  000  000  0000  000       000   000  
-// 0000000      000     0000000   000  000   000  000        0000000   
+@keyframes focusBackground
+    from  
+        background-color    bgColor
+    to    
+        background-color    bgFocus
 
-.sysinfo_load_bgr
-    fill                 #fee
-.sysinfo_load_sys
+@keyframes noFocusFrame
+    from  
+        background-color    bgFocus
+        border-top           1px solid #d8d8d8
+        border-left          1px solid #d0d0d0
+        border-right         1px solid #b8b8b8
+        border-bottom        1px solid #b0b0b0
+    to    
+        background-color    bgColor
+        border-top           1px solid #fff
+        border-left          1px solid #eee
+        border-right         1px solid #aaa
+        border-bottom        1px solid #999
+        
+@keyframes noFocusBackground
+    from  
+        background-color    bgFocus
+    to    
+        background-color    bgColor
+        
+#main
+    background-color     bgColor
+    
+//  0000000   00000000   00000000   000      
+// 000   000  000   000  000   000  000      
+// 000000000  00000000   00000000   000      
+// 000   000  000        000        000      
+// 000   000  000        000        0000000  
+
+.appldot
+    & circle.applcircle
+        stroke-width        0 !important
+    fill                #c0c0c0    
+    &.normal
+        fill            #eee
+    &.maximized
+        fill            #fff
+    &.minimized
+        fill            #aaa
+    &.top
+        fill            #ff0
+    
+//  0000000  000   000   0000000  0000000    000   0000000  000   000  
+// 000        000 000   000       000   000  000  000       000   000  
+// 0000000     00000    0000000   000   000  000  0000000   000000000  
+//      000     000          000  000   000  000       000  000   000  
+// 0000000      000     0000000   0000000    000  0000000   000   000  
+
+.sysdish_load_bgr
+    fill                 bgColor
+.sysdish_load_sys
     fill                 #f80
-.sysinfo_load_usr
+.sysdish_load_usr
     fill                 #ff0
     
-.sysinfo_mem_bgr 
-    fill                 #eef
-.sysinfo_mem_used 
+.sysdish_mem_bgr 
+    fill                 #bbb
+.sysdish_mem_used 
     fill                 #22f
-.sysinfo_mem_active 
+.sysdish_mem_active 
     fill                 #88f
     
-.sysinfo_net_bgr
-    fill                 #efe
-.sysinfo_net_recv
+.sysdish_net_bgr
+    fill                 #c0c0c0
+.sysdish_net_recv
     fill                 #080
-.sysinfo_net_send
+.sysdish_net_send
     fill                 #0a0
     
-.sysinfo_disk_bgr
-    fill                 #eee
-.sysinfo_disk_read
+.sysdish_disk_bgr
+    fill                 #bbb
+.sysdish_disk_read
     fill                 #666
-.sysinfo_disk_write
+.sysdish_disk_write
     fill                 #aaa
     
 //  0000000  000       0000000    0000000  000   000    
@@ -82,11 +156,11 @@ body
 //  0000000  0000000   0000000    0000000  000   000    
 
 .face
-    stroke              #eee 
+    stroke              #aaa 
     fill                #fff
     
 .minmrk
-    stroke              #eee  
+    stroke              #aaa 
     
 .hour   
     stroke              #000 
@@ -96,5 +170,22 @@ body
     
 .second 
     stroke              #ddd
+    
+// 000   000   0000000   000      000   000  00     00  00000000    
+// 000   000  000   000  000      000   000  000   000  000         
+//  000 000   000   000  000      000   000  000000000  0000000     
+//    000     000   000  000      000   000  000 0 000  000         
+//     0       0000000   0000000   0000000   000   000  00000000    
+    
+.knob
+    fill                #eee
+
+.volmrk
+    stroke              #bbb
+
+.voldot
+    fill                #666
+    &.mute 
+        fill            #ccc
     
         

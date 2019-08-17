@@ -26,7 +26,7 @@ class utils
     @svg: (width:100, height:100, clss:) ->
         
         svg = document.createElementNS 'http://www.w3.org/2000/svg' 'svg'
-        svg.setAttribute 'viewBox' '-50 -50 100 100'
+        svg.setAttribute 'viewBox' "-#{width/2} -#{width/2} #{width} #{height}"
         svg.setAttribute 'class' clss if clss
         svg
         

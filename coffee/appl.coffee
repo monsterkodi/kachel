@@ -10,6 +10,7 @@
 
 Kachel  = require './kachel'
 appIcon = require './icon'
+utils   = require './utils'
 wxw     = require 'wxw'
 
 class Appl extends Kachel
@@ -59,7 +60,13 @@ class Appl extends Kachel
         dot =$ '.appldot'
         
         if @activated and not dot
-            dot = elem class:'appldot'
+            dot = utils.svg width:16 height:16 clss:'appldot'
+            def = utils.append dot, 'defs'
+            grd = utils.append def, 'linearGradient', id:'appldotstroke' x1:"0%" y1:"0%" x2:"100%" y2:"100%"
+            stp = utils.append grd, 'stop' offset:"0%" 'stop-color':"#111"
+            stp = utils.append grd, 'stop' offset:"100%" 'stop-color':"#333"
+            grp = utils.append dot, 'g'
+            crc = utils.append grp, 'circle' cx:0 cy:0 r:7 class:'applcircle'
             @main.appendChild dot
         else if not @activated and dot
             dot?.remove()
@@ -100,19 +107,7 @@ class Appl extends Kachel
     onMiddleClick: (event) => 
   
         wxw 'terminate' @kachelId
-        
-        # infos = wxw 'info' slash.file @kachelId
-        # if infos.length
-            # maximized = false
-            # for info in infos
-                # if info.status == 'maximized'
-                    # maximized = true
-                    # break
-            # if maximized
-                # wxw 'restore' slash.file @kachelId
-            # else
-                # wxw 'maximize' slash.file @kachelId
-            
+                    
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     
     # 000  000 0 000  000     000     

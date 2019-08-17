@@ -36,8 +36,8 @@ body
             animation-duration  0.2s
     
     &.kachelHover
-        border-top-color    #333
         background-color    bgHover
+        border-top-color    #333
         border-left-color   #333
         border-right-color  #111
         border-bottom-color #111
@@ -105,6 +105,23 @@ body
         
 #main
     background-color     bgColor
+    
+//  0000000   00000000   00000000   000      
+// 000   000  000   000  000   000  000      
+// 000000000  00000000   00000000   000      
+// 000   000  000        000        000      
+// 000   000  000        000        0000000  
+
+.appldot
+    fill                #202020    
+    &.normal
+        fill            #333
+    &.maximized
+        fill            #555
+    &.minimized
+        fill            #181818
+    &.top
+        fill            #f80
     
 //  0000000  000   000   0000000  0000000    000   0000000  000   000  
 // 000        000 000   000       000   000  000  000       000   000  

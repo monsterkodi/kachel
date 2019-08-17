@@ -6,7 +6,7 @@
 
 # kachel 
 
-**Kachel** [ˈkaxəl] german noun *f* *pl*:Kacheln
+**[ˈkaxəl]** german noun *f* *pl*:Kacheln
 
 - (glazed) tile
 
@@ -33,6 +33,7 @@ Kachel is a [NeXTSTEP](https://en.wikipedia.org/wiki/NeXTSTEP) inspired replacem
 - Shutdown, Sleep and Restart
 - Calendar: current date (mac)
 - Taskbar Toggle (win)
+- Bright & Dark Scheme
 - Raises on mouse at screen border
 - Keyboard Navigation
 
