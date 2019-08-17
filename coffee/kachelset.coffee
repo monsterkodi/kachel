@@ -15,6 +15,8 @@ class KachelSet
 
     @: (mainId) ->
         
+        @switching   = false
+        
         @focusKachel = null
         @hoverKachel = null
         
@@ -156,6 +158,8 @@ class KachelSet
     #    000      0000000    0000000    0000000   0000000  00000000  
     
     onToggleSet: =>
+
+        return if @switching
         
         sets = prefs.get 'sets' ['']
         index = Math.max 0, sets.indexOf(@sid)
@@ -179,7 +183,11 @@ class KachelSet
     # 0000000   0000000   000   000  0000000    
     
     load: (newSid, postfix='') ->
-                
+           
+        return if @switching
+            
+        @switching = true
+        
         newSid ?= prefs.get 'set' ''
         
         if empty postfix
@@ -227,6 +235,7 @@ class KachelSet
             
         if @kachelIds.length == 0
             # klog 'loaded ++ focus main'
+            @switching = false
             @win('main').focus()
             post.emit 'setLoaded'
            
@@ -250,7 +259,8 @@ class KachelSet
             if index >= 0
                 @kachelIds.splice index, 1
                 if @kachelIds.length == 0
-                    # klog 'set loaded -- focus main'
+                    klog "set#{@sid} loaded"
+                    @switching = false
                     @win('main').focus()
                     post.emit 'setLoaded'
             else

@@ -1,5 +1,5 @@
 name            kachel
-version         0.105.0
+version         0.106.0
 description     dock
 author          monsterkodi
 license         Unlicense
@@ -12,7 +12,6 @@ scripts
                 win   bash ./bin/buildwin.sh
 dependencies
                 kxk             ^0.334.0
-                simple-plist    ^1.0.0
                 systeminformation  ^4.14.4
                 wxw             ^1.84.0
 devDependencies

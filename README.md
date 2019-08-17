@@ -54,7 +54,7 @@ Zoom the desktop similar to the ctrl-mousewheel experience on mac:
 
 ## Window Management
 
-Position windows via keyboard shortcuts similiar to divvy or magnet 
+Position windows via keyboard shortcuts similiar to [divvy](https://mizage.com/divvy/) or [spectacle](https://www.spectacleapp.com/)
 
 - win: Alt+Ctrl+[Up|Left...|1...6]
 - mac: Alt+Cmd+[Up|Left...|1...6]
