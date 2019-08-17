@@ -6,7 +6,7 @@
 000   000  000   000   0000000  000   000  00000000  0000000  0000000   00000000     000   
 ###
 
-{ post, slash, prefs, klog } = require 'kxk'
+{ post, slash, prefs, empty, valid, klog } = require 'kxk'
 
 Bounds   = require './bounds'
 electron = require 'electron'
@@ -25,6 +25,8 @@ class KachelSet
         
         post.on 'kachelLoad'  @onKachelLoad
         post.on 'toggleSet'   @onToggleSet
+        post.on 'restoreSet'  @onRestoreSet
+        post.on 'storeSet'    @onStoreSet
         post.on 'newSet'      @onNewSet
         post.on 'kachelFocus' @onKachelFocus
         post.on 'newKachel'   @onNewKachel
@@ -161,22 +163,32 @@ class KachelSet
         if index >= sets.length-1 then index = -1
         @load sets[index+1]
         
+    onRestoreSet: =>
+
+        @load @sid, '_save'
+
+    onStoreSet: =>
+
+        prefs.set "kacheln#{@sid}_save" @set 
+        prefs.save()
+        
     # 000       0000000    0000000   0000000    
     # 000      000   000  000   000  000   000  
     # 000      000   000  000000000  000   000  
     # 000      000   000  000   000  000   000  
     # 0000000   0000000   000   000  0000000    
     
-    load: (newSid) ->
+    load: (newSid, postfix='') ->
                 
         newSid ?= prefs.get 'set' ''
         
-        oldKacheln = prefs.get "kacheln#{@sid}" []
+        if empty postfix
+            oldKacheln = prefs.get "kacheln#{@sid}" []
 
         @kachelIds = []
         updateIds = ['main']
         showIds = []
-        newSet = prefs.get "kacheln#{newSid}" []
+        newSet = prefs.get "kacheln#{newSid}#{postfix}" []
 
         for kachelId in newSet ? []
             if kachelId != 'main'
@@ -196,12 +208,16 @@ class KachelSet
                     else
                         klog 'no wid for' kachelId
         
-        prefs.set "kacheln#{@sid}" oldKacheln
+        if empty postfix
+            prefs.set "kacheln#{@sid}" oldKacheln
                     
         @sid = newSid
         prefs.set 'set' @sid
                     
         @set = newSet
+        
+        if valid postfix
+            prefs.set "kacheln#{newSid}" @set
         
         for kachelId in updateIds
             post.emit 'updateBounds' kachelId

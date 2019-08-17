@@ -15,21 +15,21 @@
 Kachel is a [NeXTSTEP](https://en.wikipedia.org/wiki/NeXTSTEP) inspired replacement for the Windows Taskbar and the macOS Dock.
 
 ### Features
-- Tiles 
+- **Tiles** 
     - 6 sizes, freely placeable
     - snap, sets
-    - Application tiles
+    - **Application**  tiles
         - activate on left click
         - minimize on right click
         - terminate on middle click
         - state indicator: minimized, top, window-less
-    - Folder tiles
+    - **Folder** tiles
         - open in Finder/Explorer on left click
         - custom icons for Home, Desktop and Downloads 
         - Trash: shows state, empty on right click
-- Analog and digital clock
-- Process information: load, memory, network, ...
-- System volume: scroll wheel control
+- Analog and digital **clock**
+- System **information**: load, memory, network, ...
+- System **volume**: scroll wheel control
 - Shutdown, Sleep and Restart
 - Calendar: current date (mac)
 - Taskbar Toggle (win)

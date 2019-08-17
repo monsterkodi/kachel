@@ -16,6 +16,8 @@ About           alt+cmdctrl+/
 Hide            cmdctrl+h
 Screenshot      alt+cmdctrl+s
 Reload          alt+cmdctrl+l
+Restore         cmdctrl+r
+Store           cmdctrl+s
 DevTools        alt+cmdctrl+i
 MoveDown        cmdctrl+down
 MoveRight       cmdctrl+right

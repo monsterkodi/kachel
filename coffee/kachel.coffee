@@ -22,6 +22,7 @@ class Kachel extends win
             onLoad: @onWinLoad
     
         @main =$ '#main'
+        
         @drag = new drag
             target:   document.body
             onStart:  @onDragStart
@@ -160,6 +161,8 @@ class Kachel extends win
         
         switch action
             when 'New'          then post.toMain 'newKachel' 'default'
+            when 'Restore'      then post.toMain 'restoreSet'
+            when 'Store'        then post.toMain 'storeSet'
             when 'Close'        then @win.setClosable(true); @win.close()
             when 'Quit'         then post.toMain 'quit'
             when 'Hide'         then post.toMain 'hide'
