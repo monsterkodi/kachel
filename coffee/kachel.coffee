@@ -160,7 +160,7 @@ class Kachel extends win
         
         switch action
             when 'New'          then post.toMain 'newKachel' 'default'
-            when 'Close'        then @win.close()
+            when 'Close'        then @win.setClosable(true); @win.close()
             when 'Quit'         then post.toMain 'quit'
             when 'Hide'         then post.toMain 'hide'
             when 'About'        then post.toMain 'showAbout'
