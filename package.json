@@ -16,7 +16,7 @@
   "dependencies": {
     "kxk": "^0.334.0",
     "systeminformation": "^4.14.4",
-    "wxw": "^1.84.0"
+    "wxw": "^1.86.0"
   },
   "devDependencies": {
     "electron": "^6.0.2",
