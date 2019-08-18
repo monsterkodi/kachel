@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 DIR=`dirname $0`
-BIN=$DIR/../node_modules/.bin
+MC=$DIR/../node_modules/wxw/bin/mc.app/Contents/MacOS/mc
 
-$BIN/wxw hook input &
-$BIN/wxw hook info &
-$BIN/wxw hook proc &
-$BIN/wxw hook cmd &
+$MC hook input &
+$MC hook info &
+$MC hook proc &
+$MC hook cmd &
