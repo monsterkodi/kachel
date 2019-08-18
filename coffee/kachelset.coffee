@@ -234,16 +234,26 @@ class KachelSet
             post.emit 'newKachel' kachelId
             
         if @kachelIds.length == 0
-            # klog 'loaded ++ focus main'
-            @switching = false
-            @win('main').focus()
-            post.emit 'setLoaded'
+            @didLoad()
+            
+    # 0000000    000  0000000          000       0000000    0000000   0000000    
+    # 000   000  000  000   000        000      000   000  000   000  000   000  
+    # 000   000  000  000   000        000      000   000  000000000  000   000  
+    # 000   000  000  000   000        000      000   000  000   000  000   000  
+    # 0000000    000  0000000          0000000   0000000   000   000  0000000    
+    
+    didLoad: =>
+        
+        @switching = false
+        @win('main').focus()
+        @focusKachel = @win('main')
+        post.emit 'setLoaded'
            
-    #  0000000   000   000         000       0000000    0000000   0000000    
-    # 000   000  0000  000         000      000   000  000   000  000   000  
-    # 000   000  000 0 000         000      000   000  000000000  000   000  
-    # 000   000  000  0000         000      000   000  000   000  000   000  
-    #  0000000   000   000         0000000   0000000   000   000  0000000    
+    # 000   000   0000000    0000000  000   000  00000000  000              000       0000000    0000000   0000000    
+    # 000  000   000   000  000       000   000  000       000              000      000   000  000   000  000   000  
+    # 0000000    000000000  000       000000000  0000000   000              000      000   000  000000000  000   000  
+    # 000  000   000   000  000       000   000  000       000              000      000   000  000   000  000   000  
+    # 000   000  000   000   0000000  000   000  00000000  0000000          0000000   0000000   000   000  0000000    
     
     onKachelLoad: (wid, kachelId) =>
         
@@ -258,11 +268,7 @@ class KachelSet
             index = @kachelIds.indexOf kachelId
             if index >= 0
                 @kachelIds.splice index, 1
-                if @kachelIds.length == 0
-                    klog "set#{@sid} loaded"
-                    @switching = false
-                    @win('main').focus()
-                    post.emit 'setLoaded'
+                if @kachelIds.length == 0 then @didLoad()
             else
                 klog 'unknown kachel?' kachelId
 

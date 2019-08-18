@@ -24,11 +24,6 @@ class Sysdish extends Kachel
             dsk: []
             cpu: []
             
-        @max = 
-            net: [100 100]
-            dsk: [1 1]
-            cpu: [1 1]
-            
         @colors =
             dsk: [[128 128 255] [ 64  64 255]]
             net: [[  0 150   0] [  0 255   0]]
@@ -75,21 +70,18 @@ class Sysdish extends Kachel
     #  0000000   000   000  0000000    000   000     000     000   000  
     
     onData: (@data) =>
-        
+            
         for n in ['dsk' 'net' 'cpu']
             hist = @history[n]
             switch n
                 when 'dsk' 
                     if @data.dsk? 
-                                hist.push [@data.dsk.r_sec,  @data.dsk.w_sec]
+                                hist.push [@data.dsk.r_fac,  @data.dsk.w_fac]
                     else
                                 hist.push [@data.mem.active/@data.mem.total, @data.mem.used/@data.mem.total]
                 when 'cpu' then hist.push [@data.cpu.sys,    @data.cpu.usr]
-                when 'net' then hist.push [@data.net.rx_sec, @data.net.tx_sec]
+                when 'net' then hist.push [@data.net.rx_fac, @data.net.tx_fac]
              
-            for m in [0..1]
-                @max[n][m] = Math.max last(hist)[m], @max[n][m]
-                
             hist.shift() while hist.length > @width
                 
         if @mode == 'dish'
@@ -127,8 +119,7 @@ class Sysdish extends Kachel
                             h = @height * hist[i][1]
                             ctx.fillRect @width-hist.length+i, @height-h, 2, h
                     else
-                        max = [@max[n][0], @max[n][1]]
-                        h = (hist[i][m] / max[m]) * @height/2
+                        h = hist[i][m] * @height/2
                         if m 
                             ctx.fillRect @width-hist.length+i, @height/2-h, 2, h
                         else
@@ -247,9 +238,13 @@ class Sysdish extends Kachel
          @netrOld = @netrNow = @netrNew
          @nettOld = @nettNow = @nettNew
 
+         
          @netrNew = 180*@data.net.rx_sec/@data.net.rx_max
          @nettNew = 180*@data.net.tx_sec/@data.net.tx_max
 
+         if Number.isNaN @netrNew # remove me!
+            klog @data.net        # remove me!
+         
          @sysOld = @sysNow = @sysNew
          @usrOld = @usrNow = @usrNew
 

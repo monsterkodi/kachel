@@ -9,9 +9,6 @@ New             cmdctrl+n
 Close           cmdctrl+w delete
 Quit            alt+cmdctrl+q
 Scheme          cmdctrl+i
-IncreaseSize    cmdctrl+= 
-DecreaseSize    cmdctrl+- 
-ResetSize       cmdctrl+0 
 About           alt+cmdctrl+/
 Hide            cmdctrl+h
 Screenshot      alt+cmdctrl+s
@@ -23,7 +20,7 @@ MoveDown        cmdctrl+down
 MoveRight       cmdctrl+right
 MoveUp          cmdctrl+up
 MoveLeft        cmdctrl+left
-Increase        =
-Decrease        -
-Reset           0
+Increase        cmdctrl+= =
+Decrease        cmdctrl+- -
+Reset           cmdctrl+0 0
     

@@ -6,7 +6,7 @@
 0000000     0000000    0000000   000   000  0000000    0000000 
 ###
 
-{ post, clamp, empty, klog, kpos, os } = require 'kxk'
+{ post, clamp, empty, valid, klog, kpos, os } = require 'kxk'
 
 wxw = require 'wxw'
 
@@ -39,17 +39,19 @@ class Bounds
     #  0000000  0000000  00000000  000   000  000   000  
     
     @cleanTiles: =>
-        klog 'cleanTiles', @infos.length
+
         @update()
         for info in @infos
             kb = info.bounds
             
             if kb.width not in @kachelSizes
+                klog 'wrong width' kb
                 kb.width = @kachelSizes[@kachelSize info.kachel]
                 @setBounds info.kachel, kb
                 return @cleanTiles()
                 
             if kb.height not in @kachelSizes
+                klog 'wrong height' kb
                 kb.height = @kachelSizes[@kachelSize info.kachel]
                 @setBounds info.kachel, kb
                 return @cleanTiles()
@@ -57,17 +59,17 @@ class Bounds
             if overlap = @overlapInfo info.kachel, kb
                 
                 ox = kb.x
-                nx = ox - 72
+                nx = ox - @kachelSizes[0]
                 kb.x = nx
                 while nx > 0 and overlap = @overlapInfo info.kachel, kb
-                    nx -= 72
+                    nx -= @kachelSizes[0]
                     kb.x = nx
                     
                 if nx <= 0
-                    nx = ox + 72
+                    nx = ox + @kachelSizes[0]
                     kb.x = nx
                     while nx < @screenWidth and overlap = @overlapInfo info.kachel, kb
-                        nx += 72
+                        nx += @kachelSizes[0]
                         kb.x = nx
                         
                 if not @overlapInfo info.kachel, kb
@@ -148,7 +150,7 @@ class Bounds
         
     @onScreen: (b) ->
         
-        b.x = clamp 0, @screenWidth  - b.width,  b.x
+        b.x = clamp 0, @screenWidth - b.width, b.x
         b.y = clamp @screenTop, @screenTop+@screenHeight - b.height, b.y
         b
         
@@ -229,7 +231,7 @@ class Bounds
             switch dir
                 when 'left' 'right' then b.y < kb.y+kb.height and b.y+b.height > kb.y
                 when 'up' 'down'    then b.x < kb.x+kb.width  and b.x+b.width  > kb.x
-        
+                        
         if inline.length 
             ks = inline
                 
@@ -250,43 +252,80 @@ class Bounds
                     a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (kb.y - ab.y)
                     b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
             a-b
+                    
         ks[0]
-                 
+          
+    @inlineNeighborKachel: (kachel, dir) ->
+        
+        kb = kachel.getBounds()
+        kacheln = global.kacheln()
+        
+        ks = kacheln.filter (k) ->
+            return false if k == kachel
+            b = k.getBounds()
+            switch dir
+                when 'right' then b.x  > kb.x+kb.width
+                when 'down'  then b.y  > kb.y+kb.height
+                when 'left'  then b.x+b.width  < kb.x 
+                when 'up'    then b.y+b.height < kb.y 
+    
+        if valid ks
+                
+            inline = ks.filter (k) ->
+                b = k.getBounds()
+                switch dir
+                    when 'left' 'right' then b.y < kb.y+kb.height and b.y+b.height > kb.y
+                    when 'up' 'down'    then b.x < kb.x+kb.width  and b.x+b.width  > kb.x
+                    
+            if valid inline
+                        
+                inline.sort (a,b) ->
+                    ab = a.getBounds()
+                    bb = b.getBounds()
+                    switch dir
+                        when 'right' 
+                            a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (ab.x - kb.x)
+                            b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (bb.x - kb.x)
+                        when 'left'  
+                            a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (kb.x - ab.x)
+                            b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (kb.x - bb.x)
+                        when 'down'  
+                            a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (ab.y - kb.y)
+                            b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (bb.y - kb.y)
+                        when 'up'    
+                            a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (kb.y - ab.y)
+                            b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
+                    a-b
+                    
+                return inline[0]
+        
     # 00     00   0000000   000   000  00000000  
     # 000   000  000   000  000   000  000       
     # 000000000  000   000   000 000   0000000   
     # 000 0 000  000   000     000     000       
     # 000   000   0000000       0      00000000  
     
+    @dirDist: (kachel, dir) ->
+        
+        if nk = @inlineNeighborKachel kachel, dir
+            return @gap kachel.getBounds(), nk.getBounds(), dir
+        
+        Infinity
+    
     @moveKachel: (kachel, dir) ->
                 
         b = @validBounds kachel
         
         nb = x:b.x, y:b.y, width:b.width, height:b.height
+        
         switch dir 
-            when 'up'       then nb.y = b.y - b.height
-            when 'down'     then nb.y = b.y + b.height
-            when 'right'    then nb.x = b.x + b.width 
-            when 'left'     then nb.x = b.x - b.width 
-            
-        if info = @overlapInfo kachel, nb
-            
-            gap = (s, d, f, b, o) =>
-                g = f b, o
-                if g > 0
-                    nb[d] = b[d] + s * g
-                    @setBounds kachel, nb
-                    true
-                    
-            r = switch dir 
-                when 'up'    then gap -1 'y' @gapUp,    b, info.bounds
-                when 'down'  then gap +1 'y' @gapDown,  b, info.bounds
-                when 'right' then gap +1 'x' @gapRight, b, info.bounds
-                when 'left'  then gap -1 'x' @gapLeft,  b, info.bounds
-            return if r
-                   
-        @setBounds kachel, @isOnScreen(nb) and nb or b
-
+            when 'right'    then nb.x = b.x + Math.min @dirDist(kachel, dir), b.width 
+            when 'down'     then nb.y = b.y + Math.min @dirDist(kachel, dir), b.height
+            when 'left'     then nb.x = b.x - Math.min @dirDist(kachel, dir), b.width 
+            when 'up'       then nb.y = b.y - Math.min @dirDist(kachel, dir), b.height
+        
+        @setBounds kachel, @onScreen nb
+        
     @gapRight: (a, b) -> b.x - (a.x + a.width)
     @gapLeft:  (a, b) -> a.x - (b.x + b.width)
     @gapUp:    (a, b) -> a.y - (b.y + b.height)

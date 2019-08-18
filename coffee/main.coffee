@@ -16,12 +16,12 @@ wxw       = require 'wxw'
 
 BrowserWindow = electron.BrowserWindow
 
-dragging    = false
-mainWin     = null
-kachelSet   = null
-data        = null
-swtch       = null
-mousePos    = kpos 0 0
+dragging  = false
+mainWin   = null
+kachelSet = null
+data      = null
+swtch     = null
+mousePos  = kpos 0 0
     
 KachelApp = new app
     
@@ -99,7 +99,7 @@ KachelApp = new app
                 appswitch:  'alt+tab'
                 screenzoom: 'alt+z'
             
-        keys = prefs.get 'keys', keys
+        keys = prefs.get 'keys' keys
         prefs.set 'keys' keys
         prefs.save()
         

@@ -138,6 +138,8 @@ class Sysinfo
             nd =
                 mem: d.mem
                 net:
+                    rx_fac: rx_sec/@rx_max
+                    tx_fac: tx_sec/@tx_max
                     rx_sec: rx_sec
                     tx_sec: tx_sec
                     rx_max: @rx_max
@@ -155,6 +157,8 @@ class Sysinfo
                 @w_max = Math.max @w_max, w_sec
                 
                 nd.dsk = 
+                    r_fac: r_sec/@r_max
+                    w_fac: w_sec/@w_max
                     r_sec: r_sec
                     w_sec: w_sec
                     r_max: @r_max
