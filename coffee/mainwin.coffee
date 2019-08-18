@@ -11,16 +11,15 @@
 Kachel = require './kachel'
 
 class MainWin extends Kachel
-        
+      
     @: (@kachelId:'main') -> 
         
         super
         
         post.on 'showDot' @onShowDot
         
-        @win.on 'close' (event) -> stopEvent event
-        
-        window.onbeforeunload = (e) => e.returnValue = false
+        # @win.on 'close' (event) -> stopEvent event
+        # window.onbeforeunload = (e) => e.returnValue = false
     
     onLoad: -> @main.appendChild elem 'img', class:'kachelImg' src:__dirname + '/../img/about.png'    
         

@@ -82,7 +82,7 @@ class KachelSet
             resizable:          false
             maximizable:        false
             minimizable:        false
-            closable:           false
+            # closable:           false
             fullscreen:         false
             show:               false
             fullscreenenable:   false

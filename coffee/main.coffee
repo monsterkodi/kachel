@@ -23,6 +23,10 @@ data      = null
 swtch     = null
 mousePos  = kpos 0 0
     
+menu = electron.Menu.buildFromTemplate [{
+    label: "kachel",
+    submenu: [{ role: 'about' }]}]
+
 KachelApp = new app
     
     dir:                __dirname
@@ -33,6 +37,7 @@ KachelApp = new app
     icon:               '../img/app.ico'
     tray:               '../img/menu.png'
     about:              '../img/about.png'
+    menu:               menu
     minWidth:           Bounds.kachelSizes[0]
     minHeight:          Bounds.kachelSizes[0]
     maxWidth:           Bounds.kachelSizes[0]
@@ -48,7 +53,7 @@ KachelApp = new app
     onQuit:             -> data.detach()
     resizable:          false
     maximizable:        false
-    closable:           false
+    # closable:           false
     saveBounds:         false
     onWinReady: (win) =>
         
