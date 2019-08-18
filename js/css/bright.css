@@ -13,26 +13,26 @@ body:not(.kachelFocus) #main {
   animation-duration: 0.2s;
 }
 body.kachelHover {
-  background-color: #ddd;
+  background-color: #d0d0d0;
   border-top: 1px solid #eee;
   border-left: 1px solid #ddd;
   border-right: 1px solid #b0b0b0;
   border-bottom: 1px solid #aaa;
 }
 body.kachelHover #main {
-  background-color: #ddd;
+  background-color: #d0d0d0;
 }
 body.kachelFocus {
   animation-name: focusFrame;
   animation-duration: 0.4s;
-  background-color: #eee;
+  background-color: #ddd;
   border-top: 1px solid #fff;
   border-left: 1px solid #eee;
   border-right: 1px solid #aaa;
   border-bottom: 1px solid #999;
 }
 body.kachelFocus #main {
-  background-color: #eee;
+  background-color: #ddd;
   animation-name: focusBackground;
   animation-duration: 0.4s;
 }
@@ -101,7 +101,7 @@ body:active {
 }
 .face {
   stroke: #aaa;
-  fill: #fff;
+  fill: #ccc;
 }
 .minmrk {
   stroke: #aaa;
@@ -113,7 +113,19 @@ body:active {
   stroke: #888;
 }
 .second {
-  stroke: #ddd;
+  stroke: #aaa;
+}
+.alarm-hour {
+  color: #555;
+}
+.alarm-minute {
+  color: #555;
+}
+.alarm-minute:before {
+  color: #aaa;
+}
+.alarm-second {
+  color: #aaa;
 }
 .knob {
   fill: #eee;
@@ -136,7 +148,7 @@ body:active {
     border-bottom: 1px solid #999;
   }
   to {
-    background-color: #eee;
+    background-color: #ddd;
     border-top: 1px solid #d8d8d8;
     border-left: 1px solid #d0d0d0;
     border-right: 1px solid #b8b8b8;
@@ -152,7 +164,7 @@ body:active {
     border-bottom: 1px solid #999;
   }
   to {
-    background-color: #eee;
+    background-color: #ddd;
     border-top: 1px solid #d8d8d8;
     border-left: 1px solid #d0d0d0;
     border-right: 1px solid #b8b8b8;
@@ -168,7 +180,7 @@ body:active {
     border-bottom: 1px solid #999;
   }
   to {
-    background-color: #eee;
+    background-color: #ddd;
     border-top: 1px solid #d8d8d8;
     border-left: 1px solid #d0d0d0;
     border-right: 1px solid #b8b8b8;
@@ -184,7 +196,7 @@ body:active {
     border-bottom: 1px solid #999;
   }
   to {
-    background-color: #eee;
+    background-color: #ddd;
     border-top: 1px solid #d8d8d8;
     border-left: 1px solid #d0d0d0;
     border-right: 1px solid #b8b8b8;
@@ -196,7 +208,7 @@ body:active {
     background-color: #ccc;
   }
   to {
-    background-color: #eee;
+    background-color: #ddd;
   }
 }
 @-webkit-keyframes focusBackground {
@@ -204,7 +216,7 @@ body:active {
     background-color: #ccc;
   }
   to {
-    background-color: #eee;
+    background-color: #ddd;
   }
 }
 @-o-keyframes focusBackground {
@@ -212,7 +224,7 @@ body:active {
     background-color: #ccc;
   }
   to {
-    background-color: #eee;
+    background-color: #ddd;
   }
 }
 @keyframes focusBackground {
@@ -220,12 +232,12 @@ body:active {
     background-color: #ccc;
   }
   to {
-    background-color: #eee;
+    background-color: #ddd;
   }
 }
 @-moz-keyframes noFocusFrame {
   from {
-    background-color: #eee;
+    background-color: #ddd;
     border-top: 1px solid #d8d8d8;
     border-left: 1px solid #d0d0d0;
     border-right: 1px solid #b8b8b8;
@@ -241,7 +253,7 @@ body:active {
 }
 @-webkit-keyframes noFocusFrame {
   from {
-    background-color: #eee;
+    background-color: #ddd;
     border-top: 1px solid #d8d8d8;
     border-left: 1px solid #d0d0d0;
     border-right: 1px solid #b8b8b8;
@@ -257,7 +269,7 @@ body:active {
 }
 @-o-keyframes noFocusFrame {
   from {
-    background-color: #eee;
+    background-color: #ddd;
     border-top: 1px solid #d8d8d8;
     border-left: 1px solid #d0d0d0;
     border-right: 1px solid #b8b8b8;
@@ -273,7 +285,7 @@ body:active {
 }
 @keyframes noFocusFrame {
   from {
-    background-color: #eee;
+    background-color: #ddd;
     border-top: 1px solid #d8d8d8;
     border-left: 1px solid #d0d0d0;
     border-right: 1px solid #b8b8b8;
@@ -289,7 +301,7 @@ body:active {
 }
 @-moz-keyframes noFocusBackground {
   from {
-    background-color: #eee;
+    background-color: #ddd;
   }
   to {
     background-color: #ccc;
@@ -297,7 +309,7 @@ body:active {
 }
 @-webkit-keyframes noFocusBackground {
   from {
-    background-color: #eee;
+    background-color: #ddd;
   }
   to {
     background-color: #ccc;
@@ -305,7 +317,7 @@ body:active {
 }
 @-o-keyframes noFocusBackground {
   from {
-    background-color: #eee;
+    background-color: #ddd;
   }
   to {
     background-color: #ccc;
@@ -313,7 +325,7 @@ body:active {
 }
 @keyframes noFocusBackground {
   from {
-    background-color: #eee;
+    background-color: #ddd;
   }
   to {
     background-color: #ccc;

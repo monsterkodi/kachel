@@ -121,6 +121,9 @@ body:active {
 .alarm-minute {
   color: #08f;
 }
+.alarm-minute:before {
+  color: #333;
+}
 .alarm-second {
   color: #333;
 }

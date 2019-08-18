@@ -6,20 +6,19 @@
 // 0000000    000   000  000   0000000   000   000     000     
 
 bgColor             = #ccc
-bgHover             = #ddd
-bgFocus             = #eee
+bgHover             = #d0d0d0
+bgFocus             = #ddd
 
 body
     &:not(.kachelFocus)
         animation-name      noFocusFrame
         animation-duration  0.2s
         
-        background-color        bgColor    
-    
-        border-top           1px solid #d8d8d8
-        border-left          1px solid #d0d0d0
-        border-right         1px solid #b8b8b8
-        border-bottom        1px solid #b0b0b0
+        background-color    bgColor
+        border-top          1px solid #d8d8d8
+        border-left         1px solid #d0d0d0
+        border-right        1px solid #b8b8b8
+        border-bottom       1px solid #b0b0b0
 
         & #main
             background-color    bgColor
@@ -156,20 +155,35 @@ body
 //  0000000  0000000   0000000    0000000  000   000    
 
 .face
-    stroke              #aaa 
-    fill                #fff
+    stroke              #aaa
+    fill                #ccc
     
 .minmrk
-    stroke              #aaa 
+    stroke              #aaa
     
 .hour   
-    stroke              #000 
+    stroke              #000
     
 .minute 
     stroke              #888
     
 .second 
-    stroke              #ddd
+    stroke              #aaa
+    
+//  0000000   000       0000000   00000000   00     00  
+// 000   000  000      000   000  000   000  000   000  
+// 000000000  000      000000000  0000000    000000000  
+// 000   000  000      000   000  000   000  000 0 000  
+// 000   000  0000000  000   000  000   000  000   000  
+
+.alarm-hour
+    color               #555
+.alarm-minute
+    color               #555
+    &:before
+        color           #aaa
+.alarm-second
+    color               #aaa
     
 // 000   000   0000000   000      000   000  00     00  00000000    
 // 000   000  000   000  000      000   000  000   000  000         

@@ -6,7 +6,7 @@
 0000000   000   000      0      00000000  000   000
 ###
 
-{ sw, sh, os, slash, post, kpos, klog, elem, _ } = require 'kxk'
+{ sw, sh, os, slash, post, kpos, prefs, klog, elem, _ } = require 'kxk'
 
 Kachel   = require './kachel'
 wxw      = require 'wxw'
@@ -21,10 +21,10 @@ class Saver extends Kachel
         @last     = Date.now()
         @taskbar  = false
         @saver    = null
-        @minutes  = 5
+        @minutes  = prefs.get 'saver▸timeout' 5
         @interval = parseInt 1000 * 60 * @minutes
         
-    onLoad: ->
+    onLoad: =>
         
         @main.appendChild elem 'img' class:'kachelImg' src:__dirname + '/../img/saver.png'
         
@@ -33,6 +33,8 @@ class Saver extends Kachel
         @requestData 'mouse'   
         @requestData 'keyboard'
     
+    onShow: => @startCheck()
+        
     onData: (data) => @last = Date.now()
         
     #  0000000  000   000  00000000   0000000  000   000  
@@ -41,9 +43,14 @@ class Saver extends Kachel
     # 000       000   000  000       000       000  000   
     #  0000000  000   000  00000000   0000000  000   000  
     
-    startCheck: (ms=@interval) -> @checkTimer = setTimeout @check, ms
+    startCheck: (ms=@interval) -> 
+        
+        clearTimeout @checkTimer
+        @checkTimer = setTimeout @check, ms
         
     check: =>
+        
+        return if not @win.isVisible()
         
         now = Date.now()
         

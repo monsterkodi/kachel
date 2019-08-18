@@ -52,7 +52,6 @@ svg {
 }
 .alarm-minute:before {
   content: ':';
-  color: #333;
   padding-right: 7%;
 }
 .alarm-second {

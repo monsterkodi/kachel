@@ -29,6 +29,7 @@ class Kachel extends win
             onMove:   @onDragMove
             onStop:   @onDragStop
         
+        @win.on 'show'  @onWinShow
         @win.on 'move'  @onWinMove
         @win.on 'blur'  @onWinBlur
         @win.on 'focus' @onWinFocus
@@ -114,6 +115,7 @@ class Kachel extends win
     onWinFocus: (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
     onWinBlur:  (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
     onWinLoad:  (event) => @onLoad event
+    onWinShow:  (event) => @onShow event
     onWinMove:  (event) => @onMove event
     onWinClose: (event) => @onClose event
         
@@ -127,6 +129,7 @@ class Kachel extends win
         post.toMain 'kachelLoad' @id, @kachelId
     
     onLoad:   -> # to be overridden in subclasses
+    onShow:   -> # to be overridden in subclasses
     onMove:   -> # to be overridden in subclasses
     onFocus:  -> # to be overridden in subclasses
     onBlur:   -> # to be overridden in subclasses
