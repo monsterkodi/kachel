@@ -39,32 +39,36 @@ class KachelSet
     # 000  0000  000       000   000        000  000   000   000  000       000   000  000       000      
     # 000   000  00000000  00     00        000   000  000   000   0000000  000   000  00000000  0000000  
 
-    onNewKachel: (id) =>
+    onNewKachel: (kachelId) =>
 
-        return if id == 'main'
+        return if kachelId == 'main'
         
-        if @wids[id]
-            win = @win id
+        if @wids[kachelId]
+            win = @win kachelId
             win.showInactive()
-            # win.focus()
-            # klog 'show' id
-            # win.show()
+            
+            if kachelId not in @set
+                @set.push kachelId 
+                prefs.set "kacheln#{@sid}" @set
+                klog 'prefs save'
+                prefs.save()
+            
             return
         
-        kachelSize = 3
+        kachelSize = 2
     
-        type = id
-        if id.startsWith 'start'
+        type = kachelId
+        if kachelId.startsWith 'start'
             type = 'start'
             kachelSize = 2
-        else if id.endsWith('.app') or id.endsWith('.exe')
-            if slash.base(id) == 'konrad'
+        else if kachelId.endsWith('.app') or kachelId.endsWith('.exe')
+            if slash.base(kachelId) == 'konrad'
                 type = 'konrad'
                 kachelSize = 4
             else
                 type = 'appl'
                 kachelSize = 2
-        else if id.startsWith('/') or id[1] == ':'
+        else if kachelId.startsWith('/') or kachelId[1] == ':'
             type = 'folder'
             kachelSize = 2
             
@@ -94,14 +98,14 @@ class KachelSet
             
         win.loadURL KachelSet.html(type), baseURLForDataURL:"file://#{__dirname}/../js/index.html"
         
-        win.kachelId = id
+        win.kachelId = kachelId
         
         win.webContents.on 'dom-ready' ((id) -> (event) ->
             wid = event.sender.id
             post.toWin wid, 'initKachel' id
             electron.BrowserWindow.fromId(wid).show()
             Bounds.update()
-            )(id)
+            )(kachelId)
               
         win.on 'close' @onKachelClose
         win.setHasShadow false    
@@ -232,7 +236,6 @@ class KachelSet
 
         for kachelId in showIds
             @onNewKachel kachelId
-            # post.emit 'newKachel' kachelId
             
         if @kachelIds.length == 0
             @didLoad()
@@ -257,10 +260,14 @@ class KachelSet
     # 000   000  000   000   0000000  000   000  00000000  0000000          0000000   0000000   000   000  0000000    
     
     onKachelLoad: (wid, kachelId) =>
+            
+        # klog 'onLoad' @sid, @set.length, kachelId
         
         if kachelId not in @set
             @set.push kachelId 
             prefs.set "kacheln#{@sid}" @set
+            klog 'prefs save'
+            prefs.save()
         
         @dict[wid] = kachelId
         @wids[kachelId] = wid

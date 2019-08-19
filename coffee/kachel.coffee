@@ -101,7 +101,7 @@ class Kachel extends win
         post.toMain 'dragStop' @id
     
     onSaveBounds: =>
-        
+        klog 'onSaveBounds' @id
         for i in [1..6]
             document.body.classList.remove "kachelSize#{i}"
         document.body.classList.add "kachelSize#{@kachelSize()+1}"

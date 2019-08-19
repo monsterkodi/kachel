@@ -43,6 +43,7 @@ class Start extends Kachel
     onInitKachel: (@kachelId) =>
             
         @setIcon "#{__dirname}/../img/tools.png" 
+        $('.applicon').style = 'opacity:0.3;'
         super
                               
 module.exports = Start
