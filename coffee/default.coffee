@@ -40,12 +40,12 @@ class Default extends Kachel
             button 3 2 'img/alarm.png'  -> post.toMain 'newKachel' 'alarm'   
             button 3 3 'img/volume.png' -> post.toMain 'newKachel' 'volume'  
         ]
-        
 
     openTools: =>
 
         @main.innerHTML = ''
         @main.appendChild elem 'div' class:'grid3x3' children:[
+            button 1 1 'img/menu.png'       -> post.toMain 'newKachel' 'chain'  
             button 1 3 'img/tools.png'         @onLoad
             button 2 1 'img/taskbar.png'    -> post.toMain 'newKachel' 'taskbar'  
             button 2 3 'img/clean.png'      -> post.toMain 'newKachel' 'clean'    
