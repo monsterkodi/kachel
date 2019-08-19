@@ -48,6 +48,12 @@ body:active {
 #main {
   background-color: #202020;
 }
+.button:hover {
+  background-color: #333;
+}
+.button:active {
+  background-color: #222;
+}
 .appldot {
   fill: #202020;
 }

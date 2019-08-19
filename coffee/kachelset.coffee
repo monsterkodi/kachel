@@ -45,12 +45,16 @@ class KachelSet
         
         if @wids[kachelId]
             win = @win kachelId
+            
+            if kachelId == 'default'
+                win.close()
+                return
+            
             win.showInactive()
             
             if kachelId not in @set
                 @set.push kachelId 
                 prefs.set "kacheln#{@sid}" @set
-                klog 'prefs save'
                 prefs.save()
             
             return
@@ -266,7 +270,6 @@ class KachelSet
         if kachelId not in @set
             @set.push kachelId 
             prefs.set "kacheln#{@sid}" @set
-            klog 'prefs save'
             prefs.save()
         
         @dict[wid] = kachelId
@@ -277,7 +280,7 @@ class KachelSet
             if index >= 0
                 @kachelIds.splice index, 1
                 if @kachelIds.length == 0 then @didLoad()
-            else
+            else if kachelId != 'default'
                 klog 'unknown kachel?' kachelId
 
     # 00000000   00000000  00     00   0000000   000   000  00000000  

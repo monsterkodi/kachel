@@ -21,34 +21,39 @@ class Default extends Kachel
     # 000      000   000  000   000  000   000  
     # 0000000   0000000   000   000  0000000    
     
+    button = (row, col, img, click) ->
+        
+        b = elem class:"button grid3x3_#{row}#{col}" click:click, child: elem 'img' src:__dirname + '/../' + img
+        b.ondragstart = -> false
+        b
+    
     onLoad: =>
-
-        children = [
-            elem 'img' class:'grid3x3_11' click:@openApp,     src:__dirname + '/../img/app.png'   
-            elem 'img' class:'grid3x3_12' click:@openFolder,  src:__dirname + '/../img/folder.png'    
-            elem 'img' class:'grid3x3_13' click:@openClean,   src:__dirname + '/../img/clean.png'     
-            elem 'img' class:'grid3x3_21' click:@openDish,    src:__dirname + '/../img/dish.png' 
-            elem 'img' class:'grid3x3_22' click:@openTaskbar, src:__dirname + '/../img/taskbar.png' 
-            elem 'img' class:'grid3x3_23' click:@openSaver,   src:__dirname + '/../img/saver.png' 
-            elem 'img' class:'grid3x3_31' click:@openClock,   src:__dirname + '/../img/clock.png'     
-            elem 'img' class:'grid3x3_32' click:@openAlarm,   src:__dirname + '/../img/alarm.png'     
-            elem 'img' class:'grid3x3_33' click:@openVolume,  src:__dirname + '/../img/volume.png'
+        
+        @main.innerHTML = ''
+        @main.appendChild elem 'div' class:'grid3x3' children:[
+            button 1 1 'img/app.png'       @openApp
+            button 1 2 'img/folder.png'    @openFolder
+            button 1 3 'img/tools.png'     @openTools
+            button 2 1 'img/dish.png'   -> post.toMain 'newKachel' 'sysdish' 
+            button 2 3 'img/saver.png'  -> post.toMain 'newKachel' 'saver'   
+            button 3 1 'img/clock.png'  -> post.toMain 'newKachel' 'clock'   
+            button 3 2 'img/alarm.png'  -> post.toMain 'newKachel' 'alarm'   
+            button 3 3 'img/volume.png' -> post.toMain 'newKachel' 'volume'  
         ]
         
-        for child in children
-            child.ondragstart = -> false
+
+    openTools: =>
+
+        @main.innerHTML = ''
+        @main.appendChild elem 'div' class:'grid3x3' children:[
+            button 1 3 'img/tools.png'         @onLoad
+            button 2 1 'img/taskbar.png'    -> post.toMain 'newKachel' 'taskbar'  
+            button 2 3 'img/clean.png'      -> post.toMain 'newKachel' 'clean'    
+            button 3 1 'icons/sleep.png'    -> post.toMain 'newKachel' 'sleep'    
+            button 3 2 'icons/restart.png'  -> post.toMain 'newKachel' 'restart'  
+            button 3 3 'icons/shutdown.png' -> post.toMain 'newKachel' 'shutdown' 
+        ]
         
-        grid = elem 'div' class:'grid3x3' children:children
-    
-        @main.appendChild grid
-        
-    openClock:   => post.toMain 'newKachel' 'clock'   
-    openVolume:  => post.toMain 'newKachel' 'volume'   
-    openAlarm:   => post.toMain 'newKachel' 'alarm'   
-    openClean:   => post.toMain 'newKachel' 'clean'
-    openSaver:   => post.toMain 'newKachel' 'saver'   
-    openDish:    => post.toMain 'newKachel' 'sysdish'
-    openTaskbar: => post.toMain 'newKachel' 'taskbar'
     onLeftClick: => log 'onLeftClick'
     
     # 0000000    000  00000000   
