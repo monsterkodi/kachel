@@ -1,4 +1,4 @@
-// koffee 1.4.0
+// koffee 1.3.0
 var $, borderScroll, borderTimer, childp, clamp, createWindow, doScroll, done, drag, dragging, electron, init, karg, klog, kpos, mapRange, offset, onDblClick, onDragMove, onDragStart, onDragStop, onMouseMove, onWheel, os, post, prefs, ref, scale, screenshotFile, screenshotPath, scrollSpeed, slash, start, startScroll, taskbar, transform, wxw;
 
 ref = require('kxk'), childp = ref.childp, post = ref.post, karg = ref.karg, slash = ref.slash, drag = ref.drag, prefs = ref.prefs, clamp = ref.clamp, kpos = ref.kpos, klog = ref.klog, os = ref.os, $ = ref.$;

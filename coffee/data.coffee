@@ -127,13 +127,19 @@ class Sysinfo
         
         return if global.dragging
         
-        sysinfo.getDynamicData (d) => 
-            
-            rx_sec = parseInt d.networkStats[0].rx_sec
-            tx_sec = parseInt d.networkStats[0].tx_sec
+        sysinfo.getDynamicData (d) =>
+        
+            if Math.abs(d.networkStats[0].ms - 1000) > 100 # don't trust those values with wrong ms time span
+                rx_sec = Math.min @rx_max, parseInt d.networkStats[0].rx_sec
+                tx_sec = Math.min @tx_max, parseInt d.networkStats[0].tx_sec
+            else
+                rx_sec = parseInt d.networkStats[0].rx_sec
+                tx_sec = parseInt d.networkStats[0].tx_sec
             
             @rx_max = Math.max @rx_max, rx_sec
             @tx_max = Math.max @tx_max, tx_sec
+            
+            # klog 'd.networkStats' d.networkStats[0].ms, parseInt(d.networkStats[0].rx_sec), parseInt(d.networkStats[0].tx_sec), rx_sec/@rx_max, tx_sec/@tx_max
             
             nd =
                 mem: d.mem

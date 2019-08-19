@@ -46,7 +46,9 @@ class KachelSet
         if @wids[id]
             win = @win id
             win.showInactive()
-            win.focus()
+            # win.focus()
+            # klog 'show' id
+            # win.show()
             return
         
         kachelSize = 3
@@ -76,13 +78,11 @@ class KachelSet
             transparent:        true
             autoHideMenuBar:    true
             acceptFirstMouse:   true
-            transparent:        true
             hasShadow:          false
             frame:              false
             resizable:          false
             maximizable:        false
             minimizable:        false
-            # closable:           false
             fullscreen:         false
             show:               false
             fullscreenenable:   false
@@ -231,7 +231,8 @@ class KachelSet
             post.emit 'updateBounds' kachelId
 
         for kachelId in showIds
-            post.emit 'newKachel' kachelId
+            @onNewKachel kachelId
+            # post.emit 'newKachel' kachelId
             
         if @kachelIds.length == 0
             @didLoad()
