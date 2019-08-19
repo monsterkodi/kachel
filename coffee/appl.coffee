@@ -49,6 +49,13 @@ class Appl extends Kachel
         
         @updateDot()
         
+    onBounds: =>
+        
+        if os.platform() == 'win32' # on windows,
+            if dot =$ '.appldot'    # for some reason the content 
+                dot.remove()        # doesn't get updated immediately on resize 
+                @updateDot()        # if there is a dot svg present
+        
     # 0000000     0000000   000000000  
     # 000   000  000   000     000     
     # 000   000  000   000     000     
