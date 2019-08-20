@@ -6,7 +6,7 @@
 0000000     0000000    0000000   000   000  0000000    0000000 
 ###
 
-{ post, clamp, empty, valid, klog, kpos, os } = require 'kxk'
+{ post, clamp, first, empty, valid, klog, kpos, os } = require 'kxk'
 
 wxw = require 'wxw'
 
@@ -31,7 +31,11 @@ class Bounds
         @updateScreenSize()
         @update()
         post.on 'cleanTiles' @cleanTiles
+        post.on 'screensize' @updateScreenSize
             
+    @wins: -> electron.remote? and electron.remote.BrowserWindow.getAllWindows() or electron.BrowserWindow.getAllWindows()
+    @kacheln: -> @wins().filter (w) -> w.title != "switch" and w.isVisible()
+        
     #  0000000  000      00000000   0000000   000   000  
     # 000       000      000       000   000  0000  000  
     # 000       000      0000000   000000000  000 0 000  
@@ -77,21 +81,23 @@ class Bounds
                     return @cleanTiles()
                 
     @kachelSize: (k) ->
+        
         kb = k.getBounds()
         size = 0        
         while size < @kachelSizes.length-1 and Math.abs(kb.width - @kachelSizes[size]) > 8
             size++
         size
                 
-    @updateScreenSize: ->
+    @updateScreenSize: =>
         
         if os.platform() == 'win32'            
             ss = wxw 'screen' 'user'
             sp = x:ss.width, y:ss.height
-            vs = kpos(electron.screen.screenToDipPoint sp).rounded() 
+            vs = kpos(electron.screen.screenToDipPoint sp).rounded()
             @screenWidth  = vs.x
             @screenHeight = vs.y
             @screenTop    = 0
+            klog 'updateScreenSize' @screenWidth, @screenHeight
         else
             @screenWidth  = electron.screen.getPrimaryDisplay().workAreaSize.width
             @screenHeight = electron.screen.getPrimaryDisplay().workAreaSize.height
@@ -105,7 +111,7 @@ class Bounds
     
     @update: ->
         
-        kacheln = global.kacheln()
+        kacheln = @kacheln()
         
         minX = minY = 9999
         maxX = maxY = 0
@@ -213,7 +219,7 @@ class Bounds
     @neighborKachel: (kachel, dir) ->
         
         kb = kachel.getBounds()
-        kacheln = global.kacheln()
+        kacheln = @kacheln()
         
         ks = kacheln.filter (k) ->
             return false if k == kachel
@@ -255,19 +261,19 @@ class Bounds
                     
         ks[0]
           
-    @inlineNeighborKachel: (kachel, dir) ->
+    @inlineKacheln: (kachel, dir) ->
         
         kb = kachel.getBounds()
-        kacheln = global.kacheln()
+        kacheln = @kacheln()
         
         ks = kacheln.filter (k) ->
             return false if k == kachel
             b = k.getBounds()
             switch dir
-                when 'right' then b.x  > kb.x+kb.width
-                when 'down'  then b.y  > kb.y+kb.height
-                when 'left'  then b.x+b.width  < kb.x 
-                when 'up'    then b.y+b.height < kb.y 
+                when 'right' then b.x  >= kb.x+kb.width
+                when 'down'  then b.y  >= kb.y+kb.height
+                when 'left'  then b.x+b.width  <= kb.x 
+                when 'up'    then b.y+b.height <= kb.y 
     
         if valid ks
                 
@@ -296,9 +302,54 @@ class Bounds
                             a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (kb.y - ab.y)
                             b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
                     a-b
-                    
-                return inline[0]
         
+                return inline
+        []
+        
+    @inlineNeighborKachel: (kachel, dir) ->
+               
+        kb = kachel.getBounds()
+        kacheln = @kacheln()
+         
+        ks = kacheln.filter (k) ->
+            return false if k == kachel
+            b = k.getBounds()
+            switch dir
+                when 'right' then b.x  > kb.x+kb.width
+                when 'down'  then b.y  > kb.y+kb.height
+                when 'left'  then b.x+b.width  < kb.x 
+                when 'up'    then b.y+b.height < kb.y 
+     
+        if valid ks
+                 
+            inline = ks.filter (k) ->
+                b = k.getBounds()
+                switch dir
+                    when 'left' 'right' then b.y < kb.y+kb.height and b.y+b.height > kb.y
+                    when 'up' 'down'    then b.x < kb.x+kb.width  and b.x+b.width  > kb.x
+                     
+            if valid inline
+                         
+                inline.sort (a,b) ->
+                    ab = a.getBounds()
+                    bb = b.getBounds()
+                    switch dir
+                        when 'right' 
+                            a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (ab.x - kb.x)
+                            b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (bb.x - kb.x)
+                        when 'left'  
+                            a = Math.abs((kb.y+kb.height/2) - (ab.y+ab.height/2)) + (kb.x - ab.x)
+                            b = Math.abs((kb.y+kb.height/2) - (bb.y+bb.height/2)) + (kb.x - bb.x)
+                        when 'down'  
+                            a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (ab.y - kb.y)
+                            b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (bb.y - kb.y)
+                        when 'up'    
+                            a = Math.abs((kb.x+kb.width/2) - (ab.x+ab.width/2)) + (kb.y - ab.y)
+                            b = Math.abs((kb.x+kb.width/2) - (bb.x+bb.width/2)) + (kb.y - bb.y)
+                    a-b
+                     
+                return inline[0]
+         
     # 00     00   0000000   000   000  00000000  
     # 000   000  000   000  000   000  000       
     # 000000000  000   000   000 000   0000000   

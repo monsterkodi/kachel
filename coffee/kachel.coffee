@@ -128,17 +128,17 @@ class Kachel extends win
         post.toMain 'kachelBounds' @id, @kachelId
         post.toMain 'kachelLoad' @id, @kachelId
     
-    onLoad:   -> # to be overridden in subclasses
-    onShow:   -> # to be overridden in subclasses
-    onMove:   -> # to be overridden in subclasses
-    onFocus:  -> # to be overridden in subclasses
-    onBlur:   -> # to be overridden in subclasses
-    onMove:   -> # to be overridden in subclasses
-    onClose:  -> # to be overridden in subclasses
-    onBounds: -> # to be overridden in subclasses
-    onLeftClick:    -> # to be overridden in subclasses
-    onMiddleClick:  -> # to be overridden in subclasses
-    onRightClick:   -> # to be overridden in subclasses
+    onLoad:        -> # to be overridden in subclasses
+    onShow:        -> # to be overridden in subclasses
+    onMove:        -> # to be overridden in subclasses
+    onFocus:       -> # to be overridden in subclasses
+    onBlur:        -> # to be overridden in subclasses
+    onMove:        -> # to be overridden in subclasses
+    onClose:       -> # to be overridden in subclasses
+    onBounds:      -> # to be overridden in subclasses
+    onLeftClick:   -> # to be overridden in subclasses
+    onMiddleClick: -> # to be overridden in subclasses
+    onRightClick:  -> # to be overridden in subclasses
         
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  
@@ -198,5 +198,7 @@ class Kachel extends win
         switch combo
             when 'left''right''up''down' then post.toMain 'focusNeighbor' @id, combo
             when 'enter''space' then @onLeftClick()
+            when 'command+enter''command+space''ctrl+enter''ctrl+space' then @onRightClick()
+            when 'alt+command+enter''alt+command+space''alt+ctrl+enter''alt+ctrl+space' then @onMiddleClick()
             
 module.exports = Kachel

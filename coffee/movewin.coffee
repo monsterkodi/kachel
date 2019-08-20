@@ -13,11 +13,11 @@ wxw    = require 'wxw'
 
 moveWin = (dir) ->
     
-    if os.platform() == 'darwin'
-        ar = w:Bounds.screenWidth, h:Bounds.screenHeight
-    else
-        screen = wxw 'screen' 'user'
-        ar = w:screen.width, h:screen.height
+    ar = w:Bounds.screenWidth, h:Bounds.screenHeight
+    # if os.platform() == 'darwin'
+    # else
+        # screen = wxw 'screen' 'user'
+        # ar = w:screen.width, h:screen.height
     
     info = wxw('info' 'top')[0]
 

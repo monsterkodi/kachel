@@ -22,5 +22,6 @@ class Taskbar extends Kachel
     
         if os.platform() == 'win32'
             wxw 'taskbar' 'toggle'
+            post.toMain 'screensize'
     
 module.exports = Taskbar

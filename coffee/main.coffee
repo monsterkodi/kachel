@@ -152,7 +152,7 @@ action = (act) ->
     switch act
         when 'maximize'   then log wxw 'maximize' 'top'
         when 'minimize'   then log wxw 'minimize' 'top'
-        when 'taskbar'    then log wxw 'taskbar'  'toggle'
+        when 'taskbar'    then wxw 'taskbar' 'toggle'; post.toMain 'screensize'
         when 'close'      then log wxw 'close'    'top'
         when 'screenzoom' then require('./zoom').start debug:false
         when 'appswitch'  then onAppSwitch()
@@ -412,6 +412,3 @@ wins      = -> BrowserWindow.getAllWindows()
 kacheln   = -> wins().filter (w) -> w.id != swtch?.id and w.isVisible()
 activeWin = -> BrowserWindow.getFocusedWindow()
 winWithId = (id) -> BrowserWindow.fromId id
-
-global.kacheln = kacheln
-            

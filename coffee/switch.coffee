@@ -36,7 +36,7 @@ getApps = ->
             ai - bi
                 
     for info in infos
-        continue if info.title == 'wxw-switch'
+        continue if info.title == 'switch'
         file = slash.file info.path
         if file == 'ApplicationFrameHost.exe'
             name = last info.title.split '- '
@@ -119,7 +119,7 @@ start = (opt={}) ->
     
     html = """
         <head>
-        <title>wxw-switch</title>
+        <title>switch</title>
         <style type="text/css">
             * {
                 outline-width:  0;

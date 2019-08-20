@@ -6,7 +6,7 @@
 000        0000000   0000000  0000000    00000000  000   000  
 ###
 
-{ post, childp, prefs, slash, valid, osaspawn, osascript, open, klog, elem, os, fs, _ } = require 'kxk'
+{ post, childp, prefs, slash, valid, osaspawn, osascript, open, klog, elem, os, fs, $, _ } = require 'kxk'
 
 Kachel = require './kachel'
 utils  = require './utils'
@@ -52,12 +52,22 @@ class Folder extends Kachel
         else if folder == slash.untilde '~/Downloads'
             @setIcon slash.join __dirname, '..' 'img' 'downloads.png'
         else
-            @setIcon slash.join __dirname, '..' 'img' 'folder.png'
-    
-            name = elem 'div' class:'foldername' text:slash.base folder
-            @main.appendChild name
+            @plainFolder = true
+            @onBounds()
         
         super @kachelId
+        
+    onBounds: =>
+        
+        if @plainFolder and os.platform() == 'win32'
+            
+            @main.innerHTML = ''
+            @setIcon slash.join __dirname, '..' 'img' 'folder.png'
+    
+            $('.applicon').classList.add 'foldericon'
+            
+            name = elem 'div' class:'foldername' text:slash.base @kachelId
+            @main.appendChild name
        
     # 000000000  00000000    0000000    0000000  000   000  
     #    000     000   000  000   000  000       000   000  
