@@ -34,11 +34,11 @@ class Default extends Kachel
             button 1 1 'img/app.png'       @openApp
             button 1 2 'img/folder.png'    @openFolder
             button 1 3 'img/tools.png'     @openTools, 'dark'
-            button 2 1 'img/dish.png'   -> post.toMain 'newKachel' 'sysdish' 
-            button 2 3 'img/saver.png'  -> post.toMain 'newKachel' 'saver'   
-            button 3 1 'img/clock.png'  -> post.toMain 'newKachel' 'clock'   
-            button 3 2 'img/alarm.png'  -> post.toMain 'newKachel' 'alarm'   
-            button 3 3 'img/volume.png' -> post.toMain 'newKachel' 'volume'  
+            button 2 1 'img/dish.png'   -> post.toMain 'newKachel' 'sysdish'
+            button 2 3 'img/anny.png'   -> post.toMain 'newKachel' 'anny'
+            button 3 1 'img/clock.png'  -> post.toMain 'newKachel' 'clock'
+            button 3 2 'img/alarm.png'  -> post.toMain 'newKachel' 'alarm'
+            button 3 3 'img/volume.png' -> post.toMain 'newKachel' 'volume'
         ]
 
     openTools: =>
@@ -48,6 +48,7 @@ class Default extends Kachel
             button 1 1 'img/taskbar.png'   (-> post.toMain 'newKachel' 'taskbar'), 'dark'
             button 1 2 'img/chain.png'     (-> post.toMain 'newKachel' 'chain'  ), 'dark'
             button 1 3 'img/tools.png'         @onLoad, 'dark'
+            button 2 1 'img/saver.png'      -> post.toMain 'newKachel' 'saver'   
             button 2 3 'img/clean.png'      -> post.toMain 'newKachel' 'clean'
             button 3 1 'icons/sleep.png'    -> post.toMain 'newKachel' 'sleep'    
             button 3 2 'icons/restart.png'  -> post.toMain 'newKachel' 'restart'  

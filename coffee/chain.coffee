@@ -22,7 +22,6 @@ class Chain extends Kachel
         @win.setResizable true
         @win.setMinimumSize Bounds.kachelSizes[0], Bounds.kachelSizes[0]
         @win.setMaximumSize Bounds.kachelSizes[-1], Bounds.kachelSizes[-1]
-        
         @win.on 'resize' @onResize
         
         @directions = ['down' 'left' 'up' 'right']
@@ -30,7 +29,7 @@ class Chain extends Kachel
         @updateDir()
         
         @lastBounds = @win.getBounds()
-        
+                
     collectNeighbors: ->
         @neighbors = Bounds.inlineKacheln @win, @directions[@dir]
         @neighborBounds = []
@@ -74,22 +73,4 @@ class Chain extends Kachel
             when 3 then p = utils.append g, 'path' d:"M0 -25 L50 0 L0 25 Z"
         @main.appendChild @arrow
         
-    snapSize: =>
-        
-        br = @win.getBounds()
-        
-        for i in [0...Bounds.kachelSizes.length-1]
-            if br.width < Bounds.kachelSizes[i] + (Bounds.kachelSizes[i+1] - Bounds.kachelSizes[i]) / 2
-                br.width = Bounds.kachelSizes[i]
-                break
-        br.width = Math.min br.width, Bounds.kachelSizes[-1]
-                
-        for i in [0...Bounds.kachelSizes.length-1]
-            if br.height < Bounds.kachelSizes[i] + (Bounds.kachelSizes[i+1] - Bounds.kachelSizes[i]) / 2
-                br.height = Bounds.kachelSizes[i]
-                break
-        br.height = Math.min br.height, Bounds.kachelSizes[-1]
-        
-        @win.setBounds br
-
 module.exports = Chain

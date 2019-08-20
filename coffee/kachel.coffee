@@ -140,16 +140,42 @@ class Kachel extends win
     onMiddleClick: -> # to be overridden in subclasses
     onRightClick:  -> # to be overridden in subclasses
         
+    #  0000000  000   000   0000000   00000000    0000000  000  0000000  00000000  
+    # 000       0000  000  000   000  000   000  000       000     000   000       
+    # 0000000   000 0 000  000000000  00000000   0000000   000    000    0000000   
+    #      000  000  0000  000   000  000             000  000   000     000       
+    # 0000000   000   000  000   000  000        0000000   000  0000000  00000000  
+    
+    snapSize: =>
+        
+        br = @win.getBounds()
+        
+        sizes = Bounds.snapSizes
+        
+        for i in [0...sizes.length-1]
+            if br.width < sizes[i] + (sizes[i+1] - sizes[i]) / 2
+                br.width = sizes[i]
+                break
+        br.width = Math.min br.width, sizes[-1]
+                
+        for i in [0...sizes.length-1]
+            if br.height < sizes[i] + (sizes[i+1] - sizes[i]) / 2
+                br.height = sizes[i]
+                break
+        br.height = Math.min br.height, sizes[-1]
+        
+        @win.setBounds br
+    
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  
     # 000  000       000   000  000 0 000  
     # 000  000       000   000  000  0000  
     # 000   0000000   0000000   000   000  
     
-    setIcon: (iconPath) =>
+    setIcon: (iconPath, clss='applicon') =>
         
         return if not iconPath
-        img = elem 'img' class:'applicon' src:slash.fileUrl slash.path iconPath
+        img = elem 'img' class:clss, src:slash.fileUrl slash.path iconPath
         img.ondragstart = -> false
         @main.innerHTML = ''
         @main.appendChild img

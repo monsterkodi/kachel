@@ -15,6 +15,7 @@ electron = require 'electron'
 class Bounds
 
     @kachelSizes: [36 48 72 108 144 216]
+    @snapSizes:   [36 48 72 96 108 144 192 216]
     @infos: null
     
     @screenWidth:  0
@@ -83,8 +84,9 @@ class Bounds
     @kachelSize: (k) ->
         
         kb = k.getBounds()
-        size = 0        
-        while size < @kachelSizes.length-1 and Math.abs(kb.width - @kachelSizes[size]) > 8
+        size = 0  
+        ks = Math.min kb.width, kb.height
+        while size < @kachelSizes.length-1 and Math.abs(ks - @kachelSizes[size]) > 8
             size++
         size
                 
@@ -97,7 +99,7 @@ class Bounds
             @screenWidth  = vs.x
             @screenHeight = vs.y
             @screenTop    = 0
-            klog 'updateScreenSize' @screenWidth, @screenHeight
+            # klog 'updateScreenSize' @screenWidth, @screenHeight
         else
             @screenWidth  = electron.screen.getPrimaryDisplay().workAreaSize.width
             @screenHeight = electron.screen.getPrimaryDisplay().workAreaSize.height
