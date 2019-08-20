@@ -197,6 +197,9 @@ svg {
   width: 80%;
   height: 80%;
 }
+.button.dark {
+  opacity: 0.3;
+}
 .grid2x2 {
   display: grid;
   grid-template-columns: 50% 50%;

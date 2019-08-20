@@ -21,9 +21,9 @@ class Default extends Kachel
     # 000      000   000  000   000  000   000  
     # 0000000   0000000   000   000  0000000    
     
-    button = (row, col, img, click) ->
+    button = (row, col, img, click, clss='') ->
         
-        b = elem class:"button grid3x3_#{row}#{col}" click:click, child: elem 'img' src:__dirname + '/../' + img
+        b = elem class:"button #{clss} grid3x3_#{row}#{col}" click:click, child: elem 'img' src:__dirname + '/../' + img
         b.ondragstart = -> false
         b
     
@@ -33,7 +33,7 @@ class Default extends Kachel
         @main.appendChild elem 'div' class:'grid3x3' children:[
             button 1 1 'img/app.png'       @openApp
             button 1 2 'img/folder.png'    @openFolder
-            button 1 3 'img/tools.png'     @openTools
+            button 1 3 'img/tools.png'     @openTools, 'dark'
             button 2 1 'img/dish.png'   -> post.toMain 'newKachel' 'sysdish' 
             button 2 3 'img/saver.png'  -> post.toMain 'newKachel' 'saver'   
             button 3 1 'img/clock.png'  -> post.toMain 'newKachel' 'clock'   
@@ -45,10 +45,10 @@ class Default extends Kachel
 
         @main.innerHTML = ''
         @main.appendChild elem 'div' class:'grid3x3' children:[
-            button 1 1 'img/menu.png'       -> post.toMain 'newKachel' 'chain'  
-            button 1 3 'img/tools.png'         @onLoad
-            button 2 1 'img/taskbar.png'    -> post.toMain 'newKachel' 'taskbar'  
-            button 2 3 'img/clean.png'      -> post.toMain 'newKachel' 'clean'    
+            button 1 1 'img/taskbar.png'   (-> post.toMain 'newKachel' 'taskbar'), 'dark'
+            button 1 2 'img/chain.png'     (-> post.toMain 'newKachel' 'chain'  ), 'dark'
+            button 1 3 'img/tools.png'         @onLoad, 'dark'
+            button 2 3 'img/clean.png'      -> post.toMain 'newKachel' 'clean'
             button 3 1 'icons/sleep.png'    -> post.toMain 'newKachel' 'sleep'    
             button 3 2 'icons/restart.png'  -> post.toMain 'newKachel' 'restart'  
             button 3 3 'icons/shutdown.png' -> post.toMain 'newKachel' 'shutdown' 
