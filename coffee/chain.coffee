@@ -37,14 +37,6 @@ class Chain extends Kachel
         for n in @neighbors ? []
             @neighborBounds.push n.getBounds()
         
-    # onDragStart: (drag, event) =>
-#     
-        # @collectNeighbors()
-        # super drag, event
-#         
-    # onDragMove: (drag, event) =>
-        # super drag, event
-    
     onMove: (event) =>
 
         newBounds = @win.getBounds()
@@ -58,29 +50,6 @@ class Chain extends Kachel
                 @neighborBounds[i] = @neighbors[i].getBounds()
         
         @lastBounds = newBounds
-        
-    # onDragStop: (drag, event) =>     
-
-        # @dragStopBounds = @win.getBounds()
-        # @neighborBounds = []
-        # for n in @neighbors ? []
-            # @neighborBounds.push n.getBounds()
-#             
-        # super drag, event
-#         
-    # onSaveBounds: =>
-#         
-        # if @dragStopBounds and valid @neighbors
-            # klog 'chain save bounds'
-            # b = @win.getBounds()
-            # dx = b.x - @dragStopBounds.x
-            # dy = b.y - @dragStopBounds.y
-            # for i in [0...@neighbors.length]
-                # @neighbors[i].setPosition @neighborBounds[i].x + dx, @neighborBounds[i].y + dy
-                # @neighbors[i].setSize     @neighborBounds[i].width, @neighborBounds[i].height
-                # post.toWin @neighbors.id, 'saveBounds'
-            # delete @dragStopBounds
-        # super
         
     onResize: (event) =>
         

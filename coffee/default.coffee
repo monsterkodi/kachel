@@ -54,7 +54,7 @@ class Default extends Kachel
             button 3 3 'icons/shutdown.png' -> post.toMain 'newKachel' 'shutdown' 
         ]
         
-    onLeftClick: => log 'onLeftClick'
+    onRightClick: => @win.close()  
     
     # 0000000    000  00000000   
     # 000   000  000  000   000  
