@@ -6,7 +6,7 @@
 000   000  000   000   0000000  000   000  00000000  0000000    
 ###
 
-{ drag, post, scheme, stopEvent, prefs, slash, klog, kstr, elem, win, os, $ } = require 'kxk'
+{ prefs, slash, post, os, kstr, drag, scheme, stopEvent, klog, elem, win, $ } = require 'kxk'
 
 Bounds = require './bounds'
 
@@ -100,6 +100,12 @@ class Kachel extends win
             post.toMain 'snapKachel' @id
         post.toMain 'dragStop' @id
     
+    # 0000000     0000000   000   000  000   000  0000000     0000000  
+    # 000   000  000   000  000   000  0000  000  000   000  000       
+    # 0000000    000   000  000   000  000 0 000  000   000  0000000   
+    # 000   000  000   000  000   000  000  0000  000   000       000  
+    # 0000000     0000000    0000000   000   000  0000000    0000000   
+    
     onSaveBounds: =>
         # klog 'onSaveBounds' @id
         for i in [1..6]
@@ -108,38 +114,7 @@ class Kachel extends win
         setId = prefs.get 'set' ''
         prefs.set "bounds#{setId}▸#{@kachelId}" @win.getBounds()
         @onBounds()
-        
-    onHover: (event) => document.body.classList.add 'kachelHover'
-    onLeave: (event) => document.body.classList.remove 'kachelHover'
-        
-    onWinFocus: (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
-    onWinBlur:  (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
-    onWinLoad:  (event) => @onLoad event
-    onWinShow:  (event) => @onShow event
-    onWinMove:  (event) => @onMove event
-    onWinClose: (event) => @onClose event
-        
-    onInitKachel: (@kachelId) =>
-           
-        # klog 'onInitKachel @kachelId' @kachelId
                 
-        @win.setTitle "kachel #{@kachelId}"
-                
-        post.toMain 'kachelBounds' @id, @kachelId
-        post.toMain 'kachelLoad' @id, @kachelId
-    
-    onLoad:        -> # to be overridden in subclasses
-    onShow:        -> # to be overridden in subclasses
-    onMove:        -> # to be overridden in subclasses
-    onFocus:       -> # to be overridden in subclasses
-    onBlur:        -> # to be overridden in subclasses
-    onMove:        -> # to be overridden in subclasses
-    onClose:       -> # to be overridden in subclasses
-    onBounds:      -> # to be overridden in subclasses
-    onLeftClick:   -> # to be overridden in subclasses
-    onMiddleClick: -> # to be overridden in subclasses
-    onRightClick:  -> # to be overridden in subclasses
-        
     #  0000000  000   000   0000000   00000000    0000000  000  0000000  00000000  
     # 000       0000  000  000   000  000   000  000       000     000   000       
     # 0000000   000 0 000  000000000  00000000   0000000   000    000    0000000   
@@ -165,6 +140,7 @@ class Kachel extends win
         br.height = Math.min br.height, sizes[-1]
         
         @win.setBounds br
+        @onSaveBounds()
     
     # 000   0000000   0000000   000   000  
     # 000  000       000   000  0000  000  
@@ -179,7 +155,43 @@ class Kachel extends win
         img.ondragstart = -> false
         @main.innerHTML = ''
         @main.appendChild img
+
+    # 00000000  000   000  00000000  000   000  000000000  
+    # 000       000   000  000       0000  000     000     
+    # 0000000    000 000   0000000   000 0 000     000     
+    # 000          000     000       000  0000     000     
+    # 00000000      0      00000000  000   000     000     
     
+    onHover: (event) => document.body.classList.add 'kachelHover'
+    onLeave: (event) => document.body.classList.remove 'kachelHover'
+        
+    onWinFocus: (event) => document.body.classList.add    'kachelFocus'; post.toMain 'kachelFocus' @id; @onFocus event
+    onWinBlur:  (event) => document.body.classList.remove 'kachelFocus'; @onBlur  event
+    onWinLoad:  (event) => @onLoad event
+    onWinShow:  (event) => @onShow event
+    onWinMove:  (event) => @onMove event
+    onWinClose: (event) => @onClose event
+        
+    onInitKachel: (@kachelId) =>
+           
+        @win.setTitle "kachel #{@kachelId}"
+                
+        post.toMain 'kachelBounds' @id, @kachelId
+        post.toMain 'kachelLoad' @id, @kachelId
+    
+    onLoad:        -> # to be overridden in subclasses
+    onShow:        -> # to be overridden in subclasses
+    onMove:        -> # to be overridden in subclasses
+    onFocus:       -> # to be overridden in subclasses
+    onBlur:        -> # to be overridden in subclasses
+    onMove:        -> # to be overridden in subclasses
+    onClose:       -> # to be overridden in subclasses
+    onBounds:      -> # to be overridden in subclasses
+    onLeftClick:   -> # to be overridden in subclasses
+    onMiddleClick: -> # to be overridden in subclasses
+    onRightClick:  -> # to be overridden in subclasses
+        
+        
     # 00     00  00000000  000   000  000   000
     # 000   000  000       0000  000  000   000
     # 000000000  0000000   000 0 000  000   000

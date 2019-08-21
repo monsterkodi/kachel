@@ -93,12 +93,7 @@ class Appl extends Kachel
     # 000       000      000  000       0000000    
     # 000       000      000  000       000  000   
     #  0000000  0000000  000   0000000  000   000  
-    
-    onLeftClick: (event) -> 
-        
-        # klog 'appl.onClick' slash.file @kachelId
-        @openApp @kachelId
-        
+            
     openApp: (app) ->
         
         if os.platform() == 'win32'
@@ -110,13 +105,9 @@ class Appl extends Kachel
         else
             open app
     
-    onContextMenu: (event) => 
-        
-        wxw 'minimize' slash.file @kachelId
-
-    onMiddleClick: (event) => 
-  
-        wxw 'terminate' @kachelId
+    onLeftClick: => @openApp @kachelId
+    onRightClick: => wxw 'minimize' slash.file @kachelId
+    onMiddleClick: => wxw 'terminate' @kachelId
                     
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     

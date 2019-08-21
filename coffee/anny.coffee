@@ -15,7 +15,7 @@ wxw     = require 'wxw'
 
 class Anny extends Appl
         
-    @: (@kachelId:'anny') -> 
+    @: (@kachelId:'anny') ->
 
         super
 
@@ -90,7 +90,7 @@ class Anny extends Appl
             img.style.height = "#{@iconSize*0.8}px"
             img.ondragstart = -> false
             
-            btn = elem class:'button' click:@onButtonClick, child:img
+            btn = elem class:'button' child:img
             btn.style.width  = "#{@iconSize}px"
             btn.style.height = "#{@iconSize}px"
             
@@ -104,35 +104,15 @@ class Anny extends Appl
     # 000       000      000  000       000  000   
     #  0000000  0000000  000   0000000  000   000  
     
-    onButtonClick: (event) =>
+    appEvent: (event) -> 
         
         app = event.target.id
         app = event.target.parentElement.id if empty app
-        
-        @openApp app
     
-    onLeftClick: (event) -> 
-        
-        return if not @currentApp
-        if os.platform() == 'win32'
-            infos = wxw 'info' slash.file @currentApp
-            if infos.length
-                wxw 'focus' slash.file @currentApp
-            else
-                open slash.unslash @currentApp
-        else
-            open @currentApp
-    
-    onContextMenu: (event) => 
-        
-        if @currentApp
-            wxw 'minimize' slash.file @currentApp
+    onLeftClick: (event) => if app = @appEvent event then @openApp app
+    onRightClick: (event) => if app = @appEvent event then wxw 'minimize' slash.file app
+    onMiddleClick: (event) => if app = @appEvent event then wxw 'terminate' app
 
-    onMiddleClick: (event) => 
-  
-        if @currentApp
-            wxw 'terminate' @currentApp
-                    
     onInitKachel: (@kachelId) =>
                         
         @win.setTitle "kachel #{@kachelId}"
