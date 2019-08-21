@@ -53,7 +53,6 @@ KachelApp = new app
     onQuit:             -> data.detach()
     resizable:          false
     maximizable:        false
-    # closable:           false
     saveBounds:         false
     onWinReady: (win) =>
         
@@ -279,7 +278,7 @@ onWins = (wins) ->
         wp = slash.path win.path
         if slash.base(wp) == 'kachel' then continue
         if slash.base(wp) == 'electron' and wp.indexOf('/kachel/') > 0 then continue
-        if wid = kachelSet.wids[wp]
+        if (wid = kachelSet.wids[wp]) and winWithId(wid).isVisible()
             applWins[wp] ?= []
             applWins[wp].push win
         else

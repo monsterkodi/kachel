@@ -97,15 +97,18 @@ class Appl extends Kachel
     onLeftClick: (event) -> 
         
         # klog 'appl.onClick' slash.file @kachelId
+        @openApp @kachelId
+        
+    openApp: (app) ->
         
         if os.platform() == 'win32'
-            infos = wxw 'info' slash.file @kachelId
+            infos = wxw 'info' slash.file app
             if infos.length
-                wxw 'focus' slash.file @kachelId
+                wxw 'focus' slash.file app
             else
-                open slash.unslash @kachelId 
+                open slash.unslash app
         else
-            open @kachelId 
+            open app
     
     onContextMenu: (event) => 
         

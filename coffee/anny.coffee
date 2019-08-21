@@ -26,6 +26,8 @@ class Anny extends Appl
         
         @setIcon __dirname + '/../img/anny.png' 'annyicon'
         
+        @snapSize()
+        
     onResize: (event) =>
         
         clearTimeout @snapTimer
@@ -37,7 +39,6 @@ class Anny extends Appl
         
         b = @win.getBounds()
         @iconSize = parseInt 0.92 * Math.min b.width, b.height
-        # @marginSize = parseInt 0.04 * Math.min b.width, b.height
         
         for btn in document.querySelectorAll '.button'
             
@@ -46,18 +47,13 @@ class Anny extends Appl
             img.style.width  = "#{@iconSize*0.8}px"
             img.style.height = "#{@iconSize*0.8}px"
             
-            # btn.style.margin = "#{@marginSize}px"
             btn.style.width  = "#{@iconSize}px"
             btn.style.height = "#{@iconSize}px"
         
     onApp: (action, app) =>
         
-        # @activated = action == 'activated'
-        # @updateDot()
-
     onWin: (wins) =>
         
-        # klog 'anny wins' Object.keys(wins).length
         iconDir = slash.join slash.userData(), 'icons'
         
         apps = []
@@ -81,43 +77,27 @@ class Anny extends Appl
             appName = slash.base app
             pngPath = slash.resolve slash.join iconDir, appName + ".png"
             if slash.fileExists pngPath
-                icons.push pngPath
+                icons.push icon:pngPath, app:app
             else
                 klog 'no icon' pngPath
                 appIcon app, pngPath
                         
         @main.innerHTML = ''
-        for icon in icons
-            img = elem 'img' class:'annyicon' src:slash.fileUrl slash.path icon
+        for iconApp in icons
+            img = elem 'img' class:'annyicon' src:slash.fileUrl slash.path iconApp.icon
             img.style.margin = "#{@iconSize*0.1}px"
             img.style.width  = "#{@iconSize*0.8}px"
             img.style.height = "#{@iconSize*0.8}px"
             img.ondragstart = -> false
             
             btn = elem class:'button' click:@onButtonClick, child:img
-            # btn.style.margin = "#{@marginSize}px"
             btn.style.width  = "#{@iconSize}px"
             btn.style.height = "#{@iconSize}px"
             
+            btn.id = iconApp.app
+            
             @main.appendChild btn
-                
-        # @status = ''
-        # for w in wins
-            # for c in ['maximized' 'normal']
-                # if w.status.startsWith c
-                    # @status = w.status
-                    # break
-            # if valid @status
-                # break
-
-        # if empty @status
-            # for w in wins
-                # if w.status == 'minimized'
-                    # @status = 'minimized'
-                    # break
-        
-        @updateDot()
-                        
+                                
     #  0000000  000      000   0000000  000   000  
     # 000       000      000  000       000  000   
     # 000       000      000  000       0000000    
@@ -126,11 +106,12 @@ class Anny extends Appl
     
     onButtonClick: (event) =>
         
-        klog 'onButtonClick'
+        app = event.target.id
+        app = event.target.parentElement.id if empty app
+        
+        @openApp app
     
     onLeftClick: (event) -> 
-        
-        # klog 'appl.onClick' slash.file @kachelId
         
         return if not @currentApp
         if os.platform() == 'win32'

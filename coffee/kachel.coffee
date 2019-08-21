@@ -192,7 +192,7 @@ class Kachel extends win
             when 'New'          then post.toMain 'newKachel' 'default'
             when 'Restore'      then post.toMain 'restoreSet'
             when 'Store'        then post.toMain 'storeSet'
-            when 'Close'        then @win.setClosable(true); @win.close()
+            when 'Close'        then @win.close()
             when 'Quit'         then post.toMain 'quit'
             when 'Hide'         then post.toMain 'hide'
             when 'About'        then post.toMain 'showAbout'
