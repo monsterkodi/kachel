@@ -209,9 +209,6 @@ class Kachel extends win
             when 'Hide'         then post.toMain 'hide'
             when 'About'        then post.toMain 'showAbout'
             when 'Scheme'       then post.toWins 'toggleScheme'
-            when 'IncreaseSize' then post.toMain 'kachelSize' 'increase'
-            when 'DecreaseSize' then post.toMain 'kachelSize' 'decrease'
-            when 'ResetSize'    then post.toMain 'kachelSize' 'reset'
             when 'Increase'     then post.toMain 'kachelSize' 'increase' @id
             when 'Decrease'     then post.toMain 'kachelSize' 'decrease' @id
             when 'Reset'        then post.toMain 'kachelSize' 'reset'    @id

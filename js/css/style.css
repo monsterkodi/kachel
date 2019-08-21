@@ -1,5 +1,7 @@
 * {
   outline-width: 0;
+  line-height: 1;
+  box-sizing: border-box;
 }
 body {
   position: absolute;
@@ -11,24 +13,28 @@ body {
   border-style: solid;
   border-radius: 4.2px;
   border-width: 0.5px;
+  box-sizing: border-box;
   font-family: "Meslo LG S", "Liberation Mono", "Menlo", "Cousine", "Andale Mono", "monospace";
   font-size: 15px;
   overflow: hidden;
   -webkit-user-select: none;
 }
-body:active {
-  margin: 1px;
-}
 #main {
   position: absolute;
-  left: 4%;
-  right: 4%;
-  top: 4%;
-  bottom: 4%;
+  left: 3px;
+  right: 3px;
+  top: 3px;
+  bottom: 3px;
   scroll: none;
   overflow: hidden;
   pointer-events: all;
   display: flex;
+}
+#main.noFrame {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
 svg {
   display: block;
@@ -195,14 +201,16 @@ svg {
   color: #fff;
 }
 .button {
-  position: relative;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
 }
 .button img {
   display: block;
-  margin-top: 10%;
-  margin-left: 10%;
-  width: 80%;
-  height: 80%;
+  margin-top: 15%;
+  margin-left: 15%;
+  width: 70%;
+  height: 70%;
 }
 .button.dark {
   opacity: 0.3;
@@ -311,8 +319,8 @@ svg {
 }
 .popupItem {
   padding: 2px;
-  padding-left: 8%;
-  padding-right: 78%;
+  padding-left: 6px;
+  padding-right: 76px;
   cursor: pointer;
 }
 .popupItem.separator {
@@ -324,21 +332,21 @@ svg {
   margin-bottom: 6px;
 }
 .popupItem:last-child {
-  padding-bottom: 4%;
+  padding-bottom: 3px;
 }
 .popupItem:first-child {
-  padding-top: 4%;
+  padding-top: 3px;
 }
 .popupCombo {
   pointer-events: none;
   position: absolute;
-  right: 8%;
+  right: 6px;
 }
 ::-webkit-scrollbar {
-  width: 4%;
+  width: 3px;
 }
 ::-webkit-scrollbar {
-  height: 4%;
+  height: 3px;
   background-color: transparent;
 }
 ::-webkit-scrollbar-track {
