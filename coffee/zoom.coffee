@@ -69,6 +69,7 @@ createWindow = (opt) ->
                 border:         none;
             }
             img {
+                image-rendering: pixelated;
                 position:       absolute;
                 left:           0;
                 top:            0;
