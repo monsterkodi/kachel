@@ -246,6 +246,8 @@ post.on 'apps' onApps
 
 lastWins = []
 activeWins = {}
+lastAnnyWins = {}
+
 onWins = (wins) ->
 
     lastWins = wins
@@ -271,24 +273,35 @@ onWins = (wins) ->
         post.toWin mainWin.id, 'showDot' active
         if not active then lockRaise = false
     
-    pl = {}
+    applWins = {}
+    annyWins = {}
     for win in wins
         wp = slash.path win.path
+        if slash.base(wp) == 'kachel' then continue
+        if slash.base(wp) == 'electron' and wp.indexOf('/kachel/') > 0 then continue
         if wid = kachelSet.wids[wp]
-            pl[wp] ?= []
-            pl[wp].push win
+            applWins[wp] ?= []
+            applWins[wp].push win
+        else
+            annyWins[wp] ?= []
+            annyWins[wp].push win
          
-    for kid,wins of pl
+    for kid,wins of applWins
         if not _.isEqual activeWins[kid], wins
             if kachelSet.wids[kid]
-                activeWins[kid] = pl[kid]
+                activeWins[kid] = applWins[kid]
                 post.toWin kachelSet.wids[kid], 'win' wins
                 
     for kid,wins of activeWins
-        if not pl[kid]
+        if not applWins[kid]
             if kachelSet.wids[kid]
                 post.toWin kachelSet.wids[kid], 'win' []
                 activeWins[kid] = []
+                
+    if kachelSet.wids['anny']
+        if not _.isEqual lastAnnyWins, annyWins
+            lastAnnyWins = annyWins
+            post.toWin kachelSet.wids['anny'], 'win' annyWins
         
 post.on 'wins' onWins
 post.onGet 'wins' -> lastWins

@@ -6,7 +6,7 @@
 000   0000000   0000000   000   000  
 ###
 
-{ slash, klog, fs } = require 'kxk'
+{ slash, os, fs, last, klog } = require 'kxk'
 
 wxw = require 'wxw'
 
@@ -20,8 +20,14 @@ fakeIcon = (exePath, pngPath) ->
         msys2:      'terminaldark'
         mintty:     'terminaldark'
         procexp64:  'procexp'
-    
+        Calculator: 'Calculator'
+        Calendar:   'Calendar'
+        Settings:   'Settings'
+        Mail:       'Mail'
+        'Microsoft Store': 'Microsoft Store'
+            
     base = slash.base exePath
+                
     if icon = iconMap[base]
         targetfile = slash.resolve pngPath ? base + '.png'
         fakeicon = slash.join __dirname, '..' 'icons' icon + '.png'
