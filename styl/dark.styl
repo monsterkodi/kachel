@@ -30,7 +30,7 @@ body
         border-right-color      #181818
         border-bottom-color     #181818
         
-        & #main
+        & #main:not(.noFrame)
             background-color    bgColor
             animation-name      noFocusBackground
             animation-duration  0.2s
@@ -41,7 +41,7 @@ body
         border-left-color   #333
         border-right-color  #111
         border-bottom-color #111
-        & #main
+        & #main:not(.noFrame)
             background-color     bgHover
     
     &.kachelFocus
@@ -52,17 +52,11 @@ body
         border-left-color   #555
         border-right-color  #000
         border-bottom-color #000
-        & #main
-            background-color     bgFocus
+        & #main:not(.noFrame)
+            background-color    bgFocus
             animation-name      focusBackground
             animation-duration  0.4s
                 
-    &:active
-        border-top-color    #000
-        border-left-color   #000
-        border-right-color  #444
-        border-bottom-color #444
-        
 @keyframes focusFrame
     from  
         background-color    bgColor
@@ -108,9 +102,9 @@ body
     
 .button
     &:hover
-        background-color #333
-    &:active
         background-color bgHover
+    &:active
+        background-color bgFocus
     
 //  0000000   00000000   00000000   000      
 // 000   000  000   000  000   000  000      

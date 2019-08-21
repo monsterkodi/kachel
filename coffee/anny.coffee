@@ -6,7 +6,7 @@
 000   000  000   000  000   000     000     
 ###
 
-{ post, childp, slash, empty, valid, kstr, last, randint, klog, elem, open, os, fs, $, _ } = require 'kxk'
+{ post, childp, slash, prefs, empty, valid, kstr, last, randint, klog, elem, open, os, fs, $, _ } = require 'kxk'
 
 Appl    = require './appl'
 Bounds  = require './bounds'
@@ -19,8 +19,6 @@ class Anny extends Appl
 
         super
 
-        @iconSize = parseInt Bounds.kachelSizes[-1]
-        
         @win.setResizable true
         @win.setMinimumSize Bounds.kachelSizes[0], Bounds.kachelSizes[0]
         @win.on 'resize' @onResize
@@ -30,7 +28,8 @@ class Anny extends Appl
         
         @addButton icon:__dirname + '/../img/anny.png' 'annyicon'
         
-        @snapSize()
+        @iconSize = prefs.get 'anny▸iconSize' Bounds.kachelSizes[2]
+        @updateIconSize()
         
     #  0000000  000  0000000  00000000  
     # 000       000     000   000       
@@ -60,9 +59,15 @@ class Anny extends Appl
                 break
         
         @win.setBounds b
-        @onSaveBounds()
+        @onSaveBounds()        
+        @updateIconSize()
         
-        @iconSize = Math.min @iconSize, parseInt Math.min(b.width, b.height)
+    updateIconSize: =>
+        
+        b = @win.getBounds()
+        @iconSize = Math.min @iconSize, parseInt Math.min b.width, b.height
+        
+        prefs.set 'anny▸iconSize' @iconSize
         
         for btn in document.querySelectorAll '.button'
             
@@ -74,7 +79,7 @@ class Anny extends Appl
         switch action
             when 'Reset' 
                 @iconSize = parseInt Bounds.snapSizes[-1]
-                @snapSize()
+                @updateIconSize()
                 return 
             when 'Increase' 'Decrease' 
                 d = action == 'Increase' and +1 or -1
@@ -84,7 +89,7 @@ class Anny extends Appl
                 for i in [sizes.length-2..0]
                     if size < sizes[i] + (sizes[i+1] - sizes[i]) / 2
                         @iconSize = parseInt sizes[Math.max 0, i+d]
-                @snapSize()
+                @updateIconSize()
                 return
         super
             

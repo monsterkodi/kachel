@@ -10,7 +10,7 @@ body:not(.kachelFocus) {
 body:not(.kachelFocus).mojave {
   border-top-color: #111;
 }
-body:not(.kachelFocus) #main {
+body:not(.kachelFocus) #main:not(.noFrame) {
   background-color: #202020;
   animation-name: noFocusBackground;
   animation-duration: 0.2s;
@@ -22,7 +22,7 @@ body.kachelHover {
   border-right-color: #111;
   border-bottom-color: #111;
 }
-body.kachelHover #main {
+body.kachelHover #main:not(.noFrame) {
   background-color: #222;
 }
 body.kachelFocus {
@@ -34,25 +34,19 @@ body.kachelFocus {
   border-right-color: #000;
   border-bottom-color: #000;
 }
-body.kachelFocus #main {
+body.kachelFocus #main:not(.noFrame) {
   background-color: #282828;
   animation-name: focusBackground;
   animation-duration: 0.4s;
-}
-body:active {
-  border-top-color: #000;
-  border-left-color: #000;
-  border-right-color: #444;
-  border-bottom-color: #444;
 }
 #main {
   background-color: #202020;
 }
 .button:hover {
-  background-color: #333;
+  background-color: #222;
 }
 .button:active {
-  background-color: #222;
+  background-color: #282828;
 }
 .appldot {
   fill: #202020;
