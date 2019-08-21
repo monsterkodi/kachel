@@ -1,5 +1,5 @@
 
-<p align="center"><img src="bin/about.png" width=256 height=256></p>
+<p align="center"><img src="img/about.png" width=256 height=256></p>
 <br>
 <br>
 
