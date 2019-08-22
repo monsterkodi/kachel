@@ -40,9 +40,7 @@ fakeIcon = (exePath, pngPath) ->
     
 appIcon = (exePath, pngPath) ->
     
-    # klog 'appIcon' exePath, pngPath
     if not fakeIcon(exePath, pngPath)
-        # klog 'wxw icon' exePath, pngPath
         wxw 'icon' exePath, pngPath
         
 module.exports = appIcon

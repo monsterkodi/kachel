@@ -28,7 +28,7 @@ class Anny extends Appl
         
         @addButton icon:__dirname + '/../img/anny.png' 'annyicon'
         
-        @iconSize = prefs.get 'anny▸iconSize' Bounds.kachelSizes[2]
+        @iconSize = prefs.get "#{@kachelId}▸iconSize" Bounds.kachelSizes[2]
         @updateIconSize()
         
     #  0000000  000  0000000  00000000  
@@ -67,7 +67,7 @@ class Anny extends Appl
         b = @win.getBounds()
         @iconSize = Math.min @iconSize, parseInt Math.min b.width, b.height
         
-        prefs.set 'anny▸iconSize' @iconSize
+        prefs.set "#{@kachelId}▸iconSize" @iconSize
         
         for btn in document.querySelectorAll '.button'
             
@@ -103,8 +103,6 @@ class Anny extends Appl
     
     onWin: (wins) =>
         
-        iconDir = slash.join slash.userData(), 'icons'
-        
         apps = []
         for path,infos of wins
             appName = slash.base path
@@ -120,20 +118,24 @@ class Anny extends Appl
             else
                 apps.push path
 
-        icons = []
-        for app in apps
-            appName = slash.base app
-            pngPath = slash.resolve slash.join iconDir, appName + ".png"
-            if slash.fileExists pngPath
-                icons.push icon:pngPath, app:app
-            else
-                klog 'no icon' pngPath
-                appIcon app, pngPath
-                        
         @main.innerHTML = ''
-        for iconApp in icons
+
+        for app in apps
+            @addApp app
+                                    
+    addApp: (app) ->
+        
+        iconDir = slash.join slash.userData(), 'icons'
+        appName = slash.base app
+        pngPath = slash.resolve slash.join iconDir, appName + ".png"
+        iconApp = icon:pngPath, app:app
+        if slash.fileExists pngPath
             @addButton iconApp
-            
+        else
+            appIcon app, pngPath
+            addBtn = ((appicn) => => @addButton appicn) appIcon
+            setTimeout addBtn, 1000
+        
     # 0000000    000   000  000000000  000000000   0000000   000   000  
     # 000   000  000   000     000        000     000   000  0000  000  
     # 0000000    000   000     000        000     000   000  000 0 000  
@@ -142,6 +144,7 @@ class Anny extends Appl
     
     addButton: (icon:, app:'') ->
         
+        icon ?= __dirname + '/../icons/app.png'
         img = elem 'img' class:'annyicon' src:slash.fileUrl slash.path icon
         img.ondragstart = -> false
         
@@ -164,7 +167,14 @@ class Anny extends Appl
         app = event.target.id
         app = event.target.parentElement.id if empty app
     
-    onLeftClick: (event) => if app = @appEvent event then @openApp app
+    onLeftClick: (event) => 
+        # event.getModifierState "Control""Alt""Meta""Shift"
+        if app = @appEvent event 
+            if wxw('key').trim().length
+                post.toMain 'newKachel' app
+            else
+                @openApp app
+            
     onRightClick: (event) => if app = @appEvent event then wxw 'minimize' slash.file app
     onMiddleClick: (event) => if app = @appEvent event then wxw 'terminate' app
 

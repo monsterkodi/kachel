@@ -49,6 +49,7 @@ class Default extends Kachel
             button 1 2 'img/chain.png'     (-> post.toMain 'newKachel' 'chain'  ), 'dark'
             button 1 3 'img/tools.png'         @onLoad, 'dark'
             button 2 1 'img/saver.png'      -> post.toMain 'newKachel' 'saver'   
+            button 2 2 'img/anny.png'       -> post.toMain 'newKachel' 'apps'   
             button 2 3 'img/clean.png'      -> post.toMain 'newKachel' 'clean'
             button 3 1 'icons/sleep.png'    -> post.toMain 'newKachel' 'sleep'    
             button 3 2 'icons/restart.png'  -> post.toMain 'newKachel' 'restart'  

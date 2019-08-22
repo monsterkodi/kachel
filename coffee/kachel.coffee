@@ -97,7 +97,8 @@ class Kachel extends win
             else if event.button == 2
                 @onRightClick event
         else
-            post.toMain 'snapKachel' @id
+            if @kachelId not in ['apps']
+                post.toMain 'snapKachel' @id                
         post.toMain 'dragStop' @id
     
     # 0000000     0000000   000   000  000   000  0000000     0000000  

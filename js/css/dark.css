@@ -48,6 +48,9 @@ body.kachelFocus #main:not(.noFrame) {
 .button:active {
   background-color: #282828;
 }
+.appname {
+  color: #ddd;
+}
 .appldot {
   fill: #202020;
 }

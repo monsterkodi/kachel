@@ -372,7 +372,11 @@ post.on 'kachelSize' (action, wid) ->
     b = w.getBounds()
     b.width  = Bounds.kachelSizes[size]
     b.height = Bounds.kachelSizes[size]
-    Bounds.snap w, b
+    
+    if kachelSet.dict[wid] == 'apps'
+        Bounds.setBounds w, b
+    else
+        Bounds.snap w, b
         
 # 00000000    0000000   000   0000000  00000000
 # 000   000  000   000  000  000       000     
