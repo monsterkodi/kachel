@@ -25,9 +25,7 @@ class Anny extends Appl
         
         @main.classList.add 'noFrame'
         @main.style.display = 'block'
-        
-        @addButton icon:__dirname + '/../img/anny.png' 'annyicon'
-        
+                
         @iconSize = prefs.get "#{@kachelId}▸iconSize" Bounds.kachelSizes[2]
         @updateIconSize()
         
@@ -57,7 +55,7 @@ class Anny extends Appl
             if b.height < sizes[i] + (sizes[i+1] - sizes[i]) / 2
                 b.height = sizes[i]
                 break
-        
+                        
         @win.setBounds b
         @onSaveBounds()        
         @updateIconSize()

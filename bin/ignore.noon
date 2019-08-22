@@ -115,6 +115,7 @@ matches
     coregen
     crashreporter
     dotnet
+    easyanticheat
     exclusivemodetool
     extexport
     elevate

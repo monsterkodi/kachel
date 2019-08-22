@@ -50,7 +50,7 @@ class KachelSet
                 win.close()
                 return
             
-            win.showInactive()
+            win.show()
             
             if kachelId not in @set
                 @set.push kachelId 
