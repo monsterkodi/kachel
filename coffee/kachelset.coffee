@@ -98,7 +98,8 @@ class KachelSet
             width:              Bounds.kachelSizes[kachelSize]
             height:             Bounds.kachelSizes[kachelSize]
             webPreferences: 
-                nodeIntegration: true
+                nodeIntegration:        true
+                backgroundThrottling:   false
             
         win.loadURL KachelSet.html(type), baseURLForDataURL:"file://#{__dirname}/../js/index.html"
         
