@@ -50,7 +50,7 @@ getApps = ->
     for proc in wxw 'proc'
         if proc.path not in apps
             base = slash.base proc.path
-            continue if base in ['kappo' 'cmd' 'node']
+            continue if base in ['kappo' 'cmd' 'node' 'wc' 'mc']
             continue if base.startsWith 'ServiceHub'
             if slash.fileExists pngPath proc.path
                 apps.push proc.path

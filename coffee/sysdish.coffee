@@ -238,12 +238,8 @@ class Sysdish extends Kachel
          @netrOld = @netrNow = @netrNew
          @nettOld = @nettNow = @nettNew
 
-         
          @netrNew = 180*@data.net.rx_sec/@data.net.rx_max
          @nettNew = 180*@data.net.tx_sec/@data.net.tx_max
-
-         if Number.isNaN @netrNew # remove me!
-            klog @data.net        # remove me!
          
          @sysOld = @sysNow = @sysNew
          @usrOld = @usrNow = @usrNew

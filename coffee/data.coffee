@@ -6,7 +6,7 @@
 0000000    000   000     000     000   000
 ###
 
-{ post, slash, empty, kstr, kpos, klog, last, udp, os, _ } = require 'kxk'
+{ post, slash, childp, empty, kstr, kpos, klog, last, udp, os, _ } = require 'kxk'
 
 sysinfo  = require 'systeminformation'
 electron = require 'electron'
@@ -106,7 +106,7 @@ class Clock
                     hour:   hourStr
                     minute: minuteStr
                     second: secondStr
-                    
+                                     
 #  0000000  000   000   0000000  000  000   000  00000000   0000000   
 # 000        000 000   000       000  0000  000  000       000   000  
 # 0000000     00000    0000000   000  000 0 000  000000    000   000  
@@ -117,61 +117,13 @@ class Sysinfo
         
     @: (@name='sysinfo' @tick='slow') ->
         
-        @r_max = 100
-        @w_max = 100
-
-        @rx_max = 100
-        @tx_max = 100
+        fork = childp.fork "#{__dirname}/memnet"
+        fork.on 'message' @onMessage
         
-    onTick: (data) =>
+    onMessage: (m) => @data = JSON.parse m
         
-        return if global.dragging
+    onTick: (data) => data.send @, @data if @data
         
-        sysinfo.getDynamicData (d) =>
-        
-            if Math.abs(d.networkStats[0].ms - 1000) > 100 # don't trust those values with wrong ms time span
-                rx_sec = Math.min @rx_max, parseInt d.networkStats[0].rx_sec
-                tx_sec = Math.min @tx_max, parseInt d.networkStats[0].tx_sec
-            else
-                rx_sec = parseInt d.networkStats[0].rx_sec
-                tx_sec = parseInt d.networkStats[0].tx_sec
-            
-            @rx_max = Math.max @rx_max, rx_sec
-            @tx_max = Math.max @tx_max, tx_sec
-            
-            # klog 'd.networkStats' d.networkStats[0].ms, parseInt(d.networkStats[0].rx_sec), parseInt(d.networkStats[0].tx_sec), rx_sec/@rx_max, tx_sec/@tx_max
-            
-            nd =
-                mem: d.mem
-                net:
-                    rx_fac: rx_sec/@rx_max
-                    tx_fac: tx_sec/@tx_max
-                    rx_sec: rx_sec
-                    tx_sec: tx_sec
-                    rx_max: @rx_max
-                    tx_max: @tx_max
-                cpu:
-                    sys: d.currentLoad.currentload/100 
-                    usr: d.currentLoad.currentload_user/100
-             
-            if d.disksIO?
-                
-                r_sec = d.disksIO.rIO_sec
-                w_sec = d.disksIO.wIO_sec
-                
-                @r_max = Math.max @r_max, r_sec
-                @w_max = Math.max @w_max, w_sec
-                
-                nd.dsk = 
-                    r_fac: r_sec/@r_max
-                    w_fac: w_sec/@w_max
-                    r_sec: r_sec
-                    w_sec: w_sec
-                    r_max: @r_max
-                    w_max: @w_max
-            
-            data.send @, nd
-
 # 00     00   0000000   000   000   0000000  00000000  
 # 000   000  000   000  000   000  000       000       
 # 000000000  000   000  000   000  0000000   0000000   
@@ -282,7 +234,7 @@ class Apps
         if not _.isEqual apps, @lastApps
             post.toMain 'apps' apps
             for receiver in @receivers
-                post.toWin receiver, 'data', apps
+                post.toWin receiver, 'data' apps
              
             @lastApps = apps
         
@@ -311,7 +263,7 @@ class Wins
         if not _.isEqual wins, @lastWins
             post.toMain 'wins' wins
             for receiver in @receivers
-                post.toWin receiver, 'data', apps
+                post.toWin receiver, 'data' apps
             @lastWins = wins
     
 module.exports = Data
