@@ -1,6 +1,6 @@
 {
   "name": "kachel",
-  "version": "0.119.0",
+  "version": "0.120.0",
   "description": "dock",
   "author": "monsterkodi",
   "license": "Unlicense",
@@ -11,16 +11,17 @@
   },
   "scripts": {
     "mac": "bash ./bin/buildmac.sh",
-    "win": "bash ./bin/buildwin.sh"
+    "win": "bash ./bin/buildwin.sh",
+    "build": "konrad --build"
   },
   "dependencies": {
-    "kxk": "^0.334.0",
-    "systeminformation": "^4.14.4",
-    "wxw": "^1.86.0"
+    "kxk": "^0.339.0",
+    "systeminformation": "^4.14.8",
+    "wxw": "^1.87.0"
   },
   "devDependencies": {
-    "electron": "^6.0.2",
-    "electron-packager": "^14.0.4",
+    "electron": "^6.0.9",
+    "electron-packager": "^14.0.6",
     "electron-rebuild": "^1.8.6",
     "konrad": "^0.159.0",
     "node-abi": "^2.11.0",
