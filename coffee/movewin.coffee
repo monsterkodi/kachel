@@ -30,7 +30,7 @@ moveWin = (dir) ->
         b = 0
 
         if os.platform() == 'win32'
-            if base in ['electron' 'ko' 'konrad' 'clippo' 'klog' 'kaligraf' 'kalk' 'uniko' 'knot' 'space' 'ruler']
+            if base in ['electron' 'ko' 'konrad' 'clippo' 'klog' 'kaligraf' 'kalk' 'uniko' 'knot' 'space' 'ruler' 'keks']
                 b = 0  # sane window border
             else if base in ['devenv']
                 b = -1  # wtf?
