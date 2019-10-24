@@ -27,7 +27,11 @@ class Folder extends Kachel
         if os.platform() == 'win32' and @kachelId.endsWith '$Recycle.Bin'
             childp.execSync "start shell:RecycleBinFolder"
         else
-            open slash.unslash @kachelId
+            if os.platform() == 'win32' and slash.isFile slash.resolve '~/s/keks/keks-win32-x64/keks.exe'
+                childp.spawn slash.resolve('~/s/keks/keks-win32-x64/keks.exe'), [@kachelId]
+                wxw 'focus' 'keks'               
+            else
+                open slash.unslash @kachelId
         
     # 000  000   000  000  000000000  
     # 000  0000  000  000     000     

@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, prefs, slash, clamp, empty, klog, kpos, kstr, app, os, _ } = require 'kxk'
+{ post, prefs, slash, clamp, empty, args, klog, kpos, kstr, app, os, _ } = require 'kxk'
 
 Data      = require './data'
 Bounds    = require './bounds'
@@ -33,7 +33,7 @@ KachelApp = new app
     pkg:                require '../package.json'
     shortcut:           slash.win() and 'Ctrl+F1' or 'Command+F1'
     index:              KachelSet.html 'mainwin'
-    indexURL:           "file://#{__dirname}/../js/index.html"
+    indexURL:           slash.fileUrl slash.path slash.join slash.resolve(__dirname), '..' 'js' 'index.html'
     icon:               '../img/app.ico'
     tray:               '../img/menu.png'
     about:              '../img/about.png'
@@ -55,6 +55,8 @@ KachelApp = new app
     maximizable:        false
     saveBounds:         false
     onWinReady: (win) =>
+        
+        win.webContents.openDevTools(mode:'detach') if args.devtools
         
         Bounds.init()
         
@@ -120,7 +122,7 @@ KachelApp = new app
             getSwitch()
             Bounds.update()
             data.start()
-        
+    
 #  0000000  000   000  000  000000000   0000000  000   000  
 # 000       000 0 000  000     000     000       000   000  
 # 0000000   000000000  000     000     000       000000000  
