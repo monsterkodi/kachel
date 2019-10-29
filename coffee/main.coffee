@@ -183,7 +183,7 @@ onMouse = (mouseData) ->
                 lockRaise = false
                 return
                                     
-            if mousePos.x == 0 or mousePos.x >= Bounds.screenWidth-2 or mousePos.y == 0 or mousePos.y >= Bounds.screenHeight-2
+            if (mousePos.x == 0 or mousePos.x >= Bounds.screenWidth-2) and (mousePos.y == 0 or mousePos.y >= Bounds.screenHeight-2)
                 if not lockRaise
                     if os.platform() == 'win32'
                         tmpTop = true
