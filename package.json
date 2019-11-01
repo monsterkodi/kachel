@@ -1,6 +1,6 @@
 {
   "name": "kachel",
-  "version": "0.124.0",
+  "version": "0.125.0",
   "description": "dock",
   "author": "monsterkodi",
   "license": "Unlicense",
@@ -15,15 +15,15 @@
     "build": "konrad --build"
   },
   "dependencies": {
-    "kxk": "^0.342.0",
+    "kxk": "^0.351.0",
     "systeminformation": "^4.14.17",
     "wxw": "^1.87.0"
   },
   "devDependencies": {
-    "electron": "^6.1.1",
-    "electron-packager": "^14.0.6",
+    "electron": "^6.1.2",
+    "electron-packager": "^14.1.0",
     "electron-rebuild": "^1.8.6",
-    "konrad": "^0.159.0",
+    "konrad": "^0.160.0",
     "node-abi": "^2.12.0",
     "sds": "^3.2.0"
   }

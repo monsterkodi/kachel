@@ -46,8 +46,6 @@ class Krkkl
         @width  = sw * @scalef
         @height = sh * @scalef
             
-        klog @scalef, @width, @height
-        
         @canvas = elem 'canvas' width:@width, height:@height
         @ctx = @canvas.getContext '2d'
         
@@ -81,7 +79,7 @@ class Krkkl
                 
         @pos = kpos parseInt((@width/@cubeSize)/2), parseInt (@height/@cubeSize)/2
                 
-        klog "cubeSize #{@cubeSize} cpf #{@cubesPerF} dirprob #{@dirProb} cubesMax #{@cubesMax}"
+        # klog "cubeSize #{@cubeSize} cpf #{@cubesPerF} dirprob #{@dirProb} cubesMax #{@cubesMax}"
         
         @animation()
         
