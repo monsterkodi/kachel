@@ -6,7 +6,7 @@
 0000000   000   000      0      00000000  000   000
 ###
 
-{ sw, sh, os, slash, post, kpos, prefs, klog, elem, _ } = require 'kxk'
+{ prefs, slash, elem, os, klog } = require 'kxk'
 
 Kachel   = require './kachel'
 wxw      = require 'wxw'
@@ -21,7 +21,7 @@ class Saver extends Kachel
         @last     = Date.now()
         @taskbar  = false
         @saver    = null
-        @minutes  = prefs.get 'saver▸timeout' 5
+        @minutes  = prefs.get 'saver▸timeout' 10
         @interval = parseInt 1000 * 60 * @minutes
         
     onLoad: =>
