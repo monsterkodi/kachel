@@ -6,7 +6,7 @@
 0000000    000   000     000     000   000
 ###
 
-{ post, slash, childp, empty, kstr, kpos, klog, last, udp, os, _ } = require 'kxk'
+{ post, childp, empty, slash, kstr, kpos, last, udp, win, os, _ } = require 'kxk'
 
 sysinfo  = require 'systeminformation'
 electron = require 'electron'
@@ -37,9 +37,8 @@ class Data
         setTimeout @slowTick, 1000
         
     detach: ->
-        
         if os.platform() == 'win32'
-            klog wxw 'kill' 'wc.exe'
+            wxw 'kill' 'wc.exe'
         # else
             # klog wxw 'kill' 'mc'
             
