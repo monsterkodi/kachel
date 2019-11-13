@@ -14,7 +14,7 @@ electron = require 'electron'
 
 class Saver extends Kachel
         
-    @: (@kachelId:'saver') -> 
+    @: ({@kachelId:'saver'}) -> 
     
         super
     

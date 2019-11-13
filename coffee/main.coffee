@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, prefs, slash, clamp, empty, args, klog, kpos, kstr, app, os, _ } = require 'kxk'
+{ post, slash, prefs, valid, kpos, menu, args, kstr, app, win, os, _ } = require 'kxk'
 
 Data      = require './data'
 Bounds    = require './bounds'
@@ -269,7 +269,7 @@ onWins = (wins) ->
                 top = w
                 break
 
-    if top
+    if valid top?.path
         active = slash.base(top.path).toLowerCase() in ['electron' 'kachel']
         post.toWin mainWin.id, 'showDot' active
         if not active then lockRaise = false

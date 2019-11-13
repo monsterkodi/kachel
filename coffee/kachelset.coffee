@@ -6,7 +6,7 @@
 000   000  000   000   0000000  000   000  00000000  0000000  0000000   00000000     000   
 ###
 
-{ post, slash, prefs, empty, valid, klog } = require 'kxk'
+{ post, prefs, slash, empty, valid, win, klog } = require 'kxk'
 
 Bounds   = require './bounds'
 electron = require 'electron'
@@ -44,6 +44,7 @@ class KachelSet
         return if kachelId == 'main'
         
         if @wids[kachelId]
+            
             win = @win kachelId
             
             if kachelId == 'default'
@@ -108,7 +109,7 @@ class KachelSet
         win.webContents.on 'dom-ready' ((id) -> (event) ->
             wid = event.sender.id
             post.toWin wid, 'initKachel' id
-            electron.BrowserWindow.fromId(wid).show()
+            electron.BrowserWindow.fromId(wid)?.show()
             Bounds.update()
             )(kachelId)
               
