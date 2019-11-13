@@ -11,6 +11,7 @@
 Data      = require './data'
 Bounds    = require './bounds'
 KachelSet = require './kachelset'
+autoStart = require './autostart'
 electron  = require 'electron'
 wxw       = require 'wxw'
 
@@ -116,6 +117,8 @@ KachelApp = new app
         
         kachelSet = new KachelSet win.id
         kachelSet.load()
+        
+        autoStart()
         
         post.on 'setLoaded' ->
         

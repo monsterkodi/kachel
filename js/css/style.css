@@ -14,7 +14,7 @@ body {
   border-radius: 4.2px;
   border-width: 0.5px;
   box-sizing: border-box;
-  font-family: "Meslo LG S", "Liberation Mono", "Menlo", "Cousine", "Andale Mono", "monospace";
+  font-family: fontMono;
   font-size: 15px;
   overflow: hidden;
   -webkit-user-select: none;
@@ -193,14 +193,14 @@ svg {
   stroke: url("#appldotstroke");
 }
 .foldericon {
-  margin-top: 0%;
+  margin-top: 5%;
 }
 .foldername {
   position: absolute;
   font-size: 15vh;
   font-family: Bahnschrift Light, Helvetica Neue, Ebrima, Varela Round, Helvetica, Arial;
   width: 100%;
-  bottom: 5vh;
+  bottom: 2vh;
   text-align: center;
   color: #fff;
 }
@@ -315,7 +315,7 @@ svg {
   position: absolute;
   border-radius: 3px;
   font-size: titlebarFontSize;
-  font-family: "Bahnschrift Light", "Ebrima", "Varela Round", "Arial Rounded MT Bold", "Helvetica", "Arial";
+  font-family: titlebarFont;
 }
 .popup.titlemenu {
   border-top-left-radius: 0;
