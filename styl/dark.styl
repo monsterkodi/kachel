@@ -5,10 +5,13 @@
 // 000   000  000   000  000   000  000  000   
 // 0000000    000   000  000   000  000   000  
 
-bgColor             = #202020
-bgHover             = #222
-bgFocus             = #282828
-frameColor          = #222
+borderTopColor      = #1c1c1c
+bgColor             = #181818
+borderBotColor      = #141414
+bgHover             = #161616
+bgFocus             = #202020
+frameColor          = #111111
+
 scrollHoverColor    = #b00
 titleRedColor       = #f00
 titleColor          = #333
@@ -23,12 +26,10 @@ body
         animation-duration  0.2s
         
         background-color        bgColor    
-        border-top-color        #282828
-        &.mojave
-            border-top-color    #111
-        border-left-color       #282828
-        border-right-color      #181818
-        border-bottom-color     #181818
+        border-top-color        borderTopColor
+        border-left-color       borderTopColor
+        border-right-color      borderBotColor
+        border-bottom-color     borderBotColor
         
         & #main:not(.noFrame)
             background-color    bgColor
@@ -37,10 +38,10 @@ body
     
     &.kachelHover
         background-color    bgHover
-        border-top-color    #333
-        border-left-color   #333
-        border-right-color  #111
-        border-bottom-color #111
+        border-top-color    borderTopColor
+        border-left-color   borderTopColor
+        border-right-color  borderBotColor
+        border-bottom-color borderBotColor
         & #main:not(.noFrame)
             background-color     bgHover
     
@@ -60,10 +61,10 @@ body
 @keyframes focusFrame
     from  
         background-color    bgColor
-        border-top-color    #282828
-        border-left-color   #282828
-        border-right-color  #181818
-        border-bottom-color #181818
+        border-top-color    borderTopColor
+        border-left-color   borderTopColor
+        border-right-color  borderBotColor
+        border-bottom-color borderBotColor
     to    
         background-color    bgFocus
         border-top-color    #555
@@ -86,10 +87,10 @@ body
         border-bottom-color #000
     to    
         background-color    bgColor
-        border-top-color    #282828
-        border-left-color   #282828
-        border-right-color  #181818
-        border-bottom-color #181818
+        border-top-color    borderTopColor
+        border-left-color   borderTopColor
+        border-right-color  borderBotColor
+        border-bottom-color borderBotColor
         
 @keyframes noFocusBackground
     from  
@@ -116,13 +117,13 @@ body
 // 000   000  000        000        0000000  
 
 .appldot
-    fill                #202020    
+    fill                #181818
     &.normal
         fill            #333
     &.maximized
         fill            #555
     &.minimized
-        fill            #181818
+        fill            #161616
     &.top
         fill            #f80
     
@@ -136,28 +137,28 @@ body
 // 0000000      000     0000000   0000000    000  0000000   000   000  
 
 .sysdish_mem_bgr 
-    fill                 #222222
+    fill                 borderTopColor
 .sysdish_mem_used 
     fill                 #22f
 .sysdish_mem_active 
     fill                 #88f
 
 .sysdish_load_bgr
-    fill                 #202020
+    fill                 bgColor
 .sysdish_load_sys
     fill                 #f80
 .sysdish_load_usr
     fill                 #ff0
         
-.sysdish_net_bgr
-    fill                 #222222
+.sysdish_net_bgr         
+    fill                 bgHover
 .sysdish_net_recv
     fill                 #080
 .sysdish_net_send
     fill                 #0a0
     
 .sysdish_disk_bgr
-    fill                 #242424
+    fill                 borderTopColor
 .sysdish_disk_read
     fill                 #88f
 .sysdish_disk_write
@@ -170,11 +171,11 @@ body
 //  0000000  0000000   0000000    0000000  000   000    
 
 .face
-    stroke              #333
-    fill                #222
+    stroke              borderTopColor
+    fill                bgColor
     
 .minmrk
-    stroke              #333
+    stroke              borderTopColor
     
 .hour   
     stroke              #f80
@@ -208,12 +209,12 @@ body
     fill                #1c1c1c
 
 .volmrk
-    stroke              #333
+    stroke              bgColor
 
 .voldot
     fill                #888
     &.mute 
-        fill            #222
+        fill            borderBotColor
     
 // 00     00  00000000  000   000  000   000  
 // 000   000  000       0000  000  000   000  

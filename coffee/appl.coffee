@@ -6,7 +6,7 @@
 000   000  000        000        0000000  
 ###
 
-{ post, childp, slash, empty, valid, randint, klog, kstr, elem, open, os, fs, $, _ } = require 'kxk'
+{ post, valid, empty, slash, open, kstr, elem, app, os, $ } = require 'kxk'
 
 Kachel  = require './kachel'
 appIcon = require './icon'
@@ -15,7 +15,7 @@ wxw     = require 'wxw'
 
 class Appl extends Kachel
         
-    @: (@kachelId:'appl') -> 
+    @: ({@kachelId:'appl'}) -> 
     
         post.on 'app' @onApp
         post.on 'win' @onWin
@@ -68,10 +68,10 @@ class Appl extends Kachel
         
         if @activated and not dot
             dot = utils.svg width:16 height:16 clss:'appldot'
-            def = utils.append dot, 'defs'
-            grd = utils.append def, 'linearGradient', id:'appldotstroke' x1:"0%" y1:"0%" x2:"100%" y2:"100%"
-            stp = utils.append grd, 'stop' offset:"0%" 'stop-color':"#111"
-            stp = utils.append grd, 'stop' offset:"100%" 'stop-color':"#333"
+            defs = utils.append dot, 'defs'
+            grd = utils.append defs, 'linearGradient', id:'appldotstroke' x1:"0%" y1:"0%" x2:"100%" y2:"100%"
+            stp = utils.append grd, 'stop' offset:"0%" 'stop-color':"#0a0a0a"
+            stp = utils.append grd, 'stop' offset:"100%" 'stop-color':"#202020"
             grp = utils.append dot, 'g'
             crc = utils.append grp, 'circle' cx:0 cy:0 r:7 class:'applcircle'
             @main.appendChild dot
