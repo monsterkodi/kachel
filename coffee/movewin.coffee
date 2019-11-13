@@ -41,16 +41,16 @@ moveWin = (dir) ->
         ko = 216
         d = 2*b
         [x,y,w,h] = switch dir
-            when 'left'     then [-b,         0         ar.w/2+d,  ar.h+b]
-            when 'right'    then [ar.w/2-b,   0     ar.w/2+d-ko,   ar.h+b]
-            when 'down'     then [ar.w/3-b,   0     2/3*ar.w+d-ko, ar.h+b]
-            when 'up'       then [-b,         0         ar.w+d-ko, ar.h+b]
-            when 'topleft'  then [-b,         0         ar.w/3+d,  ar.h/2]
-            when 'top'      then [ar.w/3-b,   0         ar.w/3+d,  ar.h/2]
-            when 'topright' then [2/3*ar.w-b, 0         ar.w/3+d,  ar.h/2]
-            when 'botleft'  then [-b,         ar.h/2-b, ar.w/3+d,  ar.h/2+d]
-            when 'bot'      then [ar.w/3-b,   ar.h/2-b, ar.w/3+d,  ar.h/2+d]
-            when 'botright' then [2/3*ar.w-b, ar.h/2-b, ar.w/3+d,  ar.h/2+d]
+            when 'left'     then [-b,         0         ar.w/2+d,     ar.h+b]
+            when 'right'    then [ar.w/2-b,   0       ar.w/2+d-ko,    ar.h+b]
+            when 'down'     then [ar.w/6-b,   0        2/3*ar.w+d,    ar.h+b]
+            when 'up'       then [-b,         0         ar.w+d-ko,    ar.h+b]
+            when 'topleft'  then [-b,         0         ar.w/2+d,     ar.h/2]
+            when 'botleft'  then [-b,         ar.h/2-b, ar.w/2+d,     ar.h/2+d]
+            when 'topright' then [ar.w/2-b,   0         ar.w/2+d-ko,  ar.h/2]
+            when 'botright' then [ar.w/2-b,   ar.h/2-b, ar.w/2+d-ko,  ar.h/2+d]
+            when 'top'      then [ar.w/6-b,   0         2*ar.w/3+d,   ar.h/2]
+            when 'bot'      then [ar.w/6-b,   ar.h/2-b, 2*ar.w/3+d,   ar.h/2+d]
         
         sl = 20 > Math.abs wr.x -  x
         sr = 20 > Math.abs wr.x+wr.w - (x+w)
@@ -59,10 +59,16 @@ moveWin = (dir) ->
         
         if sl and sr and st and sb
             switch dir
-                when 'left'  then                 w = ar.w/3+d
-                when 'right' then                 w = ar.w/2+d
-                when 'down'  then x = ar.w/3-b;   w = 2/3*ar.w+d
-                when 'up'    then x = -b;         w = ar.w+d     
+                when 'left'     then                 w = ar.w/3+d
+                when 'right'    then                 w = ar.w/2+d
+                when 'down'     then x = ar.w/3-b;   w = 2/3*ar.w+d-ko
+                when 'up'       then x = -b;         w = ar.w+d     
+                when 'topleft'  then                 w = ar.w/3+d
+                when 'botleft'  then                 w = ar.w/3+d
+                when 'topright' then x = 2*ar.w/3-b; w = ar.w/3+d
+                when 'botright' then x = 2*ar.w/3-b; w = ar.w/3+d
+                when 'top'      then x = ar.w/3-b;   w = ar.w/3+d
+                when 'bot'      then x = ar.w/3-b;   w = ar.w/3+d
         
         wxw 'bounds' info.id, parseInt(x), parseInt(y), parseInt(w), parseInt(h)
         
