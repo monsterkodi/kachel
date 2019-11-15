@@ -87,6 +87,8 @@ KachelApp = new app
                 taskbar:    'alt+ctrl+t'
                 appswitch:  'ctrl+tab'
                 screenzoom: 'alt+z'
+                
+            electron.globalShortcut.register 'F13' -> action 'taskbar'
         else
             keys = 
                 left:       'alt+command+left'
@@ -102,7 +104,6 @@ KachelApp = new app
                 minimize:   'alt+command+m'
                 maximize:   'alt+command+shift+m'
                 close:      'alt+command+w'
-                taskbar:    'alt+command+t'
                 appswitch:  'alt+tab'
                 screenzoom: 'alt+z'
             
