@@ -23,13 +23,10 @@ class KachelSet
         @dict  = "#{mainId}": 'main'
         @wids  = main:mainId
         @set   = []
-        @sid   = ''
         
         post.on 'kachelLoad'  @onKachelLoad
-        post.on 'toggleSet'   @onToggleSet
         post.on 'restoreSet'  @onRestoreSet
         post.on 'storeSet'    @onStoreSet
-        post.on 'newSet'      @onNewSet
         post.on 'kachelFocus' @onKachelFocus
         post.on 'newKachel'   @onNewKachel
             
@@ -55,7 +52,7 @@ class KachelSet
             
             if kachelId not in @set
                 @set.push kachelId 
-                prefs.set "kacheln#{@sid}" @set
+                prefs.set "kacheln" @set
                 prefs.save()
             
             return
@@ -144,7 +141,6 @@ class KachelSet
     
     onKachelFocus: (winId) =>
     
-        # klog 'on focus' @dict[winId]
         if @dict[winId] != 'main'
             @focusKachel = electron.BrowserWindow.fromId winId
 
@@ -154,36 +150,14 @@ class KachelSet
     # 000  0000  000       000   000  
     # 000   000  00000000  00     00  
     
-    onNewSet: =>
-        
-        sets = prefs.get 'sets' ['']
-        sets.push "#{sets.length}"
-        prefs.set 'sets' sets
-        @load sets[-1]
-        
-    # 000000000   0000000    0000000    0000000   000      00000000  
-    #    000     000   000  000        000        000      000       
-    #    000     000   000  000  0000  000  0000  000      0000000   
-    #    000     000   000  000   000  000   000  000      000       
-    #    000      0000000    0000000    0000000   0000000  00000000  
-    
-    onToggleSet: =>
-
-        return if @switching
-        
-        sets = prefs.get 'sets' ['']
-        index = Math.max 0, sets.indexOf(@sid)
-        
-        if index >= sets.length-1 then index = -1
-        @load sets[index+1]
-        
     onRestoreSet: =>
 
-        @load @sid, '_save'
+        @load '_save'
 
     onStoreSet: =>
 
-        prefs.set "kacheln#{@sid}_save" @set 
+        klog 'store' @set
+        prefs.set "kacheln_save" @set 
         prefs.save()
         
     # 000       0000000    0000000   0000000    
@@ -192,21 +166,19 @@ class KachelSet
     # 000      000   000  000   000  000   000  
     # 0000000   0000000   000   000  0000000    
     
-    load: (newSid, postfix='') ->
-           
+    load: (postfix='') ->
+                
         return if @switching
             
         @switching = true
         
-        newSid ?= prefs.get 'set' ''
-        
         if empty postfix
-            oldKacheln = prefs.get "kacheln#{@sid}" []
+            oldKacheln = prefs.get "kacheln" []
 
         @kachelIds = []
         updateIds = ['main']
         showIds = []
-        newSet = prefs.get "kacheln#{newSid}#{postfix}" []
+        newSet = prefs.get "kacheln#{postfix}" []
 
         for kachelId in newSet ? []
             if kachelId != 'main'
@@ -227,24 +199,20 @@ class KachelSet
                         klog 'no wid for' kachelId
         
         if empty postfix
-            prefs.set "kacheln#{@sid}" oldKacheln
-                    
-        @sid = newSid
-        prefs.set 'set' @sid
+            prefs.set "kacheln" oldKacheln
                     
         @set = newSet
         
         if valid postfix
-            prefs.set "kacheln#{newSid}" @set
+            prefs.set "kacheln" @set
         
         for kachelId in updateIds
             post.emit 'updateBounds' kachelId
 
         for kachelId in showIds
             @onNewKachel kachelId
-            
-        if @kachelIds.length == 0
-            @didLoad()
+         
+        @didLoad()
             
     # 0000000    000  0000000          000       0000000    0000000   0000000    
     # 000   000  000  000   000        000      000   000  000   000  000   000  
@@ -267,11 +235,9 @@ class KachelSet
     
     onKachelLoad: (wid, kachelId) =>
             
-        # klog 'onLoad' @sid, @set.length, kachelId
-        
         if kachelId not in @set
             @set.push kachelId 
-            prefs.set "kacheln#{@sid}" @set
+            prefs.set "kacheln" @set
             prefs.save()
         
         @dict[wid] = kachelId
@@ -299,8 +265,7 @@ class KachelSet
                 @set.splice @set.indexOf(kachelId), 1
             delete @wids[kachelId]
             delete @dict[kachel.id]
-            # klog "prefs remove from #{@sid}" kachelId
-            prefs.set "kacheln#{@sid}" @set
+            prefs.set "kacheln" @set
                 
     win: (kachelId) ->
             

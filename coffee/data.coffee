@@ -6,7 +6,7 @@
 0000000    000   000     000     000   000
 ###
 
-{ post, childp, empty, slash, kstr, kpos, last, udp, win, os, _ } = require 'kxk'
+{ post, childp, empty, slash, kstr, kpos, last, udp, win, os, klog, _ } = require 'kxk'
 
 sysinfo  = require 'systeminformation'
 electron = require 'electron'
@@ -22,10 +22,12 @@ class Data
             @hookInfo  = wxw 'hook' 'info'
             
         @providers = 
-            mouse:    new Mouse
-            keyboard: new Keyboard
-            apps:     new Apps
-            wins:     new Wins
+            mouse:      new Mouse
+            keyboard:   new Keyboard
+            apps:       new Apps
+            wins:       new Wins
+            clock:      new Clock 
+            sysinfo:    new Sysinfo
         
         post.on 'requestData' @onRequestData
         
@@ -53,12 +55,11 @@ class Data
         
     onRequestData: (provider, wid) =>
         
-        # klog "Data.onRequestData provider:#{kstr provider} wid:#{kstr wid}"
+        klog "Data.onRequestData provider:#{kstr provider} wid:#{kstr wid}"
             
         if not @providers[provider]
-            @providers[provider] = new {clock:Clock, sysinfo:Sysinfo}[provider]
-            @providers[provider].receivers = []
-            
+            return klog "Data.onRequestData no provider of type #{provider}"
+                    
         if wid not in @providers[provider].receivers
             @providers[provider].receivers.push wid 
 
@@ -83,7 +84,7 @@ class Data
 
 class Clock
         
-    @: (@name='clock' @tick='slow') ->
+    @: (@name='clock' @tick='slow' @receivers=[]) -> 
         
     onTick: (data) =>
         
@@ -114,7 +115,7 @@ class Clock
 
 class Sysinfo
         
-    @: (@name='sysinfo' @tick='slow') ->
+    @: (@name='sysinfo' @tick='slow' @receivers=[]) ->
         
         fork = childp.fork "#{__dirname}/memnet"
         fork.on 'message' @onMessage

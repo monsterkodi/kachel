@@ -121,11 +121,11 @@ KachelApp = new app
         
         autoStart()
         
-        post.on 'setLoaded' ->
-        
-            getSwitch()
-            Bounds.update()
-            data.start()
+post.on 'setLoaded' ->
+
+    getSwitch()
+    Bounds.update()
+    data.start()
     
 #  0000000  000   000  000  000000000   0000000  000   000  
 # 000       000 0 000  000     000     000       000   000  

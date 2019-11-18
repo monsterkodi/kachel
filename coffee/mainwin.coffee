@@ -20,7 +20,7 @@ class MainWin extends Kachel
         
     onLoad: -> @main.appendChild elem 'img' class:'kachelImg' src:__dirname + '/../img/about.png'    
         
-    onLeftClick: -> post.toMain 'toggleSet'
+    onLeftClick: -> 
     onRightClick: -> post.toMain 'newKachel' 'default'
     onMiddleClick: -> post.toMain 'quitApp'
 
