@@ -156,8 +156,7 @@ class KachelSet
 
     onStoreSet: =>
 
-        klog 'store' @set
-        prefs.set "kacheln_save" @set 
+        prefs.set "kacheln_save" @set
         prefs.save()
         
     # 000       0000000    0000000   0000000    

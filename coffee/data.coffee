@@ -55,7 +55,7 @@ class Data
         
     onRequestData: (provider, wid) =>
         
-        klog "Data.onRequestData provider:#{kstr provider} wid:#{kstr wid}"
+        # klog "Data.onRequestData provider:#{kstr provider} wid:#{kstr wid}"
             
         if not @providers[provider]
             return klog "Data.onRequestData no provider of type #{provider}"
