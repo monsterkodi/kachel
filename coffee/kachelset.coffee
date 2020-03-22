@@ -6,7 +6,7 @@
 000   000  000   000   0000000  000   000  00000000  0000000  0000000   00000000     000   
 ###
 
-{ post, prefs, slash, empty, valid, win, klog } = require 'kxk'
+{ empty, klog, post, prefs, slash, valid, win } = require 'kxk'
 
 Bounds   = require './bounds'
 electron = require 'electron'

@@ -6,14 +6,14 @@
 000   000  000   000   0000000  000   000  00000000  0000000    
 ###
 
-{ prefs, slash, post, os, kstr, drag, scheme, stopEvent, klog, elem, win, $ } = require 'kxk'
+{ $, _, drag, elem, klog, post, prefs, scheme, slash, stopEvent, win } = require 'kxk'
 
 Bounds = require './bounds'
 
 class Kachel extends win
 
-    @: (@kachelId:'kachel') ->
-        
+    @: (@kachelId:'kachel') -> 
+        _
         super
             prefsSeperator: '▸'
             dir:    __dirname

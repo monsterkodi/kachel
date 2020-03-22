@@ -6,7 +6,7 @@
 0000000   000   000      0      00000000  000   000
 ###
 
-{ prefs, slash, elem, os, klog } = require 'kxk'
+{ _, elem, klog, os, prefs, slash } = require 'kxk'
 
 Kachel   = require './kachel'
 wxw      = require 'wxw'
@@ -14,8 +14,8 @@ electron = require 'electron'
 
 class Saver extends Kachel
         
-    @: ({@kachelId:'saver'}) -> 
-    
+    @: (@kachelId:'saver') -> 
+        _
         super
     
         @last     = Date.now()

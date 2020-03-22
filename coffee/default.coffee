@@ -6,14 +6,19 @@
 0000000    00000000  000       000   000   0000000   0000000   000     
 ###
 
-{ post, slash, klog, elem, os, _ } = require 'kxk'
+{ _, elem, klog, post, slash } = require 'kxk'
 
 electron = require 'electron'
 Kachel   = require './kachel'
 
 class Default extends Kachel
         
-    @: (@kachelId:'default') -> super
+    @: (@kachelId:'default') ->
+        _
+        # electron = require 'electron'
+        # electron.remote.getCurrentWindow().openDevTools mode:'detach'
+        klog 'Default' @kachelId
+        super
     
     # 000       0000000    0000000   0000000    
     # 000      000   000  000   000  000   000  
@@ -29,6 +34,7 @@ class Default extends Kachel
     
     onLoad: =>
         
+        klog 'onLoad'
         @main.innerHTML = ''
         @main.appendChild elem 'div' class:'grid3x3' children:[
             button 1 1 'img/app.png'       @openApp

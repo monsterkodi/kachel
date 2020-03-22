@@ -6,7 +6,7 @@
 000   0000000   0000000   000   000  
 ###
 
-{ slash, os, fs, last, klog } = require 'kxk'
+{ fs, slash } = require 'kxk'
 
 wxw = require 'wxw'
 
@@ -21,7 +21,7 @@ fakeIcon = (exePath, pngPath) ->
         mintty:     'terminaldark'
         procexp64:  'procexp'
         Calculator: 'Calculator'
-        Calendar:   'Calendar'
+        # Calendar:   'Calendar'
         Settings:   'Settings'
         Mail:       'Mail'
         'Microsoft Store': 'Microsoft Store'

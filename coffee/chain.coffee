@@ -6,7 +6,7 @@
  0000000  000   000  000   000  000  000   000
 ###
 
-{ post, slash, valid, klog, elem, os, _ } = require 'kxk'
+{ _, valid } = require 'kxk'
 
 electron = require 'electron'
 Kachel   = require './kachel'
@@ -16,7 +16,7 @@ utils    = require './utils'
 class Chain extends Kachel
         
     @: (@kachelId:'chain') -> 
-        
+        _
         super
         
         @win.setResizable true

@@ -6,7 +6,7 @@
 000        0000000   0000000  0000000    00000000  000   000  
 ###
 
-{ post, childp, prefs, slash, valid, osaspawn, osascript, open, klog, elem, os, fs, $, _ } = require 'kxk'
+{ $, _, childp, elem, open, os, slash } = require 'kxk'
 
 Kachel = require './kachel'
 utils  = require './utils'
@@ -14,7 +14,9 @@ wxw    = require 'wxw'
 
 class Folder extends Kachel
         
-    @: (@kachelId:'folder') -> super
+    @: (@kachelId:'folder') -> 
+        _
+        super
         
     #  0000000  000      000   0000000  000   000  
     # 000       000      000  000       000  000   
@@ -29,7 +31,9 @@ class Folder extends Kachel
         else
             if os.platform() == 'win32' and slash.isFile slash.resolve '~/s/keks/keks-win32-x64/keks.exe'
                 childp.spawn slash.resolve('~/s/keks/keks-win32-x64/keks.exe'), [@kachelId]
-                wxw 'focus' 'keks'               
+                wxw 'focus' 'keks'
+            else if os.platform() == 'darwin' and slash.isFile slash.resolve '~/s/keks/keks-darwin-x64/keks.app/Contents/MacOS/keks'
+                childp.spawn slash.resolve('~/s/keks/keks-darwin-x64/keks.app/Contents/MacOS/keks'), ['--' @kachelId]
             else
                 open slash.unslash @kachelId
         
@@ -63,7 +67,7 @@ class Folder extends Kachel
         
     onBounds: =>
         
-        if @plainFolder and os.platform() == 'win32'
+        if @plainFolder
             
             @main.innerHTML = ''
             @setIcon slash.join __dirname, '..' 'img' 'folder.png'

@@ -6,7 +6,7 @@
 000       000  0000000  00000000  
 ###
 
-{ post, childp, prefs, slash, valid, open, klog, elem, os, fs, _ } = require 'kxk'
+{ _, childp, fs, open, slash } = require 'kxk'
 
 Kachel  = require './kachel'
 utils   = require './utils'
@@ -14,7 +14,9 @@ appIcon = require './icon'
 
 class File extends Kachel
         
-    @: (@kachelId:'file') -> super
+    @: (@kachelId:'file') -> 
+        _
+        super
         
     #  0000000  000      000   0000000  000   000  
     # 000       000      000  000       000  000   

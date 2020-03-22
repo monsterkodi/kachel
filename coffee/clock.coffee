@@ -6,7 +6,7 @@
  0000000  0000000   0000000    0000000  000   000  
 ###
 
-{ post, elem, klog, _ } = require 'kxk'
+{ _ } = require 'kxk'
 
 utils   = require './utils'
 Kachel  = require './kachel'
@@ -14,7 +14,7 @@ Kachel  = require './kachel'
 class Clock extends Kachel
         
     @: (@kachelId:'clock') -> 
-    
+        _
         super
         
         @requestData 'clock'

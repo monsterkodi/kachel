@@ -6,7 +6,7 @@
 00000000  000   000  00000000  000       000  000   000  0000000  
 ###
 
-{ post, slash, prefs, walkdir, klog, _ } = require 'kxk'
+{ _, app, post, prefs, slash, walkdir } = require 'kxk'
 
 exeFind = (appCB, doneCB) ->
 

@@ -6,13 +6,14 @@
 000   000  00000000  0000000      000     000   000  000   000     000   
 ###
 
-{ post, childp, os, _ } = require 'kxk'
+{ _, childp, os, post } = require 'kxk'
 
 Kachel = require './kachel'
 
 class Restart extends Kachel
     
     @: (@kachelId:'restart') -> 
+        _
         super
         @setIcon __dirname + '/../icons/restart.png'
                         

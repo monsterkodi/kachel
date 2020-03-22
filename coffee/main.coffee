@@ -6,7 +6,7 @@
 000   000  000   000  000  000   000
 ###
 
-{ post, slash, prefs, valid, kpos, menu, args, kstr, app, win, os, _ } = require 'kxk'
+{ _, app, args, kpos, kstr, menu, os, post, prefs, slash, valid, win } = require 'kxk'
 
 Data      = require './data'
 Bounds    = require './bounds'

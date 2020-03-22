@@ -6,22 +6,27 @@
     0       0000000   0000000   0000000   000   000  00000000  
 ###
 
-{ post, clamp, kpos, elem, klog, os, _ } = require 'kxk'
+{ _, clamp, kerror, kpos } = require 'kxk'
 
-wxw     = require 'wxw'
 utils   = require './utils'
 Kachel  = require './kachel'
 
 class Volume extends Kachel
         
     @: (@kachelId:'volume') -> 
-    
-        super
+        _
+        # electron = require 'electron'
+        # electron.remote.getCurrentWindow().openDevTools mode:'detach'
         
+        super
         @mute = false
         @main.addEventListener 'mousewheel' @onWheel
     
-        @volume = parseInt wxw 'volume'
+        try
+            wxw = require 'wxw'
+            @volume = parseInt wxw 'volume'
+        catch err
+            kerror "#{err}"
             
     onLeftClick: (event) =>
         
@@ -43,12 +48,15 @@ class Volume extends Kachel
     setVolume: (v) ->
         
         @mute = false
+        
+        wxw = require 'wxw'
         @volume = parseInt wxw 'volume' "#{parseInt clamp 0 100 v}"
         
         @updateVolume()
         
     onContextMenu: (event) => 
         
+        wxw = require 'wxw'
         current = parseInt wxw 'volume'
         if @volume == current
             @mute = true

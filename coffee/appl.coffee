@@ -6,7 +6,7 @@
 000   000  000        000        0000000  
 ###
 
-{ post, valid, empty, slash, open, kstr, elem, app, os, $ } = require 'kxk'
+{ $, _, app, elem, empty, kstr, open, os, post, slash, valid } = require 'kxk'
 
 Kachel  = require './kachel'
 appIcon = require './icon'
@@ -15,8 +15,8 @@ wxw     = require 'wxw'
 
 class Appl extends Kachel
         
-    @: ({@kachelId:'appl'}) -> 
-    
+    @: (@kachelId:'appl') ->
+        _
         post.on 'app' @onApp
         post.on 'win' @onWin
         

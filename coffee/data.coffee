@@ -6,7 +6,7 @@
 0000000    000   000     000     000   000
 ###
 
-{ post, childp, empty, slash, kstr, kpos, last, udp, win, os, klog, _ } = require 'kxk'
+{ _, childp, empty, klog, kpos, kstr, last, os, post, slash, udp, win } = require 'kxk'
 
 sysinfo  = require 'systeminformation'
 electron = require 'electron'

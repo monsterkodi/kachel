@@ -6,14 +6,14 @@
 000   000   0000000   000   000  000   000  000   000  0000000    
 ###
 
-{ post, childp, prefs, slash, osascript, open, klog, elem, udp, os, fs, _ } = require 'kxk'
+{ _, open, os, post, slash, udp } = require 'kxk'
 
 Kachel = require './kachel'
 
 class Konrad extends Kachel
         
     @: (@kachelId:'konrad') ->
-    
+        _
         post.on 'app' @onApp
         
         super

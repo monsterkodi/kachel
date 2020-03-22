@@ -6,7 +6,7 @@
 000   000  000   000  000   000     000     
 ###
 
-{ post, childp, slash, prefs, empty, valid, kstr, last, randint, klog, elem, open, os, fs, $, _ } = require 'kxk'
+{ _, app, elem, empty, last, os, post, prefs, slash } = require 'kxk'
 
 Appl    = require './appl'
 Bounds  = require './bounds'
@@ -16,7 +16,7 @@ wxw     = require 'wxw'
 class Anny extends Appl
         
     @: (@kachelId:'anny') ->
-
+        _
         super
 
         @win.setResizable true
