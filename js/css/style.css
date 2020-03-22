@@ -1,3 +1,9 @@
+@font-face {
+  font-family: calendarFont;
+  font-weight: normal;
+  font-style: normal;
+  src: url("../../node_modules/kxk/styl/Bahnschrift.woff");
+}
 * {
   outline-width: 0;
   line-height: 1;
@@ -107,7 +113,8 @@ svg {
   position: absolute;
   top: 21.5%;
   left: 32%;
-  font-size: 9px;
+  font-size: 8px;
+  font-family: calendarFont;
   line-height: 1;
   transform: rotate(-10deg);
   color: #fff;
@@ -133,9 +140,10 @@ svg {
 }
 .calendarDay {
   position: absolute;
-  top: 40%;
-  left: 30%;
-  font-size: 20px;
+  top: 38%;
+  left: 33%;
+  font-size: 22px;
+  font-family: calendarFont;
   line-height: 1;
   transform: rotate(-10deg);
   color: #000;

@@ -8,6 +8,12 @@
 frameWidth   = 3px
 clockFont    = "Helvetica", "Arial"
 
+@font-face 
+    font-family     calendarFont
+    font-weight     normal
+    font-style      normal
+    src             url("../../node_modules/kxk/styl/Bahnschrift.woff")
+
 fill-abs()
     position            absolute
     bottom              0
@@ -135,7 +141,8 @@ svg
     position            absolute
     top                 21.5%
     left                32%
-    font-size           9px
+    font-size           8px
+    font-family         calendarFont
     line-height         1
     transform           rotate(-10deg)
     color               white
@@ -161,9 +168,10 @@ svg
  
 .calendarDay
     position            absolute
-    top                 40%
-    left                30%
-    font-size           20px
+    top                 38%
+    left                33%
+    font-size           22px
+    font-family         calendarFont
     line-height         1
     transform           rotate(-10deg)
     color               black
