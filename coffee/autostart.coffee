@@ -6,7 +6,7 @@
 000   000   0000000      000      0000000   0000000      000     000   000  000   000     000   
 ###
 
-{ post, slash, os } = require 'kxk'
+{ os, post, slash } = require 'kxk'
 
 wxw = require 'wxw'
 
@@ -16,7 +16,8 @@ autoStart = ->
         wxw 'taskbar' 'toggle'
         post.emit 'screensize'
     
-    for f in ['klog' 'kappo' 'knot' 'clippo' 'konrad' 'ko' 'keks']
+    # for f in ['klog' 'kappo' 'knot' 'clippo' 'konrad' 'ko' 'keks']
+    for f in ['clippo']
         exe = slash.resolve "~/s/#{f}/#{f}-#{process.platform}-#{process.arch}/#{f}.exe"
         if slash.isFile exe
             wxw 'launch' exe            
